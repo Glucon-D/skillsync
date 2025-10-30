@@ -14,6 +14,7 @@ import { generateId } from '@/lib/utils';
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  hasHydrated: boolean;
 }
 
 interface AuthActions {
@@ -21,6 +22,7 @@ interface AuthActions {
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   setUser: (user: User) => void;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -28,6 +30,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
+      hasHydrated: false,
 
       login: async (email: string, password: string) => {
         const users = storage.get<Record<string, { name: string; email: string; password: string }>>(STORAGE_KEYS.AUTH_USER) || {};
@@ -78,10 +81,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       setUser: (user: User) => {
         set({ user, isAuthenticated: true });
       },
+
+      setHasHydrated: (state: boolean) => {
+        set({ hasHydrated: state });
+      },
     }),
     {
       name: STORAGE_KEYS.AUTH_TOKEN,
-      skipHydration: false,
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );
