@@ -645,7 +645,7 @@ export default function CoursesPage() {
                   </div>
                 )}
 
-                <CardContent className="p-5 flex flex-col h-full">
+                <CardContent className="p-3 flex flex-col h-full">
                   {/* Header: Checkbox, Title, Bookmark */}
                   <div className="flex items-start gap-2.5 mb-4">
                     {isSelectMode && (
@@ -673,7 +673,7 @@ export default function CoursesPage() {
                       title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
                     >
                       {bookmarked ? (
-                        <BookmarkCheck className="w-5 h-5 text-primary-500" />
+                        <Bookmark className="w-5 h-5 text-primary-500 fill-primary-500" />
                       ) : (
                         <Bookmark className="w-5 h-5 text-text-muted group-hover/bookmark:text-primary-500 transition-colors" />
                       )}
