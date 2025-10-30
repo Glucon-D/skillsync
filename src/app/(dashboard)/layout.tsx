@@ -18,9 +18,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <DataLoader />
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="flex min-h-[calc(100vh-4rem)]">
+        <div className="flex pt-16">
           <Sidebar />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto min-h-screen">
             <div className="max-w-7xl mx-auto p-6 md:p-8">
               {children}
             </div>

@@ -47,13 +47,27 @@ export interface DocumentMetadata {
   };
 }
 
+export interface Project {
+  name: string;
+  description: string;
+  url?: string;
+  techStack: string[];
+  image?: string;
+}
+
 export interface Profile {
   userId: string;
+  username?: string; // Public username for portfolio, defaults to email
+  userImage?: string; // Profile image URL from Appwrite Storage
   bio: string;
   phone?: string;
+  location?: string;
+  websiteUrl?: string;
+  socialLinks?: string[]; // Array of social media URLs
   education: Education[];
   skills: Skill[];
   experience: Experience[];
+  projects?: Project[];
   documents?: DocumentMetadata[];
   assessmentScores?: AssessmentScores;
   dominantType?: string;
