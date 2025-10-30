@@ -8,7 +8,7 @@ This document outlines the complete database structure for SkillSync using Appwr
 
 **Database Name:** `skillsync_db`
 
-**Total Collections:** 4
+**Total Collections:** 3
 
 **Note:** User authentication is handled by Appwrite Auth Service (no separate users collection needed)
 
@@ -35,20 +35,25 @@ This document outlines the complete database structure for SkillSync using Appwr
 
 ### Attributes:
 
-| Attribute               | Type          | Size  | Required | Default | Description                                        |
-| ----------------------- | ------------- | ----- | -------- | ------- | -------------------------------------------------- |
-| `userId`                | string        | 36    | Yes      | -       | Reference to Appwrite Auth user ID                 |
-| `bio`                   | string        | 1000  | No       | ""      | User biography                                     |
-| `education`             | string (JSON) | 10000 | No       | "[]"    | Array of education objects                         |
-| `skills`                | string (JSON) | 5000  | No       | "[]"    | Array of skill objects                             |
-| `experience`            | string (JSON) | 10000 | No       | "[]"    | Array of experience objects                        |
-| `documents`             | string (JSON) | 2000  | No       | "[]"    | Array of document URLs (certificates, transcripts) |
-| `assessmentScores`      | string (JSON) | 500   | No       | "{}"    | Assessment scores object (see below)               |
-| `dominantType`          | string        | 50    | No       | ""      | Dominant personality type from assessment          |
-| `assessmentCompletedAt` | datetime      | -     | No       | null    | When assessment was completed                      |
-| `completionPercentage`  | integer       | -     | Yes      | 0       | Profile completion (0-100)                         |
-| `$createdAt`            | datetime      | -     | Yes      | auto    | Creation timestamp                                 |
-| `$updatedAt`            | datetime      | -     | Yes      | auto    | Last update timestamp                              |
+| Attribute               | Type          | Size  | Array | Required | Default | Description                                        |
+| ----------------------- | ------------- | ----- | ----- | -------- | ------- | -------------------------------------------------- |
+| `userId`                | string        | 36    | ❌ No  | ✅ Yes    | -       | Reference to Appwrite Auth user ID                 |
+| `bio`                   | string        | 1000  | ❌ No  | ❌ No     | ""      | User biography                                     |
+| `education`             | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (education objects)          |
+| `skills`                | string        | 5000  | ✅ Yes | ❌ No     | []      | Array of JSON strings (skill objects)              |
+| `experience`            | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (experience objects)         |
+| `documents`             | string        | 2000  | ✅ Yes | ❌ No     | []      | Array of document URLs (certificates, transcripts) |
+| `assessmentScores`      | string        | 500   | ❌ No  | ❌ No     | ""      | JSON string of assessment scores object            |
+| `dominantType`          | string        | 50    | ❌ No  | ❌ No     | ""      | Dominant personality type from assessment          |
+| `assessmentCompletedAt` | datetime      | -     | ❌ No  | ❌ No     | null    | When assessment was completed                      |
+| `completionPercentage`  | integer       | -     | ❌ No  | ✅ Yes    | 0       | Profile completion (0-100)                         |
+| `$createdAt`            | datetime      | -     | ❌ No  | ✅ Yes    | auto    | Creation timestamp                                 |
+| `$updatedAt`            | datetime      | -     | ❌ No  | ✅ Yes    | auto    | Last update timestamp                              |
+
+**IMPORTANT:** When creating attributes in Appwrite Console:
+- For `education`, `skills`, `experience`: Select **String** type and check **"Array"** option
+- Each array element will be a JSON string representing an object
+- For `assessmentScores`: Select **String** type (NOT array) - store as single JSON string
 
 ### JSON Structure for Nested Fields:
 

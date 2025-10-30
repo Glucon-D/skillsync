@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 
 export default function AssessmentPage() {
   const { user } = useAuth();
-  const { currentQuestion, result, isCompleted, setAnswer, nextQuestion, previousQuestion, calculateResults, resetAssessment } = useAssessmentStore();
+  const { currentQuestion, result, isCompleted, isSaving, saveError, setAnswer, nextQuestion, previousQuestion, calculateResults, resetAssessment } = useAssessmentStore();
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const currentQ = quizQuestions[currentQuestion];
@@ -46,6 +46,35 @@ export default function AssessmentPage() {
             </div>
             <CardTitle className="text-2xl">Assessment Complete!</CardTitle>
             <p className="text-text-muted">Your dominant type: <strong>{result.dominantType}</strong></p>
+
+            {/* Saving indicator */}
+            {isSaving && (
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-blue-500">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500" />
+                <span>Saving results to database...</span>
+              </div>
+            )}
+
+            {/* Success message */}
+            {!isSaving && !saveError && (
+              <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-sm text-green-700 dark:text-green-400">
+                  ✅ Results saved successfully to your profile!
+                </p>
+              </div>
+            )}
+
+            {/* Error message */}
+            {saveError && (
+              <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-700 dark:text-red-400 mb-2">
+                  ❌ Failed to save results: {saveError}
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-500">
+                  Check browser console for details and see TROUBLESHOOTING_ASSESSMENT.md
+                </p>
+              </div>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">

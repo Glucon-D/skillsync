@@ -20,26 +20,33 @@ import { Input, Textarea } from '@/components/ui/input';
 export default function OnboardingPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { setProfile } = useProfileStore();
+  const { createProfile } = useProfileStore();
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     bio: '',
     phone: '',
   });
 
-  const handleComplete = () => {
-    if (user) {
-      const profile: Profile = {
-        userId: user.id,
-        bio: formData.bio,
-        phone: formData.phone,
-        education: [],
-        skills: [],
-        experience: [],
-        completionPercentage: 25,
-      };
-      setProfile(profile);
-      router.push(ROUTES.DASHBOARD);
+  const handleComplete = async () => {
+    if (user && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        const profile: Profile = {
+          userId: user.id,
+          bio: formData.bio,
+          phone: formData.phone,
+          education: [],
+          skills: [],
+          experience: [],
+          completionPercentage: 25,
+        };
+        await createProfile(user.id, profile);
+        router.push(ROUTES.DASHBOARD);
+      } catch (error) {
+        console.error('Failed to create profile:', error);
+        setIsSubmitting(false);
+      }
     }
   };
 

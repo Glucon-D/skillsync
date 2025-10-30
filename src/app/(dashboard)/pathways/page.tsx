@@ -1,7 +1,7 @@
 /**
  * @file (dashboard)/pathways/page.tsx
  * @description Skill pathways page
- * @dependencies react, lucide-react, @/store/pathwaysStore, @/data/skills, @/components/ui
+ * @dependencies react, lucide-react, @/store/pathwaysStore, @/store/authStore, @/data/skills, @/components/ui
  */
 
 'use client';
@@ -9,21 +9,24 @@
 import { useEffect } from 'react';
 import { CheckCircle, Circle, Clock } from 'lucide-react';
 import { usePathwaysStore } from '@/store/pathwaysStore';
+import { useAuthStore } from '@/store/authStore';
 import { skillsPathways } from '@/data/skills';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export default function PathwaysPage() {
-  const { pathways, completedSkills, toggleSkillCompletion, setPathways, getProgress } = usePathwaysStore();
+  const user = useAuthStore((state) => state.user);
+  const { userPathways, togglePathwayCompletion, isPathwayCompleted, getProgress, loadPathways } = usePathwaysStore();
 
   useEffect(() => {
-    if (pathways.length === 0) {
-      setPathways(skillsPathways);
+    if (user?.id) {
+      loadPathways(user.id);
     }
-  }, [pathways, setPathways]);
+  }, [user?.id, loadPathways]);
 
-  const progress = getProgress();
+  const progress = getProgress(skillsPathways.length);
+  const completedCount = userPathways.filter(p => p.completed).length;
 
   return (
     <div className="space-y-6">
@@ -39,7 +42,7 @@ export default function PathwaysPage() {
         <CardContent>
           <div className="flex items-center justify-between mb-2">
             <span className="text-2xl font-bold text-text">{progress}%</span>
-            <span className="text-text-muted">{completedSkills.length} / {pathways.length} completed</span>
+            <span className="text-text-muted">{completedCount} / {skillsPathways.length} completed</span>
           </div>
           <div className="w-full bg-background rounded-full h-3">
             <div
@@ -51,9 +54,9 @@ export default function PathwaysPage() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {pathways.map((pathway) => {
-          const isCompleted = completedSkills.includes(pathway.id);
-          
+        {skillsPathways.map((pathway) => {
+          const isCompleted = isPathwayCompleted(pathway.id);
+
           return (
             <Card key={pathway.id} className={isCompleted ? 'border-green-500' : ''}>
               <CardHeader>
@@ -63,8 +66,9 @@ export default function PathwaysPage() {
                     <p className="text-sm text-text-muted mt-1">{pathway.category}</p>
                   </div>
                   <button
-                    onClick={() => toggleSkillCompletion(pathway.id)}
+                    onClick={() => user?.id && togglePathwayCompletion(user.id, pathway)}
                     className="flex-shrink-0"
+                    disabled={!user?.id}
                   >
                     {isCompleted ? (
                       <CheckCircle className="w-6 h-6 text-green-500" />
@@ -98,7 +102,8 @@ export default function PathwaysPage() {
                   variant={isCompleted ? 'outline' : 'primary'}
                   size="sm"
                   className="w-full"
-                  onClick={() => toggleSkillCompletion(pathway.id)}
+                  onClick={() => user?.id && togglePathwayCompletion(user.id, pathway)}
+                  disabled={!user?.id}
                 >
                   {isCompleted ? 'Mark Incomplete' : 'Mark Complete'}
                 </Button>

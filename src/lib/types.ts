@@ -39,7 +39,14 @@ export interface Profile {
   education: Education[];
   skills: Skill[];
   experience: Experience[];
+  documents?: string[];
+  assessmentScores?: AssessmentScores;
+  dominantType?: string;
+  assessmentCompletedAt?: string | null;
   completionPercentage: number;
+  $id?: string;
+  $createdAt?: string;
+  $updatedAt?: string;
 }
 
 export interface AssessmentScores {
@@ -70,13 +77,15 @@ export interface Course {
   id: string;
   title: string;
   platform: string;
-  instructor: string;
-  duration: string;
+  instructor?: string;
+  duration?: string;
   difficulty: CourseDifficulty;
-  price: number | 'free';
+  price: number;
   rating: number;
-  thumbnail: string;
+  thumbnail?: string;
   url: string;
+  category?: string;
+  $dbId?: string; // Database row ID for updates/deletes
 }
 
 export type GrowthPotential = 'low' | 'medium' | 'high';
