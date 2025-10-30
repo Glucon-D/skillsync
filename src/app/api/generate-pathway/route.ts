@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generatePathwayRoadmap } from '@/lib/openrouter';
+import { generatePathwayRoadmap } from '@/lib/ai-pathways';
 import type { Profile, GeneratedPathwayResponse } from '@/lib/types';
 
 /**

@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateCareerRecommendations } from '@/lib/openrouter';
+import { generateCareerRecommendations } from '@/lib/ai-pathways';
 import type { Profile, PathwayRecommendationsResponse } from '@/lib/types';
 
 /**
