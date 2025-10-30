@@ -8,6 +8,7 @@
       "Bash(npm:*)",
       "Bash(pnpm add:*)",
       "Bash(npm install)"
+      "mcp__exa__get_code_context_exa"
     ],
     "deny": [],
     "ask": []
