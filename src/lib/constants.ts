@@ -26,6 +26,7 @@ export const ROUTES = {
   PATHWAYS: '/pathways',
   COURSES: '/courses',
   CAREERS: '/careers',
+  ANALYTICS: '/analytics',
   CHAT: '/chat',
   JOBS: '/jobs',
 } as const;
