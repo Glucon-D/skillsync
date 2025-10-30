@@ -115,16 +115,6 @@ export interface Career {
   matchPercentage?: number;
 }
 
-export interface SkillPathway {
-  id: string;
-  name: string;
-  category: string;
-  level: SkillLevel;
-  estimatedTime: string;
-  resources: string[];
-  completed: boolean;
-}
-
 export interface OnboardingData {
   name: string;
   email: string;
@@ -133,4 +123,53 @@ export interface OnboardingData {
   skills: Skill[];
   interests: string[];
   quickAssessment: Record<string, number>;
+}
+
+// AI Career Pathway Types
+export interface CareerRecommendation {
+  title: string;
+  reasoning: string;
+  summary: string;
+}
+
+export interface PathwayRecommendationsResponse {
+  recommendations: CareerRecommendation[];
+}
+
+export interface PathwayStep {
+  stage: string;
+  duration: string;
+  skills: string[];
+  milestones: string[];
+  description: string;
+}
+
+export interface PathwayResource {
+  type: string;
+  title: string;
+  url?: string;
+  description: string;
+}
+
+export interface GeneratedPathwayResponse {
+  pathway_title: string;
+  description: string;
+  steps: PathwayStep[];
+  resources: PathwayResource[];
+  estimatedDuration: string;
+}
+
+// Stored AI Pathway (for database)
+export interface StoredAIPathway {
+  $id?: string;
+  userId: string;
+  pathwayTitle: string;
+  description: string;
+  steps: string; // JSON stringified PathwayStep[]
+  resources: string; // JSON stringified PathwayResource[]
+  estimatedDuration: string;
+  isCustom: boolean; // true if user-requested, false if AI-recommended
+  createdAt: string;
+  $createdAt?: string;
+  $updatedAt?: string;
 }
