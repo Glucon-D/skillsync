@@ -155,7 +155,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
               <h3 className="font-semibold text-text mb-1">Unable to load insights</h3>
               <p className="text-sm text-text-muted mb-4">{error}</p>
               <Button
-                onClick={fetchInsights}
+                onClick={() => fetchInsights(false)}
                 size="sm"
                 className="bg-red-500 hover:bg-red-600 text-white"
               >
