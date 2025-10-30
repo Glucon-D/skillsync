@@ -123,7 +123,7 @@ export default function Home() {
 
           {/* Problem-Solution Section */}
           <section className="py-20 border-t border-border">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div className="space-y-6 order-2 lg:order-1">
                 <div className="inline-block px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full">
                   <span className="text-sm font-medium text-red-600 dark:text-red-400">The Problem</span>
