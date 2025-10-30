@@ -5,7 +5,7 @@
  */
 
 import { tablesDB, DB_CONFIG, ID } from "./appwrite";
-import type { Profile, Course, SkillPathway } from "./types";
+import type { Profile, Course, SkillPathway, GeneratedPathwayResponse, StoredAIPathway } from "./types";
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
@@ -488,6 +488,185 @@ export const pathwaysService = {
     } catch (error) {
       console.error("Error finding pathway:", error);
       return null;
+    }
+  },
+};
+
+// =====================================
+// AI PATHWAYS COLLECTION (EXTENDED USER_PATHWAYS)
+// =====================================
+
+export interface AIPathwayRow {
+  userId: string;
+  pathwayId: string; // unique ID for this AI pathway
+  name: string; // pathway_title
+  category: string; // e.g., "AI-Generated", "Custom", "Recommended"
+  level: string; // "beginner", "intermediate", "advanced"
+  completed: boolean;
+  completedAt: string | null;
+  estimatedTime: string; // estimatedDuration
+  // Extended fields for AI pathways
+  description?: string; // pathway description
+  stepsData?: string[]; // Array of JSON strings for steps (Appwrite array format)
+  resourcesData?: string[]; // Array of JSON strings for resources (Appwrite array format)
+  isCustom?: boolean; // true if user requested, false if AI recommended
+}
+
+export const aiPathwaysService = {
+  /**
+   * Save AI-generated pathway to database
+   */
+  async saveAIPathway(
+    userId: string,
+    pathwayData: GeneratedPathwayResponse,
+    isCustom: boolean = false
+  ): Promise<AIPathwayRow> {
+    const pathwayId = `ai-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
+    const rowData: Omit<AIPathwayRow, "$id" | "$createdAt" | "$updatedAt"> = {
+      userId,
+      pathwayId,
+      name: pathwayData.pathway_title,
+      category: isCustom ? "Custom Skill" : "AI Recommended",
+      level: "intermediate", // Default level, can be determined from steps
+      completed: false,
+      completedAt: null,
+      estimatedTime: pathwayData.estimatedDuration || "12 months",
+      description: pathwayData.description || "",
+      // Store steps as array of JSON strings (each step is a separate string)
+      stepsData: pathwayData.steps.map((step) => JSON.stringify(step)),
+      // Store resources as array of JSON strings (each resource is a separate string)
+      resourcesData: (pathwayData.resources || []).map((resource) => JSON.stringify(resource)),
+      isCustom,
+    };
+
+    const response = await tablesDB.createRow({
+      databaseId: DB_CONFIG.databaseId,
+      tableId: DB_CONFIG.tables.userPathways,
+      rowId: ID.unique(),
+      data: rowData,
+      permissions: getUserPermissions(userId),
+    });
+
+    return response as unknown as AIPathwayRow;
+  },
+
+  /**
+   * Get all AI pathways for a user
+   */
+  async getAIPathways(userId: string): Promise<AIPathwayRow[]> {
+    try {
+      const response = await tablesDB.listRows({
+        databaseId: DB_CONFIG.databaseId,
+        tableId: DB_CONFIG.tables.userPathways,
+        queries: [
+          Query.equal("userId", userId),
+          Query.equal("category", ["AI Recommended", "Custom Skill"]),
+        ],
+      });
+
+      return response.rows as unknown as AIPathwayRow[];
+    } catch (error) {
+      console.error("Error fetching AI pathways:", error);
+      return [];
+    }
+  },
+
+  /**
+   * Get a specific AI pathway by pathwayId
+   */
+  async getAIPathwayById(
+    userId: string,
+    pathwayId: string
+  ): Promise<GeneratedPathwayResponse | null> {
+    try {
+      const response = await tablesDB.listRows({
+        databaseId: DB_CONFIG.databaseId,
+        tableId: DB_CONFIG.tables.userPathways,
+        queries: [
+          Query.equal("userId", userId),
+          Query.equal("pathwayId", pathwayId),
+        ],
+      });
+
+      if (response.total === 0) {
+        return null;
+      }
+
+      const row = response.rows[0] as any;
+
+      // Reconstruct GeneratedPathwayResponse from stored data
+      // Parse each array element back to objects
+      const steps = row.stepsData
+        ? row.stepsData.map((stepStr: string) => JSON.parse(stepStr))
+        : [];
+
+      const resources = row.resourcesData
+        ? row.resourcesData.map((resourceStr: string) => JSON.parse(resourceStr))
+        : [];
+
+      return {
+        pathway_title: row.name,
+        description: row.description || "",
+        steps,
+        resources,
+        estimatedDuration: row.estimatedTime || "",
+      };
+    } catch (error) {
+      console.error("Error fetching AI pathway:", error);
+      return null;
+    }
+  },
+
+  /**
+   * Update AI pathway completion status
+   */
+  async updateCompletion(
+    rowId: string,
+    completed: boolean
+  ): Promise<AIPathwayRow> {
+    const response = await tablesDB.updateRow({
+      databaseId: DB_CONFIG.databaseId,
+      tableId: DB_CONFIG.tables.userPathways,
+      rowId,
+      data: {
+        completed,
+        completedAt: completed ? new Date().toISOString() : null,
+      },
+    });
+
+    return response as unknown as AIPathwayRow;
+  },
+
+  /**
+   * Delete an AI pathway
+   */
+  async delete(rowId: string): Promise<void> {
+    await tablesDB.deleteRow({
+      databaseId: DB_CONFIG.databaseId,
+      tableId: DB_CONFIG.tables.userPathways,
+      rowId,
+    });
+  },
+
+  /**
+   * Check if pathway already exists
+   */
+  async exists(userId: string, pathwayTitle: string): Promise<boolean> {
+    try {
+      const response = await tablesDB.listRows({
+        databaseId: DB_CONFIG.databaseId,
+        tableId: DB_CONFIG.tables.userPathways,
+        queries: [
+          Query.equal("userId", userId),
+          Query.equal("name", pathwayTitle),
+        ],
+      });
+
+      return response.total > 0;
+    } catch (error) {
+      console.error("Error checking pathway existence:", error);
+      return false;
     }
   },
 };

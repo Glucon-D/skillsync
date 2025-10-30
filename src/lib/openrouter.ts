@@ -1,3 +1,9 @@
+/**
+ * @file openrouter.ts
+ * @description Centralized OpenRouter API wrapper for SkillSync
+ * @dependencies none
+ */
+
 interface Message {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -9,6 +15,7 @@ interface OpenRouterOptions {
   messages?: Message[];
   maxTokens?: number;
   temperature?: number;
+  responseFormat?: 'json_object' | 'text';
 }
 
 interface OpenRouterResponse {
@@ -35,6 +42,7 @@ export async function callOpenRouter({
   messages = [],
   maxTokens = 1000,
   temperature = 0.7,
+  responseFormat,
 }: OpenRouterOptions): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
 
@@ -53,6 +61,18 @@ export async function callOpenRouter({
 
   conversationMessages.push(...messages);
 
+  const requestBody: any = {
+    model,
+    messages: conversationMessages,
+    max_tokens: maxTokens,
+    temperature,
+  };
+
+  // Add response_format if specified
+  if (responseFormat === 'json_object') {
+    requestBody.response_format = { type: 'json_object' };
+  }
+
   try {
     const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
@@ -62,12 +82,7 @@ export async function callOpenRouter({
         'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
         'X-Title': 'SkillSync',
       },
-      body: JSON.stringify({
-        model,
-        messages: conversationMessages,
-        max_tokens: maxTokens,
-        temperature,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
