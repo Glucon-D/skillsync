@@ -69,6 +69,10 @@ export interface Profile {
   experience: Experience[];
   projects?: Project[];
   documents?: DocumentMetadata[];
+  followersCount?: number;
+  followingCount?: number;
+  followersList?: string; // JSON string array of follower user IDs
+  followingList?: string; // JSON string array of following user IDs
   assessmentScores?: AssessmentScores;
   dominantType?: string;
   assessmentCompletedAt?: string | null;

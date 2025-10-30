@@ -15,6 +15,9 @@ import {
   ExternalLink,
   Calendar,
   Mail,
+  Users,
+  UserPlus,
+  UserMinus,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -50,6 +53,9 @@ export default function PortfolioPage() {
   const [completedPathways, setCompletedPathways] = useState<AIPathwayRow[]>(
     []
   );
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
 
   // Render portfolio content sections
   const renderPortfolioContent = () => {
@@ -314,6 +320,22 @@ export default function PortfolioPage() {
           } else {
             console.log("No userId found in profile");
           }
+
+          // Check if current user is following this profile
+          if (user) {
+            const currentProfile = await profileService.getByUserId(user.id);
+            if (currentProfile) {
+              setCurrentUserProfile(currentProfile);
+              try {
+                const following = currentProfile.followingList 
+                  ? JSON.parse(currentProfile.followingList) 
+                  : [];
+                setIsFollowing(following.includes(data.userId));
+              } catch (e) {
+                setIsFollowing(false);
+              }
+            }
+          }
         } else {
           setNotFound(true);
         }
@@ -328,13 +350,44 @@ export default function PortfolioPage() {
     if (username) {
       loadProfile();
     }
-  }, [username]);
+  }, [username, user]);
 
   const handleBack = () => {
     if (user) {
       router.push("/dashboard");
     } else {
       router.push("/login");
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    if (!user || !profile) return;
+    
+    setFollowLoading(true);
+    try {
+      const response = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentUserId: user.id,
+          targetUserId: profile.userId,
+          action: isFollowing ? 'unfollow' : 'follow',
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsFollowing(!isFollowing);
+        // Update the profile counts
+        setProfile({
+          ...profile,
+          followersCount: data.followersCount,
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    } finally {
+      setFollowLoading(false);
     }
   };
 
@@ -536,6 +589,43 @@ export default function PortfolioPage() {
                         </p>
                       )}
 
+                      {/* Followers/Following Counts & Follow Button */}
+                      <div className="flex items-center justify-center gap-6 mb-6">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Users className="w-4 h-4 text-text-muted" />
+                          <span className="font-semibold text-text">{profile.followersCount || 0}</span>
+                          <span className="text-text-muted">Followers</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Users className="w-4 h-4 text-text-muted" />
+                          <span className="font-semibold text-text">{profile.followingCount || 0}</span>
+                          <span className="text-text-muted">Following</span>
+                        </div>
+                        {user && user.id !== profile.userId && (
+                          <Button
+                            onClick={handleFollowToggle}
+                            disabled={followLoading}
+                            size="sm"
+                            variant={isFollowing ? "outline" : "primary"}
+                            className="ml-2"
+                          >
+                            {followLoading ? (
+                              "Loading..."
+                            ) : isFollowing ? (
+                              <>
+                                <UserMinus className="w-4 h-4 mr-2" />
+                                Unfollow
+                              </>
+                            ) : (
+                              <>
+                                <UserPlus className="w-4 h-4 mr-2" />
+                                Follow
+                              </>
+                            )}
+                          </Button>
+                        )}
+                      </div>
+
                       {/* Location & Website */}
                       <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-6">
                         {profile.location && (
@@ -734,6 +824,20 @@ export default function PortfolioPage() {
               {profile.bio}
             </p>
           )}
+
+          {/* Followers/Following Counts */}
+          <div className="flex items-center justify-center gap-6 mb-8">
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="w-4 h-4 text-text-muted" />
+              <span className="font-semibold text-text">{profile.followersCount || 0}</span>
+              <span className="text-text-muted">Followers</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="w-4 h-4 text-text-muted" />
+              <span className="font-semibold text-text">{profile.followingCount || 0}</span>
+              <span className="text-text-muted">Following</span>
+            </div>
+          </div>
 
           {/* Location & Website */}
           <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-8">

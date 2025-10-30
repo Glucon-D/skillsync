@@ -26,6 +26,7 @@ export const ROUTES = {
   PATHWAYS: '/pathways',
   COURSES: '/courses',
   CAREERS: '/careers',
+  CONNECT: '/connect',
   ANALYTICS: '/analytics',
   CHAT: '/chat',
   JOBS: '/jobs',
@@ -49,3 +50,12 @@ export const COURSE_PLATFORMS = [
   'Pluralsight',
   'LinkedIn Learning',
 ] as const;
+
+// Appwrite Database Configuration
+export const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '';
+
+export const COLLECTIONS = {
+  USERPROFILES: process.env.NEXT_PUBLIC_APPWRITE_TABLE_USERPROFILES || '',
+  USER_COURSES: process.env.NEXT_PUBLIC_APPWRITE_TABLE_USER_COURSES || '',
+  USER_PATHWAYS: process.env.NEXT_PUBLIC_APPWRITE_TABLE_USER_PATHWAYS || '',
+} as const;
