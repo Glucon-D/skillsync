@@ -4,16 +4,25 @@
  * @dependencies next/link, lucide-react, @/hooks/useAuth, @/useProfileStore, @/useCoursesStore, @/lib/constants
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { BookOpen, Map, Briefcase, ClipboardList, TrendingUp, Sparkles, Award, Target } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useProfileStore } from '@/store/profileStore';
-import { useCoursesStore } from '@/store/coursesStore';
-import { ROUTES } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import IndustryTrends from '@/components/dashboard/IndustryTrends';
+import Link from "next/link";
+import {
+  BookOpen,
+  Map,
+  Briefcase,
+  ClipboardList,
+  TrendingUp,
+  Sparkles,
+  Award,
+  Target,
+} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileStore } from "@/store/profileStore";
+import { useCoursesStore } from "@/store/coursesStore";
+import { ROUTES } from "@/lib/constants";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import IndustryTrends from "@/components/dashboard/IndustryTrends";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -22,17 +31,19 @@ export default function DashboardPage() {
   const completionPercentage = profile?.completionPercentage || 0;
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-8 pb-8 p-6 md:p-8 max-w-6xl mx-auto">
       {/* Hero Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="w-8 h-8 animate-pulse" />
+            {/* <Sparkles className="w-8 h-8 animate-pulse" /> */}
             <h1 className="text-4xl font-bold">Welcome back, {user?.name}!</h1>
           </div>
-          <p className="text-white/90 text-lg">Track your progress and explore new opportunities</p>
+          <p className="text-white/90 text-lg">
+            Track your progress and explore new opportunities
+          </p>
         </div>
       </div>
 
@@ -46,7 +57,9 @@ export default function DashboardPage() {
                 <Target className="w-6 h-6 text-primary-500" />
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-text mb-1">{completionPercentage}%</div>
+                <div className="text-3xl font-bold text-text mb-1">
+                  {completionPercentage}%
+                </div>
                 <p className="text-sm text-text-muted">Profile Completion</p>
               </div>
             </div>
@@ -60,14 +73,16 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
-              <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-green-500" />
+              <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-primary-500" />
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-text mb-1">{bookmarkedCourses.length}</div>
+                <div className="text-3xl font-bold text-text mb-1">
+                  {bookmarkedCourses.length}
+                </div>
                 <p className="text-sm text-text-muted">Bookmarked Courses</p>
               </div>
             </div>
@@ -75,85 +90,22 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
-              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
-                <Award className="w-6 h-6 text-purple-500" />
+              <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                <Award className="w-6 h-6 text-primary-500" />
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-text mb-1">{profile?.skills.length || 0}</div>
+                <div className="text-3xl font-bold text-text mb-1">
+                  {profile?.skills.length || 0}
+                </div>
                 <p className="text-sm text-text-muted">Skills Mastered</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary-500" />
-            Quick Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link
-              href={ROUTES.ASSESSMENT}
-              className="group relative overflow-hidden rounded-xl border-2 border-border bg-surface p-4 transition-all duration-300 hover:border-primary-500 hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-primary-600/10 transition-all duration-300"></div>
-              <div className="relative flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-500/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <ClipboardList className="w-5 h-5 text-primary-500" />
-                </div>
-                <span className="font-medium text-text">Take Assessment</span>
-              </div>
-            </Link>
-
-            <Link
-              href={ROUTES.PATHWAYS}
-              className="group relative overflow-hidden rounded-xl border-2 border-border bg-surface p-4 transition-all duration-300 hover:border-green-500 hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:to-green-600/10 transition-all duration-300"></div>
-              <div className="relative flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <Map className="w-5 h-5 text-green-500" />
-                </div>
-                <span className="font-medium text-text">View Pathways</span>
-              </div>
-            </Link>
-
-            <Link
-              href={ROUTES.COURSES}
-              className="group relative overflow-hidden rounded-xl border-2 border-border bg-surface p-4 transition-all duration-300 hover:border-blue-500 hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-600/10 transition-all duration-300"></div>
-              <div className="relative flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <BookOpen className="w-5 h-5 text-blue-500" />
-                </div>
-                <span className="font-medium text-text">Browse Courses</span>
-              </div>
-            </Link>
-
-            <Link
-              href={ROUTES.CAREERS}
-              className="group relative overflow-hidden rounded-xl border-2 border-border bg-surface p-4 transition-all duration-300 hover:border-purple-500 hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-600/10 transition-all duration-300"></div>
-              <div className="relative flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <Briefcase className="w-5 h-5 text-purple-500" />
-                </div>
-                <span className="font-medium text-text">Explore Careers</span>
-              </div>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Profile Completion Banner */}
       {completionPercentage < 100 && (
@@ -169,7 +121,8 @@ export default function DashboardPage() {
                     Complete Your Profile
                   </h3>
                   <p className="text-sm text-text-muted">
-                    Unlock personalized career recommendations and industry insights tailored to you
+                    Unlock personalized career recommendations and industry
+                    insights tailored to you
                   </p>
                 </div>
               </div>

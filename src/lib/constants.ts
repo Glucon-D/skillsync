@@ -21,11 +21,14 @@ export const ROUTES = {
   SIGNUP: '/signup',
   ONBOARDING: '/onboarding',
   DASHBOARD: '/dashboard',
-  PROFILE: '/profile',  
+  PROFILE: '/profile',
   ASSESSMENT: '/assessment',
   PATHWAYS: '/pathways',
   COURSES: '/courses',
   CAREERS: '/careers',
+  ANALYTICS: '/analytics',
+  CHAT: '/chat',
+  JOBS: '/jobs',
 } as const;
 
 export const ASSESSMENT_CATEGORIES = [
