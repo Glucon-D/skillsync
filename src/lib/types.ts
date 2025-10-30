@@ -113,6 +113,7 @@ export interface Course {
   rating: number;
   url: string;
   category?: string;
+  completed?: boolean; // Track if course is completed
   $dbId?: string; // Database row ID for updates/deletes
   $createdAt?: string; // Creation timestamp from Appwrite
 }
