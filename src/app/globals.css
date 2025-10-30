@@ -1,26 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Primary orange colors */
+  --color-primary-50: #fff4e6;
+  --color-primary-100: #ffe8cc;
+  --color-primary-200: #ffd199;
+  --color-primary-300: #ffb366;
+  --color-primary-400: #ff9b4d;
+  --color-primary-500: #ff8c42;
+  --color-primary-600: #ff7629;
+  --color-primary-700: #e65a1f;
+  --color-primary-800: #cc4a18;
+  --color-primary-900: #b33a12;
+  --color-primary-950: #8a2a0a;
+  
+  /* Background - light mode */
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  
+  /* Text - light mode */
+  --color-text: #2d3748;
+  --color-text-muted: #718096;
+  
+  /* Border - light mode */
+  --color-border: #e2e8f0;
+  
+  /* Font family */
+  --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme dark {
+  /* Background - dark mode */
+  --color-background: #1a202c;
+  --color-surface: #2d3748;
+  
+  /* Text - dark mode */
+  --color-text: #f7fafc;
+  --color-text-muted: #a0aec0;
+  
+  /* Border - dark mode */
+  --color-border: #4a5568;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    box-sizing: border-box;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    font-family: var(--font-family-sans);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }

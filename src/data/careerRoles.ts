@@ -1,0 +1,130 @@
+/**
+ * @file careerRoles.ts
+ * @description Mock career role data for recommendations
+ * @dependencies @/lib/types
+ */
+
+import type { Career } from '@/lib/types';
+
+export const careerRoles: Career[] = [
+  {
+    id: 'cr1',
+    title: 'Frontend Developer',
+    description: 'Build and optimize user-facing features using modern web technologies. Work closely with designers to create responsive and accessible web applications.',
+    requiredSkills: ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Responsive Design'],
+    salaryRange: '$70,000 - $130,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr2',
+    title: 'Backend Developer',
+    description: 'Design and maintain server-side logic, databases, and APIs. Ensure high performance and responsiveness to requests from the frontend.',
+    requiredSkills: ['Node.js', 'Python', 'SQL', 'REST APIs', 'Database Design', 'Authentication'],
+    salaryRange: '$75,000 - $140,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr3',
+    title: 'Full Stack Developer',
+    description: 'Work on both client-side and server-side development. Build complete web applications from scratch and maintain existing systems.',
+    requiredSkills: ['JavaScript', 'React', 'Node.js', 'Databases', 'Git', 'Cloud Services'],
+    salaryRange: '$80,000 - $150,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr4',
+    title: 'UI/UX Designer',
+    description: 'Create intuitive and visually appealing user interfaces. Conduct user research and create wireframes, prototypes, and high-fidelity designs.',
+    requiredSkills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping', 'Visual Design', 'Interaction Design'],
+    salaryRange: '$65,000 - $120,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr5',
+    title: 'Data Scientist',
+    description: 'Analyze complex data to help companies make better decisions. Build predictive models and develop data-driven solutions.',
+    requiredSkills: ['Python', 'Machine Learning', 'Statistics', 'SQL', 'Data Visualization', 'R'],
+    salaryRange: '$90,000 - $160,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr6',
+    title: 'DevOps Engineer',
+    description: 'Automate and streamline development operations. Manage infrastructure, CI/CD pipelines, and ensure system reliability.',
+    requiredSkills: ['Docker', 'Kubernetes', 'AWS', 'CI/CD', 'Linux', 'Terraform'],
+    salaryRange: '$85,000 - $150,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr7',
+    title: 'Mobile Developer',
+    description: 'Create native or cross-platform mobile applications. Focus on performance, user experience, and platform-specific features.',
+    requiredSkills: ['React Native', 'Flutter', 'Swift', 'Kotlin', 'Mobile UI', 'API Integration'],
+    salaryRange: '$75,000 - $135,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr8',
+    title: 'Cloud Architect',
+    description: 'Design and implement cloud infrastructure solutions. Ensure scalability, security, and cost-effectiveness of cloud systems.',
+    requiredSkills: ['AWS', 'Azure', 'Cloud Security', 'Networking', 'Infrastructure as Code', 'Microservices'],
+    salaryRange: '$110,000 - $180,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr9',
+    title: 'Machine Learning Engineer',
+    description: 'Develop and deploy machine learning models at scale. Work on algorithms, data pipelines, and model optimization.',
+    requiredSkills: ['Python', 'TensorFlow', 'PyTorch', 'MLOps', 'Deep Learning', 'Big Data'],
+    salaryRange: '$100,000 - $170,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr10',
+    title: 'Product Manager',
+    description: 'Define product vision and strategy. Work with cross-functional teams to deliver valuable features to customers.',
+    requiredSkills: ['Product Strategy', 'User Research', 'Data Analysis', 'Communication', 'Agile', 'Roadmapping'],
+    salaryRange: '$90,000 - $160,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr11',
+    title: 'QA Engineer',
+    description: 'Ensure software quality through testing and automation. Identify bugs and work with developers to resolve issues.',
+    requiredSkills: ['Test Automation', 'Selenium', 'Jest', 'Manual Testing', 'Bug Tracking', 'API Testing'],
+    salaryRange: '$60,000 - $110,000',
+    growthPotential: 'medium',
+  },
+  {
+    id: 'cr12',
+    title: 'Security Engineer',
+    description: 'Protect systems and data from cyber threats. Implement security measures and respond to security incidents.',
+    requiredSkills: ['Cybersecurity', 'Penetration Testing', 'Network Security', 'Encryption', 'Compliance', 'Incident Response'],
+    salaryRange: '$95,000 - $165,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr13',
+    title: 'Data Analyst',
+    description: 'Transform data into actionable insights. Create reports, dashboards, and visualizations for business stakeholders.',
+    requiredSkills: ['SQL', 'Excel', 'Tableau', 'Python', 'Statistics', 'Data Visualization'],
+    salaryRange: '$60,000 - $100,000',
+    growthPotential: 'medium',
+  },
+  {
+    id: 'cr14',
+    title: 'Software Architect',
+    description: 'Design high-level structure of software systems. Make key technical decisions and guide development teams.',
+    requiredSkills: ['System Design', 'Microservices', 'Design Patterns', 'Scalability', 'Architecture', 'Leadership'],
+    salaryRange: '$120,000 - $200,000',
+    growthPotential: 'high',
+  },
+  {
+    id: 'cr15',
+    title: 'Technical Writer',
+    description: 'Create clear documentation for technical products. Write user guides, API documentation, and tutorials.',
+    requiredSkills: ['Technical Writing', 'Documentation', 'API Documentation', 'Communication', 'Markdown', 'Version Control'],
+    salaryRange: '$55,000 - $95,000',
+    growthPotential: 'medium',
+  },
+];
