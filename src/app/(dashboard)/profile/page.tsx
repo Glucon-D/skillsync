@@ -69,22 +69,41 @@ export default function ProfilePage() {
     setIsEditingBio(false);
   };
 
+  const [uploading, setUploading] = useState(false);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0 || !user?.id) return;
 
-    // For now, store file names as placeholders (local storage)
-    // Later this will be connected to Appwrite Storage
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const fileName = file.name;
-      // Store as a placeholder URL (will be replaced with actual Appwrite Storage URL later)
-      await addDocument(`local://${fileName}`);
-    }
+    setUploading(true);
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', user.id);
+
+        const response = await fetch('/api/documents/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const { document } = await response.json();
+        await addDocument(document);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload document. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -347,9 +366,13 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Documents</CardTitle>
-            <Button size="sm" onClick={() => fileInputRef.current?.click()}>
+            <Button
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
               <Upload className="w-4 h-4 mr-2" />
-              Upload
+              {uploading ? 'Uploading...' : 'Upload'}
             </Button>
           </div>
         </CardHeader>
@@ -361,30 +384,73 @@ export default function ProfilePage() {
             accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
             onChange={handleFileUpload}
             className="hidden"
+            disabled={uploading}
           />
           {profile.documents && profile.documents.length > 0 ? (
-            <div className="space-y-2">
-              {profile.documents.map((doc, index) => {
-                const fileName = doc.replace("local://", "");
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-surface rounded-lg border border-border"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-primary-500" />
-                      <span className="text-text">{fileName}</span>
+            <div className="space-y-4">
+              {profile.documents.map((doc, index) => (
+                <div
+                  key={doc.id || index}
+                  className="relative group p-4 bg-surface rounded-lg border border-border hover:border-primary-500 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1">
+                      <FileText className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-text hover:text-primary-500 transition-colors block truncate"
+                        >
+                          {doc.name}
+                        </a>
+                        {doc.uploadedAt && (
+                          <p className="text-xs text-text-muted mt-1">
+                            Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
+                          </p>
+                        )}
+                        {doc.summary && (
+                          <p className="text-sm text-text-muted mt-2 line-clamp-2">
+                            {doc.summary}
+                          </p>
+                        )}
+                        {doc.extractedData && Object.keys(doc.extractedData).length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {Object.entries(doc.extractedData).map(([key, value]) => {
+                              if (Array.isArray(value) && value.length > 0) {
+                                return (
+                                  <Badge key={key} variant="default" size="sm">
+                                    {key}: {value.length}
+                                  </Badge>
+                                );
+                              }
+                              return null;
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => removeDocument(index)}
+                      onClick={async () => {
+                        try {
+                          await fetch(`/api/documents/${doc.id}`, {
+                            method: 'DELETE',
+                          });
+                        } catch (error) {
+                          console.error('Delete error:', error);
+                        }
+                        await removeDocument(index);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8 text-text-muted">
@@ -396,6 +462,7 @@ export default function ProfilePage() {
               <Button
                 className="mt-4"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Document

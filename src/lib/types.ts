@@ -32,6 +32,21 @@ export interface Experience {
   techStack: string[];
 }
 
+export interface DocumentMetadata {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  uploadedAt: string;
+  summary: string;
+  extractedData: {
+    grades?: string[];
+    skills?: string[];
+    achievements?: string[];
+    [key: string]: unknown;
+  };
+}
+
 export interface Profile {
   userId: string;
   bio: string;
@@ -39,7 +54,7 @@ export interface Profile {
   education: Education[];
   skills: Skill[];
   experience: Experience[];
-  documents?: string[];
+  documents?: DocumentMetadata[];
   assessmentScores?: AssessmentScores;
   dominantType?: string;
   assessmentCompletedAt?: string | null;
@@ -82,10 +97,10 @@ export interface Course {
   difficulty: CourseDifficulty;
   price: number;
   rating: number;
-  thumbnail?: string;
   url: string;
   category?: string;
   $dbId?: string; // Database row ID for updates/deletes
+  $createdAt?: string; // Creation timestamp from Appwrite
 }
 
 export type GrowthPotential = 'low' | 'medium' | 'high';
@@ -100,16 +115,6 @@ export interface Career {
   matchPercentage?: number;
 }
 
-export interface SkillPathway {
-  id: string;
-  name: string;
-  category: string;
-  level: SkillLevel;
-  estimatedTime: string;
-  resources: string[];
-  completed: boolean;
-}
-
 export interface OnboardingData {
   name: string;
   email: string;
@@ -118,4 +123,53 @@ export interface OnboardingData {
   skills: Skill[];
   interests: string[];
   quickAssessment: Record<string, number>;
+}
+
+// AI Career Pathway Types
+export interface CareerRecommendation {
+  title: string;
+  reasoning: string;
+  summary: string;
+}
+
+export interface PathwayRecommendationsResponse {
+  recommendations: CareerRecommendation[];
+}
+
+export interface PathwayStep {
+  stage: string;
+  duration: string;
+  skills: string[];
+  milestones: string[];
+  description: string;
+}
+
+export interface PathwayResource {
+  type: string;
+  title: string;
+  url?: string;
+  description: string;
+}
+
+export interface GeneratedPathwayResponse {
+  pathway_title: string;
+  description: string;
+  steps: PathwayStep[];
+  resources: PathwayResource[];
+  estimatedDuration: string;
+}
+
+// Stored AI Pathway (for database)
+export interface StoredAIPathway {
+  $id?: string;
+  userId: string;
+  pathwayTitle: string;
+  description: string;
+  steps: string; // JSON stringified PathwayStep[]
+  resources: string; // JSON stringified PathwayResource[]
+  estimatedDuration: string;
+  isCustom: boolean; // true if user-requested, false if AI-recommended
+  createdAt: string;
+  $createdAt?: string;
+  $updatedAt?: string;
 }

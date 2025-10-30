@@ -5,15 +5,13 @@
  */
 
 import { tablesDB, DB_CONFIG, ID } from "./appwrite";
-import type { Profile, Course, SkillPathway } from "./types";
+import type { Profile, Course, GeneratedPathwayResponse, StoredAIPathway } from "./types";
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
-const getUserPermissions = (userId: string) => [
-  `read("user:${userId}")`,
-  `update("user:${userId}")`,
-  `delete("user:${userId}")`,
-];
+// Note: Using empty array means permissions inherit from collection settings
+// If you need user-specific permissions, configure them in Appwrite Console
+const getUserPermissions = (_userId: string) => [];
 
 // =====================================
 // USERPROFILES COLLECTION
@@ -25,7 +23,7 @@ export interface UserProfileRow {
   education: string[]; // Array of JSON strings, Size: 10000, nullable
   skills: string[]; // Array of JSON strings, Size: 5000, nullable
   experience: string[]; // Array of JSON strings, Size: 10000, nullable
-  documents: string[]; // Array of strings (URLs), Size: 2000, nullable
+  documents: string; // Single JSON string containing all documents, Size: 1000000, nullable
   assessmentScores: string[]; // Array of JSON strings in Appwrite, Size: 500, nullable (FIXED: was string, now string[])
   dominantType: string; // Size: 50, nullable
   assessmentCompletedAt: string | null; // datetime, nullable
@@ -44,7 +42,8 @@ export const profileService = {
       education: (profile.education || []).map((e) => JSON.stringify(e)),
       skills: (profile.skills || []).map((s) => JSON.stringify(s)),
       experience: (profile.experience || []).map((e) => JSON.stringify(e)),
-      documents: profile.documents || [],
+      // Documents: store ALL documents as a single JSON string
+      documents: JSON.stringify(profile.documents || []),
       // Convert assessmentScores object to JSON string array (Appwrite schema requires array)
       assessmentScores: profile.assessmentScores
         ? [JSON.stringify(profile.assessmentScores)]
@@ -107,8 +106,10 @@ export const profileService = {
       updateData.skills = updates.skills.map((s) => JSON.stringify(s));
     if (updates.experience !== undefined)
       updateData.experience = updates.experience.map((e) => JSON.stringify(e));
-    if (updates.documents !== undefined)
-      updateData.documents = updates.documents;
+    if (updates.documents !== undefined) {
+      // Documents: store ALL documents as a single JSON string
+      updateData.documents = JSON.stringify(updates.documents);
+    }
     if (updates.assessmentScores !== undefined)
       updateData.assessmentScores = [JSON.stringify(updates.assessmentScores)];
     if (updates.dominantType !== undefined)
@@ -178,13 +179,28 @@ export const profileService = {
       return {};
     };
 
+    // Parse documents from single JSON string
+    const parseDocuments = (docs: any): any[] => {
+      if (typeof docs === 'string' && docs) {
+        try {
+          return JSON.parse(docs);
+        } catch {
+          return [];
+        }
+      }
+      if (Array.isArray(docs)) {
+        return docs;
+      }
+      return [];
+    };
+
     return {
       userId: row.userId,
       bio: row.bio || "",
       education: parseJsonArray(row.education),
       skills: parseJsonArray(row.skills),
       experience: parseJsonArray(row.experience),
-      documents: Array.isArray(row.documents) ? row.documents : [],
+      documents: parseDocuments(row.documents),
       assessmentScores: parseAssessmentScores(row.assessmentScores),
       dominantType: row.dominantType || "",
       assessmentCompletedAt: row.assessmentCompletedAt || null,
@@ -208,7 +224,6 @@ export interface UserCourseRow {
   difficulty: string; // Size: 20, nullable
   price: number; // double, Min: 0, nullable
   rating: number; // double, nullable
-  thumbnail: string; // Size: 500, nullable
   url: string; // Size: 1000, nullable
   category: string; // Size: 100, nullable
   bookmarked: boolean; // default: false
@@ -219,7 +234,7 @@ export const coursesService = {
   /**
    * Add a course for a user
    */
-  async add(userId: string, course: Course): Promise<UserCourseRow> {
+  async add(userId: string, course: Course, bookmarked: boolean = false): Promise<UserCourseRow> {
     const rowData: Omit<UserCourseRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
       courseId: course.id,
@@ -228,10 +243,9 @@ export const coursesService = {
       difficulty: course.difficulty,
       price: course.price,
       rating: course.rating,
-      thumbnail: course.thumbnail || "",
       url: course.url,
       category: course.category || "",
-      bookmarked: true,
+      bookmarked,
       completed: false,
     };
 
@@ -344,7 +358,7 @@ export const coursesService = {
   /**
    * Map database row to Course type
    */
-  mapRowToCourse(row: any): Course {
+  mapRowToCourse(row: any): Course & { bookmarked?: boolean } {
     return {
       id: row.courseId,
       title: row.title,
@@ -352,43 +366,62 @@ export const coursesService = {
       difficulty: row.difficulty,
       price: row.price,
       rating: row.rating,
-      thumbnail: row.thumbnail || "",
       url: row.url,
       category: row.category || "",
+      bookmarked: row.bookmarked !== false,
       $dbId: row.$id, // Store the database row ID for updates/deletes
+      $createdAt: row.$createdAt, // Store creation timestamp for sorting
     };
   },
 };
 
+
 // =====================================
-// USER_PATHWAYS COLLECTION
+// AI PATHWAYS COLLECTION (EXTENDED USER_PATHWAYS)
 // =====================================
 
-export interface UserPathwayRow {
-  userId: string; // Size: 36, required
-  pathwayId: string; // Size: 50, required
-  name: string; // Size: 200, required
-  category: string; // Size: 100, required
-  level: string; // Size: 20, required
-  completed: boolean; // default: false
-  completedAt: string | null; // datetime, nullable
-  estimatedTime: string; // Size: 50, nullable
+export interface AIPathwayRow {
+  userId: string;
+  pathwayId: string; // unique ID for this AI pathway
+  name: string; // pathway_title
+  category: string; // e.g., "AI-Generated", "Custom", "Recommended"
+  level: string; // "beginner", "intermediate", "advanced"
+  completed: boolean;
+  completedAt: string | null;
+  estimatedTime: string; // estimatedDuration
+  // Extended fields for AI pathways
+  description?: string; // pathway description
+  stepsData?: string[]; // Array of JSON strings for steps (Appwrite array format)
+  resourcesData?: string[]; // Array of JSON strings for resources (Appwrite array format)
+  isCustom?: boolean; // true if user requested, false if AI recommended
 }
 
-export const pathwaysService = {
+export const aiPathwaysService = {
   /**
-   * Add a pathway for a user
+   * Save AI-generated pathway to database
    */
-  async add(userId: string, pathway: SkillPathway): Promise<UserPathwayRow> {
-    const rowData: Omit<UserPathwayRow, "$id" | "$createdAt" | "$updatedAt"> = {
+  async saveAIPathway(
+    userId: string,
+    pathwayData: GeneratedPathwayResponse,
+    isCustom: boolean = false
+  ): Promise<AIPathwayRow> {
+    const pathwayId = `ai-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
+    const rowData: Omit<AIPathwayRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
-      pathwayId: pathway.id,
-      name: pathway.name,
-      category: pathway.category,
-      level: pathway.level,
+      pathwayId,
+      name: pathwayData.pathway_title,
+      category: isCustom ? "Custom Skill" : "AI Recommended",
+      level: "intermediate", // Default level, can be determined from steps
       completed: false,
       completedAt: null,
-      estimatedTime: pathway.estimatedTime || "",
+      estimatedTime: pathwayData.estimatedDuration || "12 months",
+      description: pathwayData.description || "",
+      // Store steps as array of JSON strings (each step is a separate string)
+      stepsData: pathwayData.steps.map((step) => JSON.stringify(step)),
+      // Store resources as array of JSON strings (each resource is a separate string)
+      resourcesData: (pathwayData.resources || []).map((resource) => JSON.stringify(resource)),
+      isCustom,
     };
 
     const response = await tablesDB.createRow({
@@ -399,62 +432,37 @@ export const pathwaysService = {
       permissions: getUserPermissions(userId),
     });
 
-    return response as unknown as UserPathwayRow;
+    return response as unknown as AIPathwayRow;
   },
 
   /**
-   * Get all pathways for a user
+   * Get all AI pathways for a user
    */
-  async getByUserId(userId: string): Promise<any[]> {
+  async getAIPathways(userId: string): Promise<AIPathwayRow[]> {
     try {
       const response = await tablesDB.listRows({
         databaseId: DB_CONFIG.databaseId,
         tableId: DB_CONFIG.tables.userPathways,
-        queries: [Query.equal("userId", userId)],
+        queries: [
+          Query.equal("userId", userId),
+          Query.equal("category", ["AI Recommended", "Custom Skill"]),
+        ],
       });
 
-      return response.rows as any[];
+      return response.rows as unknown as AIPathwayRow[];
     } catch (error) {
-      console.error("Error fetching pathways:", error);
+      console.error("Error fetching AI pathways:", error);
       return [];
     }
   },
 
   /**
-   * Update pathway
+   * Get a specific AI pathway by pathwayId
    */
-  async update(
-    rowId: string,
-    updates: Partial<Omit<UserPathwayRow, "$id" | "$createdAt" | "$updatedAt">>
-  ): Promise<UserPathwayRow> {
-    const response = await tablesDB.updateRow({
-      databaseId: DB_CONFIG.databaseId,
-      tableId: DB_CONFIG.tables.userPathways,
-      rowId,
-      data: updates,
-    });
-
-    return response as unknown as UserPathwayRow;
-  },
-
-  /**
-   * Delete a pathway
-   */
-  async delete(rowId: string): Promise<void> {
-    await tablesDB.deleteRow({
-      databaseId: DB_CONFIG.databaseId,
-      tableId: DB_CONFIG.tables.userPathways,
-      rowId,
-    });
-  },
-
-  /**
-   * Find pathway by userId and pathwayId
-   */
-  async findByPathwayId(
+  async getAIPathwayById(
     userId: string,
     pathwayId: string
-  ): Promise<(UserPathwayRow & { $id: string }) | null> {
+  ): Promise<GeneratedPathwayResponse | null> {
     try {
       const response = await tablesDB.listRows({
         databaseId: DB_CONFIG.databaseId,
@@ -469,10 +477,80 @@ export const pathwaysService = {
         return null;
       }
 
-      return response.rows[0] as any;
+      const row = response.rows[0] as any;
+
+      // Reconstruct GeneratedPathwayResponse from stored data
+      // Parse each array element back to objects
+      const steps = row.stepsData
+        ? row.stepsData.map((stepStr: string) => JSON.parse(stepStr))
+        : [];
+
+      const resources = row.resourcesData
+        ? row.resourcesData.map((resourceStr: string) => JSON.parse(resourceStr))
+        : [];
+
+      return {
+        pathway_title: row.name,
+        description: row.description || "",
+        steps,
+        resources,
+        estimatedDuration: row.estimatedTime || "",
+      };
     } catch (error) {
-      console.error("Error finding pathway:", error);
+      console.error("Error fetching AI pathway:", error);
       return null;
+    }
+  },
+
+  /**
+   * Update AI pathway completion status
+   */
+  async updateCompletion(
+    rowId: string,
+    completed: boolean
+  ): Promise<AIPathwayRow> {
+    const response = await tablesDB.updateRow({
+      databaseId: DB_CONFIG.databaseId,
+      tableId: DB_CONFIG.tables.userPathways,
+      rowId,
+      data: {
+        completed,
+        completedAt: completed ? new Date().toISOString() : null,
+      },
+    });
+
+    return response as unknown as AIPathwayRow;
+  },
+
+  /**
+   * Delete an AI pathway
+   */
+  async delete(rowId: string): Promise<void> {
+    await tablesDB.deleteRow({
+      databaseId: DB_CONFIG.databaseId,
+      tableId: DB_CONFIG.tables.userPathways,
+      rowId,
+    });
+  },
+
+  /**
+   * Check if pathway already exists
+   */
+  async exists(userId: string, pathwayTitle: string): Promise<boolean> {
+    try {
+      const response = await tablesDB.listRows({
+        databaseId: DB_CONFIG.databaseId,
+        tableId: DB_CONFIG.tables.userPathways,
+        queries: [
+          Query.equal("userId", userId),
+          Query.equal("name", pathwayTitle),
+        ],
+      });
+
+      return response.total > 0;
+    } catch (error) {
+      console.error("Error checking pathway existence:", error);
+      return false;
     }
   },
 };

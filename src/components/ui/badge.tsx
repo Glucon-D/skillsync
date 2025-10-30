@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error';
+  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md';
 }
 
@@ -23,6 +23,7 @@ export function Badge({
   const variants = {
     default: 'bg-background text-text border border-border',
     primary: 'bg-primary-500 text-white',
+    secondary: 'bg-primary-500/10 text-primary-500 border border-primary-500/20',
     success: 'bg-green-500 text-white',
     warning: 'bg-yellow-500 text-white',
     error: 'bg-red-500 text-white',
