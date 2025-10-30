@@ -83,4 +83,14 @@
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-text-muted);
   }
+
+  /* Invisible scrollbar utility class */
+  .scrollbar-invisible {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .scrollbar-invisible::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }

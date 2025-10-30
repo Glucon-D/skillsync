@@ -22,7 +22,7 @@ export default function DashboardPage() {
   const completionPercentage = profile?.completionPercentage || 0;
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-8 pb-8 p-6 md:p-8 max-w-7xl mx-auto">
       {/* Hero Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>

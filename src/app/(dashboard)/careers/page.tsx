@@ -4,9 +4,9 @@
  * @dependencies react, lucide-react, @/data/jobs, @/components/ui
  */
 
-'use client';
+"use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from "react";
 import {
   Briefcase,
   MapPin,
@@ -21,14 +21,14 @@ import {
   Filter,
   X,
   Sparkles,
-} from 'lucide-react';
-import { JobsData } from '@/data/jobs';
-import type { JobListing } from '@/data/jobs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import Image from 'next/image';
+} from "lucide-react";
+import { JobsData } from "@/data/jobs";
+import type { JobListing } from "@/data/jobs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 const JOBS_PER_PAGE = 8;
 
@@ -44,18 +44,18 @@ interface FilterState {
 export default function CareersPage() {
   // State management with TypeScript types
   const [filters, setFilters] = useState<FilterState>({
-    searchQuery: '',
-    department: 'all',
-    salaryRange: 'all',
-    workMode: 'all',
-    companyType: 'all',
+    searchQuery: "",
+    department: "all",
+    salaryRange: "all",
+    workMode: "all",
+    companyType: "all",
   });
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
 
   // Scroll to top when page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
   // Update individual filter
@@ -66,11 +66,11 @@ export default function CareersPage() {
   // Clear all filters
   const clearFilters = () => {
     setFilters({
-      searchQuery: '',
-      department: 'all',
-      salaryRange: 'all',
-      workMode: 'all',
-      companyType: 'all',
+      searchQuery: "",
+      department: "all",
+      salaryRange: "all",
+      workMode: "all",
+      companyType: "all",
     });
   };
 
@@ -82,35 +82,37 @@ export default function CareersPage() {
     return JobsData.jobs.filter((job: JobListing) => {
       // Search filter (job title or company name)
       const matchesSearch =
-        filters.searchQuery === '' ||
+        filters.searchQuery === "" ||
         job.title.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-        job.company.name.toLowerCase().includes(filters.searchQuery.toLowerCase());
+        job.company.name
+          .toLowerCase()
+          .includes(filters.searchQuery.toLowerCase());
 
       // Department filter
       const matchesDepartment =
-        filters.department === 'all' ||
+        filters.department === "all" ||
         job.skills.some((skill) =>
           skill.toLowerCase().includes(filters.department.toLowerCase())
         );
 
       // Work mode filter
       const matchesWorkMode =
-        filters.workMode === 'all' || job.workMode === filters.workMode;
+        filters.workMode === "all" || job.workMode === filters.workMode;
 
       // Salary range filter
       const matchesSalary = (() => {
-        if (filters.salaryRange === 'all' || !job.salary) return true;
+        if (filters.salaryRange === "all" || !job.salary) return true;
 
         const avgSalary = (job.salary.min + job.salary.max) / 2;
 
         switch (filters.salaryRange) {
-          case '0-3 Lakhs':
+          case "0-3 Lakhs":
             return avgSalary <= 300000;
-          case '3-6 Lakhs':
+          case "3-6 Lakhs":
             return avgSalary > 300000 && avgSalary <= 600000;
-          case '6-10 Lakhs':
+          case "6-10 Lakhs":
             return avgSalary > 600000 && avgSalary <= 1000000;
-          case '10-15 Lakhs':
+          case "10-15 Lakhs":
             return avgSalary > 1000000 && avgSalary <= 1500000;
           default:
             return true;
@@ -118,7 +120,7 @@ export default function CareersPage() {
       })();
 
       // Company type filter (simplified - you can enhance this based on your data)
-      const matchesCompanyType = filters.companyType === 'all';
+      const matchesCompanyType = filters.companyType === "all";
 
       return (
         matchesSearch &&
@@ -149,7 +151,7 @@ export default function CareersPage() {
       pages.push(1);
 
       if (currentPage > 3) {
-        pages.push('...');
+        pages.push("...");
       }
 
       const start = Math.max(2, currentPage - 1);
@@ -160,7 +162,7 @@ export default function CareersPage() {
       }
 
       if (currentPage < totalPages - 2) {
-        pages.push('...');
+        pages.push("...");
       }
 
       if (totalPages > 1) {
@@ -173,29 +175,29 @@ export default function CareersPage() {
 
   // Check if any filters are active
   const hasActiveFilters =
-    filters.searchQuery !== '' ||
-    filters.department !== 'all' ||
-    filters.salaryRange !== 'all' ||
-    filters.workMode !== 'all' ||
-    filters.companyType !== 'all';
+    filters.searchQuery !== "" ||
+    filters.department !== "all" ||
+    filters.salaryRange !== "all" ||
+    filters.workMode !== "all" ||
+    filters.companyType !== "all";
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-white dark:bg-surface border-b border-border backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="flex flex-col pt-6 overflow-hidden h-[calc(100vh-4rem)] bg-background">
+      {/* Header - Fixed */}
+      <div className="bg-white mx-8 rounded-xl dark:bg-surface border border-border backdrop-blur-sm flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-text mb-2 bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-text  bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
                 Job Opportunities
               </h1>
-              <div className="flex items-center gap-2 text-text-muted">
+              {/* <div className="flex items-center gap-2 text-text-muted">
                 <Sparkles className="w-4 h-4" />
                 <p className="text-sm font-medium">
-                  {JobsData.totalJobs.toLocaleString()} jobs available • Updated{' '}
+                  {JobsData.totalJobs.toLocaleString()} jobs available • Updated{" "}
                   {JobsData.lastUpdated}
                 </p>
-              </div>
+              </div> */}
             </div>
             <Button
               variant="outline"
@@ -210,242 +212,276 @@ export default function CareersPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Content */}
-          <main className="flex-1 min-w-0 lg:order-1">
-            {/* Job Listings Grid */}
-            {paginatedJobs.length > 0 ? (
-              <div className="grid grid-cols-1 gap-5">
-                {paginatedJobs.map((job: JobListing) => (
-                  <Card
-                    key={job.id}
-                    className="bg-white dark:bg-surface hover:shadow-lg transition-all duration-200 rounded-xl border border-border hover:border-primary-500/50 group"
-                  >
-                    <CardContent className="p-6">
-                      {/* Header: Title and Logo */}
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="text-lg font-semibold text-text mb-2 group-hover:text-primary-500 transition-colors line-clamp-1">
-                            {job.title}
-                          </h3>
-                          <div className="flex items-center gap-2 text-sm text-text-muted flex-wrap">
-                            <span className="font-medium text-text">{job.company.name}</span>
-                            {job.company.rating && (
-                              <>
-                                <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-                                <span className="font-medium">{job.company.rating}</span>
-                                {job.company.reviewCount && (
-                                  <span className="text-xs">
-                                    | {job.company.reviewCount.toLocaleString()} Reviews
+      {/* Content Area - Scrollable left, Fixed right */}
+      <div className="flex-1 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+          <div className="flex flex-col lg:flex-row gap-8 h-full py-8">
+            {/* Main Content - Scrollable */}
+            <main className="flex-1 min-w-0 lg:order-1 overflow-y-auto pr-2 scrollbar-invisible">
+              {/* Job Listings Grid */}
+              {paginatedJobs.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4">
+                  {paginatedJobs.map((job: JobListing) => (
+                    <Card
+                      key={job.id}
+                      className="bg-white dark:bg-surface hover:shadow-lg transition-all duration-200 rounded-lg border border-border hover:border-primary-500/50 group"
+                    >
+                      <CardContent className="p-2">
+                        {/* Header: Title and Logo */}
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 min-w-0 pr-3">
+                            <h3 className="text-base font-semibold text-text mb-1 group-hover:text-primary-500 transition-colors line-clamp-1">
+                              {job.title}
+                            </h3>
+                            <div className="flex items-center gap-1.5 text-xs text-text-muted flex-wrap">
+                              <span className="font-medium text-text">
+                                {job.company.name}
+                              </span>
+                              {job.company.rating && (
+                                <>
+                                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                                  <span className="font-medium">
+                                    {job.company.rating}
+                                  </span>
+                                  {job.company.reviewCount && (
+                                    <span>
+                                      |{" "}
+                                      {job.company.reviewCount.toLocaleString()}{" "}
+                                      Reviews
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          {/* Company Logo */}
+                          {job.company.logo && (
+                            <div className="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border border-border bg-white p-1">
+                              <Image
+                                src={job.company.logo}
+                                alt={job.company.name}
+                                width={48}
+                                height={48}
+                                className="object-contain w-full h-full"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Info Row: Experience, Salary, Location */}
+                        <div className="flex items-center gap-3 text-xs text-text-muted mb-2 flex-wrap">
+                          <div className="flex items-center gap-1">
+                            <Briefcase className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span>
+                              {job.experience.min}-{job.experience.max} Yrs
+                            </span>
+                          </div>
+                          {job.salary && (
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>
+                                {job.salary.min / 100000}-
+                                {job.salary.max / 100000} LPA
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="truncate">
+                              {Array.isArray(job.location)
+                                ? job.location.join(", ")
+                                : job.location}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Description/Badges */}
+                        {job.badges && job.badges.length > 0 && (
+                          <div className="flex items-start gap-1.5 text-xs text-text-muted mb-2">
+                            <span className="flex-shrink-0 mt-0.5">•</span>
+                            <p className="line-clamp-2">
+                              {job.badges.join(" . ")}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Skills */}
+                        <div className="mb-3">
+                          <div className="flex flex-wrap gap-1 text-xs">
+                            {job.skills.slice(0, 8).map((skill, idx) => (
+                              <span
+                                key={idx}
+                                className="text-primary-600 dark:text-primary-400"
+                              >
+                                {skill}
+                                {idx < Math.min(job.skills.length, 8) - 1 && (
+                                  <span className="text-text-muted ml-1">
+                                    •
                                   </span>
                                 )}
-                              </>
+                              </span>
+                            ))}
+                            {job.skills.length > 8 && (
+                              <span className="text-text-muted">
+                                +{job.skills.length - 8} more
+                              </span>
                             )}
                           </div>
                         </div>
-                        {/* Company Logo */}
-                        {job.company.logo && (
-                          <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-border bg-white p-1">
-                            <Image
-                              src={job.company.logo}
-                              alt={job.company.name}
-                              width={64}
-                              height={64}
-                              className="object-contain w-full h-full"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
-                            />
+
+                        {/* Footer: Posted Date and Apply Button */}
+                        <div className="flex items-center justify-between pt-2 border-t border-border">
+                          <div className="flex items-center gap-3 text-xs text-text-muted">
+                            <span>{job.postedDate}</span>
+                            {job.workMode && (
+                              <>
+                                <span>•</span>
+                                <span>{job.workMode}</span>
+                              </>
+                            )}
                           </div>
-                        )}
-                      </div>
-
-                      {/* Info Row: Experience, Salary, Location */}
-                      <div className="flex items-center gap-4 text-sm text-text-muted mb-3 flex-wrap">
-                        <div className="flex items-center gap-1.5">
-                          <Briefcase className="w-4 h-4 flex-shrink-0" />
-                          <span>{job.experience.min}-{job.experience.max} Yrs</span>
+                          <a
+                            href={job.applyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center px-4 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-md transition-all duration-200 hover:shadow-md gap-1.5"
+                          >
+                            Apply Now
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
                         </div>
-                        {job.salary && (
-                          <div className="flex items-center gap-1.5">
-                            <DollarSign className="w-4 h-4 flex-shrink-0" />
-                            <span>{job.salary.min / 100000}-{job.salary.max / 100000} LPA</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="w-4 h-4 flex-shrink-0" />
-                          <span className="truncate">
-                            {Array.isArray(job.location) ? job.location.join(', ') : job.location}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Description/Badges */}
-                      {job.badges && job.badges.length > 0 && (
-                        <div className="flex items-start gap-2 text-sm text-text-muted mb-3">
-                          <span className="flex-shrink-0 mt-0.5">•</span>
-                          <p className="line-clamp-2">
-                            {job.badges.join(' . ')}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Skills */}
-                      <div className="mb-4">
-                        <div className="flex flex-wrap gap-1.5 text-sm">
-                          {job.skills.slice(0, 8).map((skill, idx) => (
-                            <span key={idx} className="text-primary-600 dark:text-primary-400">
-                              {skill}
-                              {idx < Math.min(job.skills.length, 8) - 1 && (
-                                <span className="text-text-muted ml-1.5">•</span>
-                              )}
-                            </span>
-                          ))}
-                          {job.skills.length > 8 && (
-                            <span className="text-text-muted">+{job.skills.length - 8} more</span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Footer: Posted Date and Apply Button */}
-                      <div className="flex items-center justify-between pt-3 border-t border-border">
-                        <div className="flex items-center gap-3 text-xs text-text-muted">
-                          <span>{job.postedDate}</span>
-                          {job.workMode && (
-                            <>
-                              <span>•</span>
-                              <span>{job.workMode}</span>
-                            </>
-                          )}
-                        </div>
-                        <a
-                          href={job.applyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-lg transition-all duration-200 hover:shadow-md gap-2"
-                        >
-                          Apply Now
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              /* No Results */
-              <Card className="shadow-lg">
-                <CardContent className="py-20 text-center">
-                  <div className="w-20 h-20 mx-auto mb-6 bg-primary-50 dark:bg-primary-900/20 rounded-full flex items-center justify-center">
-                    <Briefcase className="w-10 h-10 text-primary-500" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-text mb-3">No jobs found</h3>
-                  <p className="text-text-muted mb-8 max-w-md mx-auto leading-relaxed">
-                    We couldn't find any jobs matching your criteria. Try adjusting your
-                    filters or search query.
-                  </p>
-                  {hasActiveFilters && (
-                    <Button
-                      onClick={clearFilters}
-                      variant="outline"
-                      className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
-                    >
-                      Clear All Filters
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Pagination */}
-            {filteredJobs.length > 0 && totalPages > 1 && (
-              <Card className="mt-8 shadow-lg">
-                <CardContent className="py-6">
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    {/* Page info */}
-                    <div className="text-sm font-semibold text-text">
-                      Page <span className="text-primary-600 dark:text-primary-400">{currentPage}</span> of {totalPages}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                /* No Results */
+                <Card className="shadow-lg">
+                  <CardContent className="py-20 text-center">
+                    <div className="w-20 h-20 mx-auto mb-6 bg-primary-50 dark:bg-primary-900/20 rounded-full flex items-center justify-center">
+                      <Briefcase className="w-10 h-10 text-primary-500" />
                     </div>
-
-                    {/* Pagination controls */}
-                    <div className="flex items-center gap-2">
-                      {/* Previous button */}
+                    <h3 className="text-2xl font-bold text-text mb-3">
+                      No jobs found
+                    </h3>
+                    <p className="text-text-muted mb-8 max-w-md mx-auto leading-relaxed">
+                      We couldn't find any jobs matching your criteria. Try
+                      adjusting your filters or search query.
+                    </p>
+                    {hasActiveFilters && (
                       <Button
+                        onClick={clearFilters}
                         variant="outline"
-                        size="sm"
-                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+                        className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
                       >
-                        <ChevronLeft className="w-4 h-4" />
-                        Previous
+                        Clear All Filters
                       </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
-                      {/* Page numbers */}
-                      <div className="hidden sm:flex items-center gap-2">
-                        {getPageNumbers().map((page, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() =>
-                              typeof page === 'number' && setCurrentPage(page)
-                            }
-                            disabled={page === '...' || page === currentPage}
-                            className={`
+              {/* Pagination */}
+              {filteredJobs.length > 0 && totalPages > 1 && (
+                <Card className="mt-4 shadow-lg">
+                  <CardContent className="py-3">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                      {/* Page info */}
+                      <div className="text-xs font-semibold text-text">
+                        Page{" "}
+                        <span className="text-primary-600 dark:text-primary-400">
+                          {currentPage}
+                        </span>{" "}
+                        of {totalPages}
+                      </div>
+
+                      {/* Pagination controls */}
+                      <div className="flex items-center gap-2">
+                        {/* Previous button */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(1, prev - 1))
+                          }
+                          disabled={currentPage === 1}
+                          className="flex items-center gap-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                          Previous
+                        </Button>
+
+                        {/* Page numbers */}
+                        <div className="hidden sm:flex items-center gap-2">
+                          {getPageNumbers().map((page, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() =>
+                                typeof page === "number" && setCurrentPage(page)
+                              }
+                              disabled={page === "..." || page === currentPage}
+                              className={`
                               px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200
                               ${
                                 page === currentPage
-                                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md scale-110'
-                                  : page === '...'
-                                  ? 'text-text-muted cursor-default'
-                                  : 'text-text hover:bg-primary-50 dark:hover:bg-primary-900/20 border-2 border-border hover:border-primary-500'
+                                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md scale-110"
+                                  : page === "..."
+                                  ? "text-text-muted cursor-default"
+                                  : "text-text hover:bg-primary-50 dark:hover:bg-primary-900/20 border-2 border-border hover:border-primary-500"
                               }
                             `}
-                          >
-                            {page}
-                          </button>
-                        ))}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Next button */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(totalPages, prev + 1)
+                            )
+                          }
+                          disabled={currentPage === totalPages}
+                          className="flex items-center gap-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+                        >
+                          Next
+                          <ChevronRight className="w-4 h-4" />
+                        </Button>
                       </div>
 
-                      {/* Next button */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                        }
-                        disabled={currentPage === totalPages}
-                        className="flex items-center gap-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
-                      >
-                        Next
-                        <ChevronRight className="w-4 h-4" />
-                      </Button>
+                      {/* Mobile page numbers */}
+                      <div className="sm:hidden text-sm font-semibold text-text">
+                        <span className="text-primary-600 dark:text-primary-400">
+                          {currentPage}
+                        </span>{" "}
+                        / {totalPages}
+                      </div>
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+            </main>
 
-                    {/* Mobile page numbers */}
-                    <div className="sm:hidden text-sm font-semibold text-text">
-                      <span className="text-primary-600 dark:text-primary-400">{currentPage}</span> / {totalPages}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </main>
-
-          {/* Sidebar Filters - Right Side */}
-          <aside
-            className={`
-              lg:block lg:w-80 flex-shrink-0 lg:order-2
-              ${showMobileFilters ? 'block' : 'hidden'}
+            {/* Sidebar Filters - Fixed Right Side */}
+            <aside
+              className={`
+              lg:block lg:w-80 flex-shrink-0 lg:order-2 overflow-y-auto scrollbar-invisible
+              ${showMobileFilters ? "block" : "hidden"}
             `}
-          >
-            <div className="lg:sticky lg:top-6">
-              <Card className="shadow-lg border-border/50 overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-xl font-bold text-text flex items-center gap-2">
-                      <Filter className="w-5 h-5 text-primary-500" />
+            >
+              <Card className="shadow-lg border-border/50 ">
+                <CardContent className="">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-bold text-text flex items-center gap-2">
+                      <Filter className="w-4 h-4 text-primary-500" />
                       Filters
                     </h2>
                     {hasActiveFilters && (
@@ -459,32 +495,36 @@ export default function CareersPage() {
                     )}
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-3">
                     {/* Search */}
                     <div>
-                      <label className="block text-sm font-semibold text-text mb-3">
+                      <label className="block text-sm font-semibold text-text mb-1.5">
                         Search Jobs
                       </label>
                       <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-primary-500 transition-colors duration-200" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-primary-500 transition-colors duration-200" />
                         <Input
                           placeholder="Job title or company..."
                           value={filters.searchQuery}
-                          onChange={(e) => updateFilter('searchQuery', e.target.value)}
-                          className="pl-11 pr-4 py-2.5 rounded-full border-2 border-border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all duration-200"
+                          onChange={(e) =>
+                            updateFilter("searchQuery", e.target.value)
+                          }
+                          className="pl-10 pr-3 py-2 text-sm rounded-full border-2 border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
                         />
                       </div>
                     </div>
 
                     {/* Department Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-text mb-3">
+                      <label className="block text-sm font-semibold text-text mb-1.5">
                         Department
                       </label>
                       <select
                         value={filters.department}
-                        onChange={(e) => updateFilter('department', e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
+                        onChange={(e) =>
+                          updateFilter("department", e.target.value)
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
                       >
                         <option value="all">All Departments</option>
                         {JobsData.filters.departments.map((dept) => (
@@ -497,13 +537,15 @@ export default function CareersPage() {
 
                     {/* Salary Range Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-text mb-3">
+                      <label className="block text-sm font-semibold text-text mb-1.5">
                         Salary Range
                       </label>
                       <select
                         value={filters.salaryRange}
-                        onChange={(e) => updateFilter('salaryRange', e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
+                        onChange={(e) =>
+                          updateFilter("salaryRange", e.target.value)
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
                       >
                         <option value="all">All Salaries</option>
                         {JobsData.filters.salary.map((range) => (
@@ -516,13 +558,15 @@ export default function CareersPage() {
 
                     {/* Work Mode Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-text mb-3">
+                      <label className="block text-sm font-semibold text-text mb-1.5">
                         Work Mode
                       </label>
                       <select
                         value={filters.workMode}
-                        onChange={(e) => updateFilter('workMode', e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
+                        onChange={(e) =>
+                          updateFilter("workMode", e.target.value)
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
                       >
                         <option value="all">All Work Modes</option>
                         {JobsData.filters.workModes.map((mode) => (
@@ -535,13 +579,15 @@ export default function CareersPage() {
 
                     {/* Company Type Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-text mb-3">
+                      <label className="block text-sm font-semibold text-text mb-1.5">
                         Company Type
                       </label>
                       <select
                         value={filters.companyType}
-                        onChange={(e) => updateFilter('companyType', e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
+                        onChange={(e) =>
+                          updateFilter("companyType", e.target.value)
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-xl border-2 border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 cursor-pointer hover:border-primary-400"
                       >
                         <option value="all">All Company Types</option>
                         {JobsData.filters.companyTypes.map((type) => (
@@ -554,13 +600,14 @@ export default function CareersPage() {
                   </div>
 
                   {/* Results Summary */}
-                  <div className="mt-8 pt-6 border-t border-border">
-                    <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4">
-                      <p className="text-sm font-semibold text-text">
-                        Showing {startIndex + 1}-{Math.min(endIndex, filteredJobs.length)} of{' '}
+                  <div className="mt-4 pt-3 border-t border-border">
+                    <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3">
+                      <p className="text-xs font-semibold text-text">
+                        Showing {startIndex + 1}-
+                        {Math.min(endIndex, filteredJobs.length)} of{" "}
                         <span className="text-primary-600 dark:text-primary-400">
                           {filteredJobs.length}
-                        </span>{' '}
+                        </span>{" "}
                         jobs
                       </p>
                       {filteredJobs.length !== JobsData.jobs.length && (
@@ -572,8 +619,8 @@ export default function CareersPage() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
-          </aside>
+            </aside>
+          </div>
         </div>
       </div>
     </div>

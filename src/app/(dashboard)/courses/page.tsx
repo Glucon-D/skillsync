@@ -376,7 +376,7 @@ export default function CoursesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6 md:p-8 max-w-7xl mx-auto">
       <Toaster
         position="top-center"
         toastOptions={{
