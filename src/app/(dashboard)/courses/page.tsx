@@ -1,7 +1,7 @@
 /**
  * @file (dashboard)/courses/page.tsx
  * @description Courses recommendation page
- * @dependencies react, lucide-react, @/store/coursesStore, @/data/sampleCourses, @/components/ui
+ * @dependencies react, lucide-react, @/store/coursesStore, @/store/authStore, @/data/sampleCourses, @/components/ui
  */
 
 'use client';
@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { Bookmark, BookmarkCheck, Star, Clock, DollarSign } from 'lucide-react';
 import { useCoursesStore } from '@/store/coursesStore';
+import { useAuthStore } from '@/store/authStore';
 import { sampleCourses } from '@/data/sampleCourses';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/input';
 
 export default function CoursesPage() {
+  const user = useAuthStore((state) => state.user);
   const { toggleBookmark, isBookmarked } = useCoursesStore();
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [platformFilter, setPlatformFilter] = useState<string>('all');
@@ -72,8 +74,9 @@ export default function CoursesPage() {
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
                   <button
-                    onClick={() => toggleBookmark(course.id)}
+                    onClick={() => user?.id && toggleBookmark(user.id, course)}
                     className="flex-shrink-0"
+                    disabled={!user?.id}
                   >
                     {bookmarked ? (
                       <BookmarkCheck className="w-5 h-5 text-primary-500" />
@@ -110,7 +113,7 @@ export default function CoursesPage() {
                 <div className="flex items-center justify-between pt-2 border-t border-border">
                   <div className="flex items-center text-lg font-bold text-text">
                     <DollarSign className="w-5 h-5" />
-                    {course.price === 'free' ? 'Free' : course.price}
+                    {course.price === 0 ? 'Free' : `$${course.price}`}
                   </div>
                   <Button size="sm">View Course</Button>
                 </div>
