@@ -23,7 +23,7 @@ export interface UserProfileRow {
   education: string[]; // Array of JSON strings, Size: 10000, nullable
   skills: string[]; // Array of JSON strings, Size: 5000, nullable
   experience: string[]; // Array of JSON strings, Size: 10000, nullable
-  documents: string[]; // Array of strings (URLs), Size: 2000, nullable
+  documents: string; // Single JSON string containing all documents, Size: 1000000, nullable
   assessmentScores: string[]; // Array of JSON strings in Appwrite, Size: 500, nullable (FIXED: was string, now string[])
   dominantType: string; // Size: 50, nullable
   assessmentCompletedAt: string | null; // datetime, nullable
@@ -42,7 +42,8 @@ export const profileService = {
       education: (profile.education || []).map((e) => JSON.stringify(e)),
       skills: (profile.skills || []).map((s) => JSON.stringify(s)),
       experience: (profile.experience || []).map((e) => JSON.stringify(e)),
-      documents: profile.documents || [],
+      // Documents: store ALL documents as a single JSON string
+      documents: JSON.stringify(profile.documents || []),
       // Convert assessmentScores object to JSON string array (Appwrite schema requires array)
       assessmentScores: profile.assessmentScores
         ? [JSON.stringify(profile.assessmentScores)]
@@ -105,8 +106,10 @@ export const profileService = {
       updateData.skills = updates.skills.map((s) => JSON.stringify(s));
     if (updates.experience !== undefined)
       updateData.experience = updates.experience.map((e) => JSON.stringify(e));
-    if (updates.documents !== undefined)
-      updateData.documents = updates.documents;
+    if (updates.documents !== undefined) {
+      // Documents: store ALL documents as a single JSON string
+      updateData.documents = JSON.stringify(updates.documents);
+    }
     if (updates.assessmentScores !== undefined)
       updateData.assessmentScores = [JSON.stringify(updates.assessmentScores)];
     if (updates.dominantType !== undefined)
@@ -176,13 +179,28 @@ export const profileService = {
       return {};
     };
 
+    // Parse documents from single JSON string
+    const parseDocuments = (docs: any): any[] => {
+      if (typeof docs === 'string' && docs) {
+        try {
+          return JSON.parse(docs);
+        } catch {
+          return [];
+        }
+      }
+      if (Array.isArray(docs)) {
+        return docs;
+      }
+      return [];
+    };
+
     return {
       userId: row.userId,
       bio: row.bio || "",
       education: parseJsonArray(row.education),
       skills: parseJsonArray(row.skills),
       experience: parseJsonArray(row.experience),
-      documents: Array.isArray(row.documents) ? row.documents : [],
+      documents: parseDocuments(row.documents),
       assessmentScores: parseAssessmentScores(row.assessmentScores),
       dominantType: row.dominantType || "",
       assessmentCompletedAt: row.assessmentCompletedAt || null,

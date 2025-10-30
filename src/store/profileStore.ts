@@ -6,7 +6,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Profile, Education, Skill, Experience } from "@/lib/types";
+import type { Profile, Education, Skill, Experience, DocumentMetadata } from "@/lib/types";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { calculateProfileCompletion } from "@/lib/utils";
 import { profileService } from "@/lib/db";
@@ -26,7 +26,7 @@ interface ProfileActions {
   removeSkill: (index: number) => Promise<void>;
   addExperience: (experience: Experience) => Promise<void>;
   removeExperience: (index: number) => Promise<void>;
-  addDocument: (documentUrl: string) => Promise<void>;
+  addDocument: (document: DocumentMetadata | string) => Promise<void>;
   removeDocument: (index: number) => Promise<void>;
   getCompletionPercentage: () => number;
   // Database sync methods
@@ -222,19 +222,20 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
         }
       },
 
-      addDocument: async (documentUrl: string) => {
+      addDocument: async (document: DocumentMetadata | string) => {
         const profile = get().profile;
         if (!profile) return;
 
+        // Add document to the array in memory
         const updatedProfile = {
           ...profile,
-          documents: [...(profile.documents || []), documentUrl],
+          documents: [...(profile.documents || []), document as DocumentMetadata],
         };
         updatedProfile.completionPercentage =
           calculateProfileCompletion(updatedProfile);
         set({ profile: updatedProfile });
 
-        // Sync to database
+        // Sync to database - db.ts will handle JSON string conversion
         if (profile.$id && profile.userId) {
           try {
             await profileService.update(profile.$id, profile.userId, {
@@ -259,7 +260,7 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
           calculateProfileCompletion(updatedProfile);
         set({ profile: updatedProfile });
 
-        // Sync to database
+        // Sync to database - db.ts will handle JSON string conversion
         if (profile.$id && profile.userId) {
           try {
             await profileService.update(profile.$id, profile.userId, {
@@ -284,6 +285,7 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
           console.log("🔍 Loading profile for user:", userId);
           const profile = await profileService.getByUserId(userId);
           if (profile) {
+            // Documents are already parsed by db.ts
             console.log("✅ Profile loaded from database");
             set({ profile, isLoading: false });
           } else {
