@@ -13,7 +13,7 @@ export default function LoginPage() {
   return (
     <Card className="border-border/50 shadow-2xl backdrop-blur-sm bg-surface/95 dark:bg-surface/90">
       <CardHeader className="text-center space-y-2 pb-6">
-        <div className="mx-auto w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-2 shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-shadow duration-300">
+        <div className="mx-auto w-14 h-14 bg-linear-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-2 shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-shadow duration-300">
           <span className="text-white font-bold text-2xl">S</span>
         </div>
         <CardTitle className="text-3xl font-bold text-text">Welcome Back</CardTitle>
