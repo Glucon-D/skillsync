@@ -442,6 +442,10 @@ export interface AIPathwayRow {
   stepsData?: string[]; // Array of JSON strings for steps (Appwrite array format)
   resourcesData?: string[]; // Array of JSON strings for resources (Appwrite array format)
   isCustom?: boolean; // true if user requested, false if AI recommended
+  // Appwrite metadata fields
+  $id?: string;
+  $createdAt?: string;
+  $updatedAt?: string;
 }
 
 export const aiPathwaysService = {
