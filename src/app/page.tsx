@@ -65,8 +65,8 @@ export default function Home() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <section className="pt-20 pb-16 sm:pt-32 sm:pb-24">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="space-y-8 text-center">
                 <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-surface border border-border text-sm text-text-muted">
                   <HiSparkles className="w-4 h-4 text-primary-500 animate-pulse" />
                   <span>AI-Powered Career Intelligence Platform</span>
@@ -79,12 +79,12 @@ export default function Home() {
                   </span>
                 </h1>
 
-                <p className="text-lg sm:text-xl text-text-muted leading-relaxed">
+                <p className="text-lg sm:text-xl text-text-muted leading-relaxed max-w-3xl mx-auto">
                   SkillSync uses AI to analyze your strengths, interests, and goals—delivering personalized career recommendations,
                   skill pathways, and curated learning resources to accelerate your professional journey.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link
                     href={ROUTES.SIGNUP}
                     className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-xl bg-primary-500 text-white hover:bg-primary-600 shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all duration-200 group"
@@ -99,7 +99,7 @@ export default function Home() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-6 pt-8">
+                <div className="grid grid-cols-3 gap-6 pt-8 max-w-2xl mx-auto">
                   <div className="space-y-1">
                     <div className="text-3xl sm:text-4xl font-bold text-text">10K+</div>
                     <div className="text-sm text-text-muted">Students Guided</div>
@@ -111,18 +111,6 @@ export default function Home() {
                   <div className="space-y-1">
                     <div className="text-3xl sm:text-4xl font-bold text-text">98%</div>
                     <div className="text-sm text-text-muted">Success Rate</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Hero Illustration */}
-              <div className="relative lg:block hidden">
-                <div className="relative w-full h-[500px] bg-gradient-to-br from-primary-500/10 to-primary-600/10 rounded-3xl border border-border shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="w-64 h-64 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl animate-pulse"></div>
-                      <FaRocket className="absolute inset-0 m-auto w-32 h-32 text-primary-500" />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -713,115 +701,6 @@ export default function Home() {
                 <div className="flex items-center space-x-2">
                   <FaAward className="w-5 h-5 text-primary-500" />
                   <span className="text-sm font-medium text-text">98% Success Rate</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* AI Mentorship Section */}
-          <section className="py-20 border-t border-border">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="relative">
-                <div className="relative w-full h-[400px] bg-gradient-to-br from-primary-500/10 to-primary-600/10 rounded-3xl border border-border shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="w-48 h-48 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl"></div>
-                      <RiBrainFill className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="inline-block px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full">
-                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400">AI-Powered Mentorship</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-text">
-                  Your Personal AI Career
-                  <span className="block mt-2 text-primary-500">Mentor & Simulator</span>
-                </h2>
-                <p className="text-lg text-text-muted leading-relaxed">
-                  Get real-time guidance from our advanced AI mentor. Practice interviews, receive feedback on your portfolio,
-                  and simulate real-world career scenarios to build confidence before stepping into the professional world.
-                </p>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <MdMessage className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">24/7 Career Guidance</h4>
-                      <p className="text-sm text-text-muted">Ask questions and get instant, personalized career advice</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <HiUsers className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">Interview Simulation</h4>
-                      <p className="text-sm text-text-muted">Practice with AI-powered mock interviews tailored to your field</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <MdTrendingUp className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">Creative Project Ideas</h4>
-                      <p className="text-sm text-text-muted">Get unique portfolio project suggestions to stand out</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Institutional Analytics Section */}
-          <section className="py-20 border-t border-border">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 order-2 lg:order-1">
-                <div className="inline-block px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full">
-                  <span className="text-sm font-medium text-primary-600 dark:text-primary-400">For Universities</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-text">
-                  Empower Your Institution with
-                  <span className="block mt-2 text-primary-500">Data-Driven Analytics</span>
-                </h2>
-                <p className="text-lg text-text-muted leading-relaxed">
-                  Universities and educators can access powerful analytics dashboards to track student engagement,
-                  career outcomes, and program effectiveness—helping you better support your students' success.
-                </p>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <MdShowChart className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">Student Progress Tracking</h4>
-                      <p className="text-sm text-text-muted">Monitor career development across your entire student body</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <MdBusiness className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">Program Insights</h4>
-                      <p className="text-sm text-text-muted">Evaluate course effectiveness and identify improvement areas</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <FaAward className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-text mb-1">Outcome Metrics</h4>
-                      <p className="text-sm text-text-muted">Track placement rates and career success post-graduation</p>
-                    </div>
-                  </div>
-                </div>
-                <button className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg border-2 border-primary-500 text-primary-600 dark:text-primary-400 hover:bg-primary-500/10 transition-all duration-200">
-                  Request Institutional Demo
-                </button>
-              </div>
-
-              <div className="relative order-1 lg:order-2">
-                <div className="relative w-full h-[400px] bg-gradient-to-br from-primary-500/10 to-primary-600/10 rounded-3xl border border-border shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="w-48 h-48 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl"></div>
-                      <MdAnalytics className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
