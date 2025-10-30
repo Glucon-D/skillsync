@@ -7,11 +7,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle, Circle, Clock, Sparkles, ArrowRight, BookOpen, Target, AlertCircle, Loader2, ChevronDown, ChevronUp, Pencil, Zap, Save, History, Trash2 } from 'lucide-react';
-import { usePathwaysStore } from '@/store/pathwaysStore';
+import { CheckCircle, Clock, Sparkles, ArrowRight, BookOpen, Target, AlertCircle, Loader2, ChevronDown, ChevronUp, Pencil, Zap, Save, History, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useProfileStore } from '@/store/profileStore';
-import { skillsPathways } from '@/data/skills';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,7 +19,6 @@ import { aiPathwaysService, type AIPathwayRow } from '@/lib/db';
 export default function PathwaysPage() {
   const user = useAuthStore((state) => state.user);
   const { profile } = useProfileStore();
-  const { userPathways, togglePathwayCompletion, isPathwayCompleted, getProgress, loadPathways } = usePathwaysStore();
 
   // AI Pathways State
   const [showAISection, setShowAISection] = useState(true);
@@ -47,10 +44,9 @@ export default function PathwaysPage() {
 
   useEffect(() => {
     if (user?.id) {
-      loadPathways(user.id);
       loadSavedPathways();
     }
-  }, [user?.id, loadPathways]);
+  }, [user?.id]);
 
   // Load saved AI pathways from database
   const loadSavedPathways = async () => {
@@ -63,9 +59,6 @@ export default function PathwaysPage() {
       console.error('Error loading saved pathways:', error);
     }
   };
-
-  const progress = getProgress(skillsPathways.length);
-  const completedCount = userPathways.filter(p => p.completed).length;
 
   // Get AI Career Recommendations
   const handleGetRecommendations = async () => {
@@ -794,88 +787,6 @@ export default function PathwaysPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Traditional Pathways Section */}
-      <div>
-        <h2 className="text-2xl font-bold text-text mb-4">Your Learning Progress</h2>
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Overall Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl font-bold text-text">{progress}%</span>
-              <span className="text-text-muted">{completedCount} / {skillsPathways.length} completed</span>
-            </div>
-            <div className="w-full bg-background rounded-full h-3">
-              <div
-                className="bg-primary-500 h-3 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {skillsPathways.map((pathway) => {
-            const isCompleted = isPathwayCompleted(pathway.id);
-
-            return (
-              <Card key={pathway.id} className={isCompleted ? 'border-green-500' : ''}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{pathway.name}</CardTitle>
-                      <p className="text-sm text-text-muted mt-1">{pathway.category}</p>
-                    </div>
-                    <button
-                      onClick={() => user?.id && togglePathwayCompletion(user.id, pathway)}
-                      className="flex-shrink-0"
-                      disabled={!user?.id}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle className="w-6 h-6 text-green-500" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-text-muted" />
-                      )}
-                    </button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge variant={pathway.level === 'beginner' ? 'default' : pathway.level === 'intermediate' ? 'warning' : 'error'}>
-                      {pathway.level}
-                    </Badge>
-                    <div className="flex items-center text-sm text-text-muted">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {pathway.estimatedTime}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-text mb-1">Resources:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {pathway.resources.map((resource, idx) => (
-                        <Badge key={idx} variant="default" size="sm">
-                          {resource}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <Button
-                    variant={isCompleted ? 'outline' : 'primary'}
-                    size="sm"
-                    className="w-full"
-                    onClick={() => user?.id && togglePathwayCompletion(user.id, pathway)}
-                    disabled={!user?.id}
-                  >
-                    {isCompleted ? 'Mark Incomplete' : 'Mark Complete'}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }
