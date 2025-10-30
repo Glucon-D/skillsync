@@ -16,7 +16,7 @@ export function Card({ children, hover = false, className, ...props }: CardProps
   return (
     <div
       className={cn(
-        'bg-surface rounded-xl border border-border p-6 transition-all duration-200',
+        'bg-surface rounded-xl border border-border p-5 transition-all duration-200',
         hover && 'hover:shadow-lg hover:shadow-primary-500/5 hover:border-primary-500/20 cursor-pointer',
         className
       )}
@@ -45,7 +45,7 @@ interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export function CardTitle({ children, className, ...props }: CardTitleProps) {
   return (
-    <h3 className={cn('text-xl font-semibold text-text', className)} {...props}>
+    <h3 className={cn('text-2xl font-semibold text-text', className)} {...props}>
       {children}
     </h3>
   );
