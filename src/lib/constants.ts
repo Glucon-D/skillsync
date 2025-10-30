@@ -26,6 +26,7 @@ export const ROUTES = {
   PATHWAYS: '/pathways',
   COURSES: '/courses',
   CAREERS: '/careers',
+  ANALYTICS: '/analytics',
 } as const;
 
 export const ASSESSMENT_CATEGORIES = [
