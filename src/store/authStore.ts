@@ -1,29 +1,49 @@
 /**
  * @file authStore.ts
- * @description Authentication state management with Zustand
- * @dependencies zustand, @/lib/types, @/lib/localStorage, @/lib/constants
+ * @description Authentication state management with Zustand and Appwrite
+ * @dependencies zustand, @/lib/types, @/lib/appwrite
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { User } from '@/lib/types';
-import { storage } from '@/lib/localStorage';
-import { STORAGE_KEYS } from '@/lib/constants';
-import { generateId } from '@/lib/utils';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { User } from "@/lib/types";
+import { account, ID, OAuthProvider } from "@/lib/appwrite";
+import type { Models } from "appwrite";
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   hasHydrated: boolean;
+  isLoading: boolean;
 }
 
 interface AuthActions {
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  signup: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  getCurrentUser: () => Promise<void>;
   setUser: (user: User) => void;
   setHasHydrated: (state: boolean) => void;
+  setLoading: (loading: boolean) => void;
 }
+
+// Helper to convert Appwrite user to our User type
+const convertAppwriteUser = (
+  appwriteUser: Models.User<Models.Preferences>
+): User => ({
+  id: appwriteUser.$id,
+  name: appwriteUser.name,
+  email: appwriteUser.email,
+  createdAt: appwriteUser.$createdAt,
+});
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
@@ -31,51 +51,123 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       user: null,
       isAuthenticated: false,
       hasHydrated: false,
+      isLoading: false,
 
       login: async (email: string, password: string) => {
-        const users = storage.get<Record<string, { name: string; email: string; password: string }>>(STORAGE_KEYS.AUTH_USER) || {};
+        try {
+          set({ isLoading: true });
 
-        const userEntry = Object.entries(users).find(([, u]) => u.email === email);
+          // Create email/password session
+          await account.createEmailPasswordSession({
+            email,
+            password,
+          });
 
-        if (userEntry && userEntry[1].password === password) {
-          const [id, userData] = userEntry;
-          const user: User = {
-            id,
-            name: userData.name,
-            email: userData.email,
-            createdAt: new Date().toISOString(),
-          };
+          // Get user details
+          const appwriteUser = await account.get();
+          const user = convertAppwriteUser(appwriteUser);
 
-          set({ user, isAuthenticated: true });
-          return true;
+          set({ user, isAuthenticated: true, isLoading: false });
+          return { success: true };
+        } catch (error: any) {
+          console.error("Login error:", error);
+          set({ isLoading: false });
+
+          // Return specific error message
+          let errorMessage = "Invalid email or password";
+
+          if (error?.code === 401) {
+            errorMessage = "Invalid email or password";
+          } else if (error?.message) {
+            errorMessage = error.message;
+          }
+
+          return { success: false, error: errorMessage };
         }
-
-        return false;
       },
 
       signup: async (name: string, email: string, password: string) => {
-        const users = storage.get<Record<string, { name: string; email: string; password: string }>>(STORAGE_KEYS.AUTH_USER) || {};
+        try {
+          set({ isLoading: true });
 
-        const emailExists = Object.values(users).some(u => u.email === email);
-        if (emailExists) return false;
+          // Create account
+          await account.create({
+            userId: ID.unique(),
+            email,
+            password,
+            name,
+          });
 
-        const id = generateId();
-        users[id] = { name, email, password };
-        storage.set(STORAGE_KEYS.AUTH_USER, users);
+          // Automatically log in after signup
+          await account.createEmailPasswordSession({
+            email,
+            password,
+          });
 
-        const user: User = {
-          id,
-          name,
-          email,
-          createdAt: new Date().toISOString(),
-        };
+          // Get user details
+          const appwriteUser = await account.get();
+          const user = convertAppwriteUser(appwriteUser);
 
-        set({ user, isAuthenticated: true });
-        return true;
+          set({ user, isAuthenticated: true, isLoading: false });
+          return { success: true };
+        } catch (error: any) {
+          console.error("Signup error:", error);
+          set({ isLoading: false });
+
+          // Return specific error message
+          let errorMessage = "Failed to create account";
+
+          if (error?.code === 409 || error?.type === "user_already_exists") {
+            errorMessage = "Email already exists";
+          } else if (error?.code === 400) {
+            errorMessage = "Invalid email or password format";
+          } else if (error?.message) {
+            errorMessage = error.message;
+          }
+
+          return { success: false, error: errorMessage };
+        }
       },
 
-      logout: () => {
-        set({ user: null, isAuthenticated: false });
+      logout: async () => {
+        try {
+          set({ isLoading: true });
+          await account.deleteSession({ sessionId: "current" });
+          set({ user: null, isAuthenticated: false, isLoading: false });
+        } catch (error) {
+          console.error("Logout error:", error);
+          set({ isLoading: false });
+        }
+      },
+
+      loginWithGoogle: async () => {
+        try {
+          // Get current origin for redirect URLs
+          const origin =
+            typeof window !== "undefined" ? window.location.origin : "";
+
+          // Initiate OAuth2 flow
+          account.createOAuth2Session({
+            provider: OAuthProvider.Google,
+            success: `${origin}/auth/callback`,
+            failure: `${origin}/login?error=oauth_failed`,
+          });
+        } catch (error) {
+          console.error("Google OAuth error:", error);
+          throw error;
+        }
+      },
+
+      getCurrentUser: async () => {
+        try {
+          set({ isLoading: true });
+          const appwriteUser = await account.get();
+          const user = convertAppwriteUser(appwriteUser);
+          set({ user, isAuthenticated: true, isLoading: false });
+        } catch (error) {
+          // User not logged in
+          set({ user: null, isAuthenticated: false, isLoading: false });
+        }
       },
 
       setUser: (user: User) => {
@@ -85,9 +177,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       setHasHydrated: (state: boolean) => {
         set({ hasHydrated: state });
       },
+
+      setLoading: (loading: boolean) => {
+        set({ isLoading: loading });
+      },
     }),
     {
-      name: STORAGE_KEYS.AUTH_TOKEN,
+      name: "auth-storage",
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },

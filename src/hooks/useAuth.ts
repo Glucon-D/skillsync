@@ -4,18 +4,30 @@
  * @dependencies @/store/authStore
  */
 
-'use client';
+"use client";
 
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from "@/store/authStore";
 
 export function useAuth() {
-  const { user, isAuthenticated, login, signup, logout } = useAuthStore();
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    login,
+    signup,
+    logout,
+    loginWithGoogle,
+    getCurrentUser,
+  } = useAuthStore();
 
   return {
     user,
     isAuthenticated,
+    isLoading,
     login,
     signup,
     logout,
+    loginWithGoogle,
+    getCurrentUser,
   };
 }
