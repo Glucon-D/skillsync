@@ -20,10 +20,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Navbar />
         <div className="flex pt-16">
           <Sidebar />
-          <main className="flex-1 overflow-y-auto min-h-screen">
-            <div className="max-w-7xl mx-auto p-6 md:p-8">
-              {children}
-            </div>
+          <main className="flex-1">
+            {children}
           </main>
         </div>
       </div>
