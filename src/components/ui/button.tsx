@@ -23,13 +23,13 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700',
-    secondary: 'bg-surface text-text border border-border hover:bg-background',
-    outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20',
-    ghost: 'text-text hover:bg-background',
+    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-sm hover:shadow-md',
+    secondary: 'bg-surface text-text border border-border hover:bg-background hover:border-primary-500/20',
+    outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:shadow-sm',
+    ghost: 'text-text hover:bg-background hover:text-primary-500',
   };
   
   const sizes = {

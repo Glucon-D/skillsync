@@ -31,9 +31,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
       login: async (email: string, password: string) => {
         const users = storage.get<Record<string, { name: string; email: string; password: string }>>(STORAGE_KEYS.AUTH_USER) || {};
-        
+
         const userEntry = Object.entries(users).find(([, u]) => u.email === email);
-        
+
         if (userEntry && userEntry[1].password === password) {
           const [id, userData] = userEntry;
           const user: User = {
@@ -42,31 +42,31 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             email: userData.email,
             createdAt: new Date().toISOString(),
           };
-          
+
           set({ user, isAuthenticated: true });
           return true;
         }
-        
+
         return false;
       },
 
       signup: async (name: string, email: string, password: string) => {
         const users = storage.get<Record<string, { name: string; email: string; password: string }>>(STORAGE_KEYS.AUTH_USER) || {};
-        
+
         const emailExists = Object.values(users).some(u => u.email === email);
         if (emailExists) return false;
-        
+
         const id = generateId();
         users[id] = { name, email, password };
         storage.set(STORAGE_KEYS.AUTH_USER, users);
-        
+
         const user: User = {
           id,
           name,
           email,
           createdAt: new Date().toISOString(),
         };
-        
+
         set({ user, isAuthenticated: true });
         return true;
       },
@@ -81,6 +81,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     }),
     {
       name: STORAGE_KEYS.AUTH_TOKEN,
+      skipHydration: false,
     }
   )
 );

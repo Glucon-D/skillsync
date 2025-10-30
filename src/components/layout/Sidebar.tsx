@@ -32,9 +32,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex w-64 flex-col bg-surface border-r border-border">
-      <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-        <nav className="flex-1 px-3 space-y-1">
+    <aside className="hidden md:flex w-64 flex-col bg-surface border-r border-border min-h-screen">
+      <div className="flex-1 flex flex-col py-6 overflow-y-auto">
+        <nav className="flex-1 px-4 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -44,9 +44,9 @@ export function Sidebar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors',
+                  'group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
                   isActive
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-primary-500 text-white shadow-sm'
                     : 'text-text-muted hover:bg-background hover:text-text'
                 )}
               >

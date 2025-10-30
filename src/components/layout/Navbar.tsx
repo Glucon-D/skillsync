@@ -12,11 +12,9 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/lib/constants';
 import { ThemeToggle } from './ThemeToggle';
-import { Button } from '@/components/ui/button';
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -25,12 +23,12 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-surface border-b border-border backdrop-blur-sm bg-surface/95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-40 bg-surface/80 border-b border-border backdrop-blur-md supports-[backdrop-filter]:bg-surface/60">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME} className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+            <Link href={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME} className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
               <span className="text-xl font-bold text-text">SkillSync</span>
@@ -40,11 +38,14 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated && user && (
               <>
-                <span className="text-sm text-text-muted">Welcome, {user.name}!</span>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <span className="text-sm text-text-muted">Welcome, <span className="text-text font-medium">{user.name}</span></span>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-text-muted hover:text-text bg-transparent hover:bg-background rounded-lg transition-all duration-200"
+                >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
-                </Button>
+                </button>
               </>
             )}
             <ThemeToggle />
@@ -64,15 +65,18 @@ export function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-surface">
+        <div className="md:hidden border-t border-border bg-surface/95 backdrop-blur-md">
           <div className="px-4 py-4 space-y-3">
             {isAuthenticated && user && (
               <>
-                <p className="text-sm text-text-muted">Welcome, {user.name}!</p>
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start">
+                <p className="text-sm text-text-muted">Welcome, <span className="text-text font-medium">{user.name}</span></p>
+                <button
+                  onClick={handleLogout}
+                  className="w-full inline-flex items-center justify-start px-3 py-2 text-sm font-medium text-text-muted hover:text-text bg-transparent hover:bg-background rounded-lg transition-all"
+                >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
-                </Button>
+                </button>
               </>
             )}
           </div>
