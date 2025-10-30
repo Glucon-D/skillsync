@@ -38,10 +38,16 @@ This document outlines the complete database structure for SkillSync using Appwr
 | Attribute               | Type          | Size  | Array | Required | Default | Description                                        |
 | ----------------------- | ------------- | ----- | ----- | -------- | ------- | -------------------------------------------------- |
 | `userId`                | string        | 36    | ❌ No  | ✅ Yes    | -       | Reference to Appwrite Auth user ID                 |
+| `username`              | string        | 100   | ❌ No  | ❌ No     | ""      | Unique username for public portfolio               |
+| `userImage`             | string        | 500   | ❌ No  | ❌ No     | ""      | Profile image URL from Appwrite Storage            |
+| `location`              | string        | 200   | ❌ No  | ❌ No     | ""      | User's location                                    |
+| `websiteUrl`            | string        | 500   | ❌ No  | ❌ No     | ""      | User's personal website URL                        |
 | `bio`                   | string        | 1000  | ❌ No  | ❌ No     | ""      | User biography                                     |
 | `education`             | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (education objects)          |
 | `skills`                | string        | 5000  | ✅ Yes | ❌ No     | []      | Array of JSON strings (skill objects)              |
 | `experience`            | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (experience objects)         |
+| `socialLinks`           | string        | 2000  | ✅ Yes | ❌ No     | []      | Array of social media links                        |
+| `projects`              | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (project objects)            |
 | `documents`             | string        | 2000  | ✅ Yes | ❌ No     | []      | Array of document URLs (certificates, transcripts) |
 | `assessmentScores`      | string        | 500   | ❌ No  | ❌ No     | ""      | JSON string of assessment scores object            |
 | `dominantType`          | string        | 50    | ❌ No  | ❌ No     | ""      | Dominant personality type from assessment          |
@@ -51,7 +57,7 @@ This document outlines the complete database structure for SkillSync using Appwr
 | `$updatedAt`            | datetime      | -     | ❌ No  | ✅ Yes    | auto    | Last update timestamp                              |
 
 **IMPORTANT:** When creating attributes in Appwrite Console:
-- For `education`, `skills`, `experience`: Select **String** type and check **"Array"** option
+- For `education`, `skills`, `experience`, `socialLinks`, `projects`: Select **String** type and check **"Array"** option
 - Each array element will be a JSON string representing an object
 - For `assessmentScores`: Select **String** type (NOT array) - store as single JSON string
 
@@ -94,6 +100,30 @@ This document outlines the complete database structure for SkillSync using Appwr
 ]
 ```
 
+**socialLinks** (Array of strings):
+
+```json
+[
+  "https://github.com/username",
+  "https://linkedin.com/in/username",
+  "https://twitter.com/username"
+]
+```
+
+**projects** (Array of objects):
+
+```json
+[
+  {
+    "name": "string (max 200)",
+    "description": "string (max 1000)",
+    "url": "string (max 500, optional)",
+    "techStack": ["string array"],
+    "image": "string (max 500, optional)"
+  }
+]
+```
+
 **documents** (Array of strings):
 
 ```json
@@ -122,6 +152,7 @@ This document outlines the complete database structure for SkillSync using Appwr
 ### Indexes:
 
 - `userId` (unique)
+- `username` (key, unique)
 - `completionPercentage`
 - `dominantType`
 - `assessmentCompletedAt`
@@ -188,18 +219,49 @@ This document outlines the complete database structure for SkillSync using Appwr
 
 ### Attributes:
 
-| Attribute       | Type     | Size | Required | Default | Description                                  |
-| --------------- | -------- | ---- | -------- | ------- | -------------------------------------------- |
-| `userId`        | string   | 36   | Yes      | -       | Reference to Appwrite Auth user ID           |
-| `pathwayId`     | string   | 50   | Yes      | -       | Pathway ID (from skills.ts e.g. sp1, sp2)    |
-| `name`          | string   | 200  | Yes      | -       | Pathway name (denormalized for quick access) |
-| `category`      | string   | 100  | Yes      | -       | Category (e.g., Frontend Development)        |
-| `level`         | string   | 20   | Yes      | -       | beginner/intermediate/advanced               |
-| `completed`     | boolean  | -    | Yes      | false   | Is pathway completed                         |
-| `completedAt`   | datetime | -    | No       | null    | When pathway was completed                   |
-| `estimatedTime` | string   | 50   | No       | ""      | Estimated time to complete (e.g., "2 weeks") |
-| `$createdAt`    | datetime | -    | Yes      | auto    | Creation timestamp                           |
-| `$updatedAt`    | datetime | -    | Yes      | auto    | Last update timestamp                        |
+| Attribute       | Type     | Size  | Required | Default | Description                                       |
+| --------------- | -------- | ----- | -------- | ------- | ------------------------------------------------- |
+| `userId`        | string   | 36    | Yes      | -       | Reference to Appwrite Auth user ID                |
+| `pathwayId`     | string   | 50    | Yes      | -       | Pathway ID (from skills.ts e.g. sp1, sp2)         |
+| `name`          | string   | 200   | Yes      | -       | Pathway name (denormalized for quick access)      |
+| `category`      | string   | 100   | Yes      | -       | Category (e.g., Frontend Development)             |
+| `level`         | string   | 20    | Yes      | -       | beginner/intermediate/advanced                    |
+| `description`   | string   | 1000  | No       | ""      | Pathway description                               |
+| `stepsData`     | string   | 10000 | No       | ""      | JSON stringified array of learning steps          |
+| `resourcesData` | string   | 5000  | No       | ""      | JSON stringified array of resources               |
+| `isCustom`      | boolean  | -     | No       | false   | True if user-requested skill                      |
+| `completed`     | boolean  | -     | Yes      | false   | Is pathway completed                              |
+| `completedAt`   | datetime | -     | No       | null    | When pathway was completed                        |
+| `estimatedTime` | string   | 50    | No       | ""      | Estimated time to complete (e.g., "2 weeks")      |
+| `$createdAt`    | datetime | -     | Yes      | auto    | Creation timestamp                                |
+| `$updatedAt`    | datetime | -     | Yes      | auto    | Last update timestamp                             |
+
+### JSON Structure for Nested Fields:
+
+**stepsData** (Array of objects):
+
+```json
+[
+  {
+    "id": "string",
+    "title": "string",
+    "description": "string",
+    "completed": "boolean"
+  }
+]
+```
+
+**resourcesData** (Array of objects):
+
+```json
+[
+  {
+    "title": "string",
+    "url": "string",
+    "type": "string (e.g., video, article, course)"
+  }
+]
+```
 
 ### Indexes:
 

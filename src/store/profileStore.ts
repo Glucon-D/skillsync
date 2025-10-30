@@ -6,7 +6,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Profile, Education, Skill, Experience, DocumentMetadata } from "@/lib/types";
+import type { Profile, Education, Skill, Experience, DocumentMetadata, Project } from "@/lib/types";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { calculateProfileCompletion } from "@/lib/utils";
 import { profileService } from "@/lib/db";
@@ -26,6 +26,10 @@ interface ProfileActions {
   removeSkill: (index: number) => Promise<void>;
   addExperience: (experience: Experience) => Promise<void>;
   removeExperience: (index: number) => Promise<void>;
+  addProject: (project: Project) => Promise<void>;
+  removeProject: (index: number) => Promise<void>;
+  addSocialLink: (link: string) => Promise<void>;
+  removeSocialLink: (index: number) => Promise<void>;
   addDocument: (document: DocumentMetadata | string) => Promise<void>;
   removeDocument: (index: number) => Promise<void>;
   getCompletionPercentage: () => number;
@@ -218,6 +222,106 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
             });
           } catch (error) {
             console.error("Failed to sync experience removal:", error);
+          }
+        }
+      },
+
+      addProject: async (project: Project) => {
+        const profile = get().profile;
+        if (!profile) return;
+
+        const updatedProfile = {
+          ...profile,
+          projects: [...(profile.projects || []), project],
+        };
+        updatedProfile.completionPercentage =
+          calculateProfileCompletion(updatedProfile);
+        set({ profile: updatedProfile });
+
+        // Sync to database
+        if (profile.$id && profile.userId) {
+          try {
+            await profileService.update(profile.$id, profile.userId, {
+              projects: updatedProfile.projects,
+              completionPercentage: updatedProfile.completionPercentage,
+            });
+          } catch (error) {
+            console.error("Failed to sync project:", error);
+          }
+        }
+      },
+
+      removeProject: async (index: number) => {
+        const profile = get().profile;
+        if (!profile) return;
+
+        const updatedProfile = {
+          ...profile,
+          projects: (profile.projects || []).filter((_, i) => i !== index),
+        };
+        updatedProfile.completionPercentage =
+          calculateProfileCompletion(updatedProfile);
+        set({ profile: updatedProfile });
+
+        // Sync to database
+        if (profile.$id && profile.userId) {
+          try {
+            await profileService.update(profile.$id, profile.userId, {
+              projects: updatedProfile.projects,
+              completionPercentage: updatedProfile.completionPercentage,
+            });
+          } catch (error) {
+            console.error("Failed to sync project removal:", error);
+          }
+        }
+      },
+
+      addSocialLink: async (link: string) => {
+        const profile = get().profile;
+        if (!profile) return;
+
+        const updatedProfile = {
+          ...profile,
+          socialLinks: [...(profile.socialLinks || []), link],
+        };
+        updatedProfile.completionPercentage =
+          calculateProfileCompletion(updatedProfile);
+        set({ profile: updatedProfile });
+
+        // Sync to database
+        if (profile.$id && profile.userId) {
+          try {
+            await profileService.update(profile.$id, profile.userId, {
+              socialLinks: updatedProfile.socialLinks,
+              completionPercentage: updatedProfile.completionPercentage,
+            });
+          } catch (error) {
+            console.error("Failed to sync social link:", error);
+          }
+        }
+      },
+
+      removeSocialLink: async (index: number) => {
+        const profile = get().profile;
+        if (!profile) return;
+
+        const updatedProfile = {
+          ...profile,
+          socialLinks: (profile.socialLinks || []).filter((_, i) => i !== index),
+        };
+        updatedProfile.completionPercentage =
+          calculateProfileCompletion(updatedProfile);
+        set({ profile: updatedProfile });
+
+        // Sync to database
+        if (profile.$id && profile.userId) {
+          try {
+            await profileService.update(profile.$id, profile.userId, {
+              socialLinks: updatedProfile.socialLinks,
+              completionPercentage: updatedProfile.completionPercentage,
+            });
+          } catch (error) {
+            console.error("Failed to sync social link removal:", error);
           }
         }
       },

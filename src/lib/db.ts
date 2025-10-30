@@ -19,10 +19,16 @@ const getUserPermissions = (_userId: string) => [];
 
 export interface UserProfileRow {
   userId: string; // Size: 50 in Appwrite (supports longer IDs)
+  username: string; // Size: 100, nullable - public portfolio username
+  userImage: string; // Size: 500, nullable - profile image URL from Appwrite Storage
   bio: string; // Size: 2000, nullable
+  location: string; // Size: 200, nullable
+  websiteUrl: string; // Size: 500, nullable
+  socialLinks: string[]; // Array of strings, Size: 2000, nullable
   education: string[]; // Array of JSON strings, Size: 10000, nullable
   skills: string[]; // Array of JSON strings, Size: 5000, nullable
   experience: string[]; // Array of JSON strings, Size: 10000, nullable
+  projects: string[]; // Array of JSON strings, Size: 10000, nullable
   documents: string; // Single JSON string containing all documents, Size: 1000000, nullable
   assessmentScores: string[]; // Array of JSON strings in Appwrite, Size: 500, nullable (FIXED: was string, now string[])
   dominantType: string; // Size: 50, nullable
@@ -37,11 +43,17 @@ export const profileService = {
   async create(userId: string, profile: Profile): Promise<UserProfileRow> {
     const rowData: Omit<UserProfileRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
+      username: profile.username || "",
+      userImage: profile.userImage || "",
       bio: profile.bio || "",
+      location: profile.location || "",
+      websiteUrl: profile.websiteUrl || "",
+      socialLinks: profile.socialLinks || [],
       // Convert complex objects to JSON strings for array storage
       education: (profile.education || []).map((e) => JSON.stringify(e)),
       skills: (profile.skills || []).map((s) => JSON.stringify(s)),
       experience: (profile.experience || []).map((e) => JSON.stringify(e)),
+      projects: (profile.projects || []).map((p) => JSON.stringify(p)),
       // Documents: store ALL documents as a single JSON string
       documents: JSON.stringify(profile.documents || []),
       // Convert assessmentScores object to JSON string array (Appwrite schema requires array)
@@ -90,6 +102,29 @@ export const profileService = {
   },
 
   /**
+   * Get user profile by username (for public portfolio)
+   */
+  async getByUsername(username: string): Promise<Profile | null> {
+    try {
+      const response = await tablesDB.listRows({
+        databaseId: DB_CONFIG.databaseId,
+        tableId: DB_CONFIG.tables.userProfiles,
+        queries: [Query.equal("username", username)],
+      });
+
+      if (response.total === 0) {
+        return null;
+      }
+
+      const row = response.rows[0] as any;
+      return this.mapRowToProfile(row);
+    } catch (error) {
+      console.error("Error fetching profile by username:", error);
+      return null;
+    }
+  },
+
+  /**
    * Update user profile
    */
   async update(
@@ -99,13 +134,20 @@ export const profileService = {
   ): Promise<UserProfileRow> {
     const updateData: Partial<UserProfileRow> = {};
 
+    if (updates.username !== undefined) updateData.username = updates.username;
+    if (updates.userImage !== undefined) updateData.userImage = updates.userImage;
     if (updates.bio !== undefined) updateData.bio = updates.bio;
+    if (updates.location !== undefined) updateData.location = updates.location;
+    if (updates.websiteUrl !== undefined) updateData.websiteUrl = updates.websiteUrl;
+    if (updates.socialLinks !== undefined) updateData.socialLinks = updates.socialLinks;
     if (updates.education !== undefined)
       updateData.education = updates.education.map((e) => JSON.stringify(e));
     if (updates.skills !== undefined)
       updateData.skills = updates.skills.map((s) => JSON.stringify(s));
     if (updates.experience !== undefined)
       updateData.experience = updates.experience.map((e) => JSON.stringify(e));
+    if (updates.projects !== undefined)
+      updateData.projects = updates.projects.map((p) => JSON.stringify(p));
     if (updates.documents !== undefined) {
       // Documents: store ALL documents as a single JSON string
       updateData.documents = JSON.stringify(updates.documents);
@@ -196,10 +238,16 @@ export const profileService = {
 
     return {
       userId: row.userId,
+      username: row.username || "",
+      userImage: row.userImage || "",
       bio: row.bio || "",
+      location: row.location || "",
+      websiteUrl: row.websiteUrl || "",
+      socialLinks: Array.isArray(row.socialLinks) ? row.socialLinks : [],
       education: parseJsonArray(row.education),
       skills: parseJsonArray(row.skills),
       experience: parseJsonArray(row.experience),
+      projects: parseJsonArray(row.projects),
       documents: parseDocuments(row.documents),
       assessmentScores: parseAssessmentScores(row.assessmentScores),
       dominantType: row.dominantType || "",

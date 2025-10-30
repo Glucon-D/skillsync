@@ -7,16 +7,17 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Plus, Trash2, Edit2, Save, X, Upload, FileText } from "lucide-react";
+import { Plus, Trash2, Edit2, Save, X, Upload, FileText, ExternalLink, Link as LinkIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileStore } from "@/store/profileStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/input";
+import { Input, Textarea } from "@/components/ui/input";
 import { AddSkillDialog } from "@/components/profile/AddSkillDialog";
 import { AddEducationDialog } from "@/components/profile/AddEducationDialog";
 import { AddExperienceDialog } from "@/components/profile/AddExperienceDialog";
+import { AddProjectDialog } from "@/components/profile/AddProjectDialog";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -28,19 +29,31 @@ export default function ProfilePage() {
     addSkill,
     addEducation,
     addExperience,
+    addProject,
+    addSocialLink,
     addDocument,
     removeSkill,
     removeEducation,
     removeExperience,
+    removeProject,
+    removeSocialLink,
     removeDocument,
   } = useProfileStore();
 
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [educationDialogOpen, setEducationDialogOpen] = useState(false);
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
+  const [isEditingBasicInfo, setIsEditingBasicInfo] = useState(false);
   const [bioText, setBioText] = useState("");
+  const [username, setUsername] = useState("");
+  const [location, setLocation] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [newSocialLink, setNewSocialLink] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user?.id && !profile && !isLoading) {
@@ -52,6 +65,9 @@ export default function ProfilePage() {
   useEffect(() => {
     if (profile) {
       setBioText(profile.bio || "");
+      setUsername(profile.username || "");
+      setLocation(profile.location || "");
+      setWebsiteUrl(profile.websiteUrl || "");
     }
   }, [profile]);
 
@@ -67,6 +83,78 @@ export default function ProfilePage() {
   const handleCancelBio = () => {
     setBioText(profile?.bio || "");
     setIsEditingBio(false);
+  };
+
+  const handleEditBasicInfo = () => {
+    setIsEditingBasicInfo(true);
+  };
+
+  const handleSaveBasicInfo = async () => {
+    await updateProfile({
+      username: username.trim() || undefined,
+      location: location.trim() || undefined,
+      websiteUrl: websiteUrl.trim() || undefined,
+    });
+    setIsEditingBasicInfo(false);
+  };
+
+  const handleCancelBasicInfo = () => {
+    setUsername(profile?.username || "");
+    setLocation(profile?.location || "");
+    setWebsiteUrl(profile?.websiteUrl || "");
+    setIsEditingBasicInfo(false);
+  };
+
+  const handleAddSocialLink = async () => {
+    if (newSocialLink.trim()) {
+      await addSocialLink(newSocialLink.trim());
+      setNewSocialLink("");
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('userId', user.id);
+
+      const response = await fetch('/api/profile/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const { imageUrl } = await response.json();
+      await updateProfile({ userImage: imageUrl });
+    } catch (error) {
+      console.error('Image upload error:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) {
+        imageInputRef.current.value = '';
+      }
+    }
   };
 
   const [uploading, setUploading] = useState(false);
@@ -133,6 +221,16 @@ export default function ProfilePage() {
     );
   }
 
+  const getUserInitial = () => {
+    if (profile?.username) {
+      return profile.username.charAt(0).toUpperCase();
+    }
+    if (user?.name) {
+      return user.name.charAt(0).toUpperCase();
+    }
+    return '?';
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -141,6 +239,59 @@ export default function ProfilePage() {
           Manage your personal information and track your progress
         </p>
       </div>
+
+      {/* Profile Image Card */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center gap-4">
+            {/* Avatar Display */}
+            <div className="relative group">
+              {profile.userImage ? (
+                <img
+                  src={profile.userImage}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-primary-500 shadow-lg"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                  {getUserInitial()}
+                </div>
+              )}
+              {/* Upload overlay */}
+              <button
+                onClick={() => imageInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-medium"
+              >
+                {uploadingImage ? 'Uploading...' : 'Change Photo'}
+              </button>
+            </div>
+
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              disabled={uploadingImage}
+            />
+
+            <div className="text-center">
+              <Button
+                size="sm"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={uploadingImage}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {profile.userImage ? 'Change Photo' : 'Upload Photo'}
+              </Button>
+              <p className="text-xs text-text-muted mt-2">
+                Max 5MB • JPG, PNG, GIF, WebP
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -162,6 +313,93 @@ export default function ProfilePage() {
               style={{ width: `${profile.completionPercentage}%` }}
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Basic Information</CardTitle>
+            {!isEditingBasicInfo ? (
+              <Button size="sm" onClick={handleEditBasicInfo}>
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={handleCancelBasicInfo}>
+                  <X className="w-4 h-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleSaveBasicInfo}>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {!isEditingBasicInfo ? (
+            <div className="space-y-3">
+              {profile.username && (
+                <div>
+                  <p className="text-sm text-text-muted">Username</p>
+                  <p className="text-text font-medium">@{profile.username}</p>
+                </div>
+              )}
+              {profile.location && (
+                <div>
+                  <p className="text-sm text-text-muted">Location</p>
+                  <p className="text-text">{profile.location}</p>
+                </div>
+              )}
+              {profile.websiteUrl && (
+                <div>
+                  <p className="text-sm text-text-muted">Website</p>
+                  <a
+                    href={profile.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-500 hover:underline flex items-center gap-1"
+                  >
+                    {profile.websiteUrl}
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
+              {!profile.username && !profile.location && !profile.websiteUrl && (
+                <div className="text-center py-8 text-text-muted">
+                  <p>No basic information added yet</p>
+                  <Button className="mt-4" onClick={handleEditBasicInfo}>
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Add Information
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Input
+                label="Username"
+                placeholder="e.g., johndoe"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <Input
+                label="Location"
+                placeholder="e.g., San Francisco, CA"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+              <Input
+                label="Website URL"
+                placeholder="e.g., https://yourwebsite.com"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -253,12 +491,6 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <AddSkillDialog
-        isOpen={skillDialogOpen}
-        onClose={() => setSkillDialogOpen(false)}
-        onAdd={addSkill}
-      />
-
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -307,12 +539,6 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <AddEducationDialog
-        isOpen={educationDialogOpen}
-        onClose={() => setEducationDialogOpen(false)}
-        onAdd={addEducation}
-      />
-
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -359,6 +585,126 @@ export default function ProfilePage() {
               </Button>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Projects</CardTitle>
+            <Button size="sm" onClick={() => setProjectDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Project
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {profile.projects && profile.projects.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {profile.projects.map((project, index) => (
+                <div
+                  key={index}
+                  className="relative group p-4 border border-border rounded-lg hover:border-primary-500 transition-colors"
+                >
+                  {project.image && (
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="w-full h-32 object-cover rounded-md mb-3"
+                    />
+                  )}
+                  <h3 className="font-semibold text-text">{project.name}</h3>
+                  <p className="text-sm text-text-muted mt-1">{project.description}</p>
+                  {project.url && (
+                    <a
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary-500 hover:underline flex items-center gap-1 mt-2"
+                    >
+                      View Project
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {project.techStack.map((tech, i) => (
+                      <Badge key={i} variant="default" size="sm">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => removeProject(index)}
+                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-text-muted">
+              <p>No projects added yet</p>
+              <Button className="mt-4" onClick={() => setProjectDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Project
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Social Links</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {profile.socialLinks && profile.socialLinks.length > 0 && (
+              <div className="space-y-2">
+                {profile.socialLinks.map((link, index) => (
+                  <div
+                    key={index}
+                    className="relative group flex items-center justify-between p-3 bg-surface rounded-lg border border-border hover:border-primary-500 transition-colors"
+                  >
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-500 hover:underline flex items-center gap-2 flex-1 truncate"
+                    >
+                      <LinkIcon className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{link}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                    <button
+                      onClick={() => removeSocialLink(index)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded ml-2"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add social media link (e.g., https://github.com/username)"
+                value={newSocialLink}
+                onChange={(e) => setNewSocialLink(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddSocialLink();
+                  }
+                }}
+              />
+              <Button onClick={handleAddSocialLink} disabled={!newSocialLink.trim()}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -444,7 +790,7 @@ export default function ProfilePage() {
                         }
                         await removeDocument(index);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
@@ -486,6 +832,11 @@ export default function ProfilePage() {
         isOpen={experienceDialogOpen}
         onClose={() => setExperienceDialogOpen(false)}
         onAdd={addExperience}
+      />
+      <AddProjectDialog
+        isOpen={projectDialogOpen}
+        onClose={() => setProjectDialogOpen(false)}
+        onAdd={addProject}
       />
     </div>
   );
