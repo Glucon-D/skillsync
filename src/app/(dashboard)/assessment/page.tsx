@@ -38,99 +38,101 @@ export default function AssessmentPage() {
 
   if (isCompleted && result) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="w-full max-w-2xl mx-auto animate-[fadeIn_0.6s_ease-out]">
-          <div className="bg-gradient-to-br from-white via-orange-50/30 to-white dark:from-surface dark:via-primary-900/5 dark:to-surface rounded-3xl shadow-2xl shadow-primary-500/10 border border-primary-100 dark:border-primary-900/20 p-5 sm:p-6 space-y-4">
-            
-            {/* Success Header */}
-            <div className="text-center space-y-2">
-              <div className="mx-auto w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/40 relative">
-                <div className="absolute inset-0 bg-green-400 rounded-full blur-xl opacity-40 animate-pulse" />
-                <CheckCircle className="w-7 h-7 text-white relative z-10" />
-              </div>
-              
-              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-                Assessment Complete!
-              </h2>
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)] p-3 sm:p-6">
+        <div className="w-full max-w-4xl mx-auto">
+          <Card className="border-2 shadow-2xl overflow-hidden">
+            <CardContent className="p-4 sm:p-6 space-y-4">
 
-              {/* Status Messages */}
+              {/* Success Header */}
+              <div className="text-center space-y-2">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-xl relative">
+                  <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-30 animate-pulse" />
+                  <CheckCircle className="w-8 h-8 text-white relative z-10" strokeWidth={2.5} />
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
+                  Assessment Complete!
+                </h2>
+
+                {/* Status Messages */}
+                <div className="flex justify-center">
+                  {isSaving && (
+                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 px-3 py-1">
+                      <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-700 dark:border-blue-300 border-t-transparent" />
+                      <span>Saving...</span>
+                    </Badge>
+                  )}
+
+                  {!isSaving && !saveError && (
+                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 px-3 py-1">
+                      <CheckCircle className="w-3 h-3" />
+                      <span>Saved Successfully</span>
+                    </Badge>
+                  )}
+
+                  {saveError && (
+                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700 px-3 py-1">
+                      <span>Failed to save</span>
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Dominant Type Badge */}
               <div className="flex justify-center">
-                {isSaving && (
-                  <div className="inline-flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-800 shadow-md">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 dark:border-blue-400" />
-                    <span>Saving...</span>
-                  </div>
-                )}
-
-                {!isSaving && !saveError && (
-                  <div className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full border border-green-200 dark:border-green-800 shadow-md">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Saved Successfully</span>
-                  </div>
-                )}
-
-                {saveError && (
-                  <div className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-full border border-red-200 dark:border-red-800 shadow-md">
-                    <span>❌ Failed to save</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Dominant Type Badge */}
-            <div className="flex justify-center">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-primary-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
-                <div className="relative bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-2xl shadow-xl">
-                  <div className="text-xs uppercase tracking-widest font-semibold opacity-90 mb-0.5">
-                    Your Dominant Type
-                  </div>
-                  <div className="text-xl sm:text-2xl font-bold capitalize">
-                    {result.dominantType}
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity" />
+                  <div className="relative bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl shadow-xl border border-primary-400">
+                    <div className="text-xs uppercase tracking-widest font-bold opacity-90">
+                      Your Dominant Type
+                    </div>
+                    <div className="text-2xl font-bold capitalize">
+                      {result.dominantType}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Scores Section */}
-            <div className="space-y-2.5 pt-1">
-              <h3 className="text-base font-semibold text-text text-center mb-2">Your Scores</h3>
-              <div className="space-y-2.5">
-                {Object.entries(result.scores).map(([category, score], index) => (
-                  <div 
-                    key={category} 
-                    className="space-y-1"
-                    style={{ 
-                      animation: `slideIn 0.5s ease-out ${index * 0.1}s both`
-                    }}
-                  >
-                    <div className="flex justify-between items-baseline">
-                      <span className="capitalize text-text font-semibold text-sm">{category}</span>
-                      <span className="text-primary-600 dark:text-primary-400 font-bold text-sm">{score.toFixed(1)}/5</span>
-                    </div>
-                    <div className="relative h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 rounded-full transition-all duration-1000 ease-out shadow-lg relative"
-                        style={{ width: `${(score / 5) * 100}%` }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 animate-[shimmer_2s_infinite]" />
+              {/* Scores Section */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-bold text-text text-center">Your Scores</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {Object.entries(result.scores).map(([category, score], index) => (
+                    <div
+                      key={category}
+                      className="space-y-1.5 p-3 bg-surface rounded-lg border border-border hover:border-primary-400 transition-all duration-300"
+                    >
+                      <div className="flex justify-between items-baseline">
+                        <span className="capitalize text-text font-bold text-sm">{category}</span>
+                        <span className="text-primary-600 dark:text-primary-400 font-bold text-base">{score.toFixed(1)}/5</span>
+                      </div>
+                      <div className="relative h-2 bg-background rounded-full overflow-hidden shadow-inner">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-1000 ease-out shadow-lg relative"
+                          style={{
+                            width: `${(score / 5) * 100}%`,
+                            animation: `slideIn 0.8s ease-out ${index * 0.15}s both`
+                          }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/40 to-white/0 animate-[shimmer_2s_infinite]" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Action Button */}
-            <div className="pt-2">
-              <button
-                onClick={resetAssessment}
-                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-3 rounded-full shadow-xl shadow-primary-500/30 hover:shadow-2xl hover:shadow-primary-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Retake Assessment
-              </button>
-            </div>
-          </div>
+              {/* Action Button */}
+              <div className="pt-2">
+                <Button
+                  onClick={resetAssessment}
+                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold py-3 text-base rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Retake Assessment
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
