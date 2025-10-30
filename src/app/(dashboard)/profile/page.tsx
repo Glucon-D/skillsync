@@ -18,6 +18,9 @@ import { AddSkillDialog } from "@/components/profile/AddSkillDialog";
 import { AddEducationDialog } from "@/components/profile/AddEducationDialog";
 import { AddExperienceDialog } from "@/components/profile/AddExperienceDialog";
 import { AddProjectDialog } from "@/components/profile/AddProjectDialog";
+import { EditProjectDialog } from "@/components/profile/EditProjectDialog";
+import { EditEducationDialog } from "@/components/profile/EditEducationDialog";
+import { EditExperienceDialog } from "@/components/profile/EditExperienceDialog";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -29,7 +32,10 @@ export default function ProfilePage() {
     addSkill,
     addEducation,
     addExperience,
+    updateEducation,
+    updateExperience,
     addProject,
+    updateProject,
     addSocialLink,
     addDocument,
     removeSkill,
@@ -42,10 +48,18 @@ export default function ProfilePage() {
 
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [educationDialogOpen, setEducationDialogOpen] = useState(false);
+  const [editEducationDialogOpen, setEditEducationDialogOpen] = useState(false);
+  const [editingEducation, setEditingEducation] = useState<{ index: number; education: any } | null>(null);
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
+  const [editExperienceDialogOpen, setEditExperienceDialogOpen] = useState(false);
+  const [editingExperience, setEditingExperience] = useState<{ index: number; experience: any } | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<{ index: number; project: any } | null>(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingBasicInfo, setIsEditingBasicInfo] = useState(false);
+  const [editingSocialLinkIndex, setEditingSocialLinkIndex] = useState<number | null>(null);
+  const [editedSocialLink, setEditedSocialLink] = useState("");
   const [bioText, setBioText] = useState("");
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
@@ -109,6 +123,16 @@ export default function ProfilePage() {
     if (newSocialLink.trim()) {
       await addSocialLink(newSocialLink.trim());
       setNewSocialLink("");
+    }
+  };
+
+  const handleUpdateSocialLink = async (index: number) => {
+    if (editedSocialLink.trim() && profile) {
+      const updatedLinks = [...(profile.socialLinks || [])];
+      updatedLinks[index] = editedSocialLink.trim();
+      await updateProfile({ socialLinks: updatedLinks });
+      setEditingSocialLinkIndex(null);
+      setEditedSocialLink("");
     }
   };
 
@@ -515,12 +539,23 @@ export default function ProfilePage() {
                   {edu.gpa && (
                     <p className="text-sm text-text-muted">GPA: {edu.gpa}</p>
                   )}
-                  <button
-                    onClick={() => removeEducation(index)}
-                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
+                  <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setEditingEducation({ index, education: edu });
+                        setEditEducationDialogOpen(true);
+                      }}
+                      className="p-1 hover:bg-primary-500/20 rounded"
+                    >
+                      <Edit2 className="w-4 h-4 text-primary-500" />
+                    </button>
+                    <button
+                      onClick={() => removeEducation(index)}
+                      className="p-1 hover:bg-red-500/20 rounded"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -564,12 +599,23 @@ export default function ProfilePage() {
                       </Badge>
                     ))}
                   </div>
-                  <button
-                    onClick={() => removeExperience(index)}
-                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
+                  <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setEditingExperience({ index, experience: exp });
+                        setEditExperienceDialogOpen(true);
+                      }}
+                      className="p-1 hover:bg-primary-500/20 rounded"
+                    >
+                      <Edit2 className="w-4 h-4 text-primary-500" />
+                    </button>
+                    <button
+                      onClick={() => removeExperience(index)}
+                      className="p-1 hover:bg-red-500/20 rounded"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -633,12 +679,23 @@ export default function ProfilePage() {
                       </Badge>
                     ))}
                   </div>
-                  <button
-                    onClick={() => removeProject(index)}
-                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
+                  <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setEditingProject({ index, project });
+                        setEditProjectDialogOpen(true);
+                      }}
+                      className="p-1 hover:bg-primary-500/20 rounded"
+                    >
+                      <Edit2 className="w-4 h-4 text-primary-500" />
+                    </button>
+                    <button
+                      onClick={() => removeProject(index)}
+                      className="p-1 hover:bg-red-500/20 rounded"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -669,22 +726,72 @@ export default function ProfilePage() {
                     key={index}
                     className="relative group flex items-center justify-between p-3 bg-surface rounded-lg border border-border hover:border-primary-500 transition-colors"
                   >
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-500 hover:underline flex items-center gap-2 flex-1 truncate"
-                    >
-                      <LinkIcon className="w-4 h-4 shrink-0" />
-                      <span className="truncate">{link}</span>
-                      <ExternalLink className="w-3 h-3 shrink-0" />
-                    </a>
-                    <button
-                      onClick={() => removeSocialLink(index)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-500/20 rounded ml-2"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </button>
+                    {editingSocialLinkIndex === index ? (
+                      <>
+                        <Input
+                          value={editedSocialLink}
+                          onChange={(e) => setEditedSocialLink(e.target.value)}
+                          className="flex-1 mr-2"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleUpdateSocialLink(index);
+                            } else if (e.key === 'Escape') {
+                              setEditingSocialLinkIndex(null);
+                              setEditedSocialLink("");
+                            }
+                          }}
+                        />
+                        <div className="flex gap-1">
+                          <Button
+                            size="sm"
+                            onClick={() => handleUpdateSocialLink(index)}
+                          >
+                            <Save className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditingSocialLinkIndex(null);
+                              setEditedSocialLink("");
+                            }}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <a
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-500 hover:underline flex items-center gap-2 flex-1 truncate"
+                        >
+                          <LinkIcon className="w-4 h-4 shrink-0" />
+                          <span className="truncate">{link}</span>
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </a>
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                          <button
+                            onClick={() => {
+                              setEditingSocialLinkIndex(index);
+                              setEditedSocialLink(link);
+                            }}
+                            className="p-1 hover:bg-primary-500/20 rounded"
+                          >
+                            <Edit2 className="w-4 h-4 text-primary-500" />
+                          </button>
+                          <button
+                            onClick={() => removeSocialLink(index)}
+                            className="p-1 hover:bg-red-500/20 rounded"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
@@ -837,6 +944,36 @@ export default function ProfilePage() {
         isOpen={projectDialogOpen}
         onClose={() => setProjectDialogOpen(false)}
         onAdd={addProject}
+      />
+      <EditProjectDialog
+        isOpen={editProjectDialogOpen}
+        onClose={() => {
+          setEditProjectDialogOpen(false);
+          setEditingProject(null);
+        }}
+        onUpdate={updateProject}
+        project={editingProject?.project || null}
+        projectIndex={editingProject?.index || 0}
+      />
+      <EditEducationDialog
+        isOpen={editEducationDialogOpen}
+        onClose={() => {
+          setEditEducationDialogOpen(false);
+          setEditingEducation(null);
+        }}
+        onUpdate={updateEducation}
+        education={editingEducation?.education || null}
+        educationIndex={editingEducation?.index || 0}
+      />
+      <EditExperienceDialog
+        isOpen={editExperienceDialogOpen}
+        onClose={() => {
+          setEditExperienceDialogOpen(false);
+          setEditingExperience(null);
+        }}
+        onUpdate={updateExperience}
+        experience={editingExperience?.experience || null}
+        experienceIndex={editingExperience?.index || 0}
       />
     </div>
   );

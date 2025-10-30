@@ -1,24 +1,26 @@
 /**
- * @file AddProjectDialog.tsx
- * @description Dialog component for adding projects
+ * @file EditProjectDialog.tsx
+ * @description Dialog component for editing projects
  */
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import type { Project } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 
-interface AddProjectDialogProps {
+interface EditProjectDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (project: Project) => Promise<void>;
+  onUpdate: (index: number, project: Project) => Promise<void>;
+  project: Project | null;
+  projectIndex: number;
 }
 
-export function AddProjectDialog({ isOpen, onClose, onAdd }: AddProjectDialogProps) {
+export function EditProjectDialog({ isOpen, onClose, onUpdate, project, projectIndex }: EditProjectDialogProps) {
   const { user } = useAuth();
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
@@ -74,13 +76,23 @@ export function AddProjectDialog({ isOpen, onClose, onAdd }: AddProjectDialogPro
     }
   };
 
+  useEffect(() => {
+    if (project && isOpen) {
+      setName(project.name || '');
+      setDescription(project.description || '');
+      setUrl(project.url || '');
+      setTechStack(project.techStack?.join(', ') || '');
+      setImage(project.image || '');
+    }
+  }, [project, isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !description.trim()) return;
 
     setIsSubmitting(true);
     try {
-      await onAdd({
+      await onUpdate(projectIndex, {
         name: name.trim(),
         description: description.trim(),
         url: url.trim() || undefined,
@@ -90,14 +102,9 @@ export function AddProjectDialog({ isOpen, onClose, onAdd }: AddProjectDialogPro
           .filter((tech) => tech.length > 0),
         image: image.trim() || undefined,
       });
-      setName('');
-      setDescription('');
-      setUrl('');
-      setTechStack('');
-      setImage('');
       onClose();
     } catch (error) {
-      console.error('Failed to add project:', error);
+      console.error('Failed to update project:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -109,7 +116,7 @@ export function AddProjectDialog({ isOpen, onClose, onAdd }: AddProjectDialogPro
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface rounded-lg shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-text">Add Project</h2>
+          <h2 className="text-xl font-bold text-text">Edit Project</h2>
           <button
             onClick={onClose}
             className="text-text-muted hover:text-text transition-colors"
@@ -225,7 +232,7 @@ export function AddProjectDialog({ isOpen, onClose, onAdd }: AddProjectDialogPro
               className="flex-1"
               disabled={isSubmitting || !name.trim() || !description.trim()}
             >
-              {isSubmitting ? 'Adding...' : 'Add Project'}
+              {isSubmitting ? 'Updating...' : 'Update Project'}
             </Button>
           </div>
         </form>
