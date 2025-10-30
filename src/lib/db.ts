@@ -9,11 +9,9 @@ import type { Profile, Course, SkillPathway } from "./types";
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
-const getUserPermissions = (userId: string) => [
-  `read("user:${userId}")`,
-  `update("user:${userId}")`,
-  `delete("user:${userId}")`,
-];
+// Note: Using empty array means permissions inherit from collection settings
+// If you need user-specific permissions, configure them in Appwrite Console
+const getUserPermissions = (_userId: string) => [];
 
 // =====================================
 // USERPROFILES COLLECTION
@@ -208,7 +206,6 @@ export interface UserCourseRow {
   difficulty: string; // Size: 20, nullable
   price: number; // double, Min: 0, nullable
   rating: number; // double, nullable
-  thumbnail: string; // Size: 500, nullable
   url: string; // Size: 1000, nullable
   category: string; // Size: 100, nullable
   bookmarked: boolean; // default: false
@@ -219,7 +216,7 @@ export const coursesService = {
   /**
    * Add a course for a user
    */
-  async add(userId: string, course: Course): Promise<UserCourseRow> {
+  async add(userId: string, course: Course, bookmarked: boolean = false): Promise<UserCourseRow> {
     const rowData: Omit<UserCourseRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
       courseId: course.id,
@@ -228,10 +225,9 @@ export const coursesService = {
       difficulty: course.difficulty,
       price: course.price,
       rating: course.rating,
-      thumbnail: course.thumbnail || "",
       url: course.url,
       category: course.category || "",
-      bookmarked: true,
+      bookmarked,
       completed: false,
     };
 
@@ -344,7 +340,7 @@ export const coursesService = {
   /**
    * Map database row to Course type
    */
-  mapRowToCourse(row: any): Course {
+  mapRowToCourse(row: any): Course & { bookmarked?: boolean } {
     return {
       id: row.courseId,
       title: row.title,
@@ -352,10 +348,11 @@ export const coursesService = {
       difficulty: row.difficulty,
       price: row.price,
       rating: row.rating,
-      thumbnail: row.thumbnail || "",
       url: row.url,
       category: row.category || "",
+      bookmarked: row.bookmarked !== false,
       $dbId: row.$id, // Store the database row ID for updates/deletes
+      $createdAt: row.$createdAt, // Store creation timestamp for sorting
     };
   },
 };
