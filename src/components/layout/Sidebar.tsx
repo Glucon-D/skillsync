@@ -1,7 +1,7 @@
 /**
  * @file Sidebar.tsx
  * @description Dashboard sidebar navigation component
- * @dependencies react, next/link, next/navigation, lucide-react, framer-motion, @/lib/constants, @/lib/utils
+ * @dependencies react, next/link, next/navigation, lucide-react, @/lib/constants, @/lib/utils
  */
 
 'use client';
@@ -17,7 +17,6 @@ import {
   Briefcase,
   ExternalLink,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { ROUTES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/authStore';
@@ -84,17 +83,6 @@ export function Sidebar() {
                   />
                 </div>
                 {item.name}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute right-4 w-2 h-2 rounded-full bg-white"
-                    transition={{
-                      type: 'spring',
-                      stiffness: 400,
-                      damping: 30,
-                    }}
-                  />
-                )}
               </Link>
             );
           })}
@@ -196,17 +184,6 @@ export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeA
                     />
                   </div>
                   {item.name}
-                  {isActive && (
-                    <motion.div
-                      layoutId="mobileActiveIndicator"
-                      className="absolute right-4 w-2 h-2 rounded-full bg-white"
-                      transition={{
-                        type: 'spring',
-                        stiffness: 400,
-                        damping: 30,
-                      }}
-                    />
-                  )}
                 </Link>
               );
             })}
