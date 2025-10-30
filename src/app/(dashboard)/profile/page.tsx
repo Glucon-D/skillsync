@@ -388,82 +388,69 @@ export default function ProfilePage() {
           />
           {profile.documents && profile.documents.length > 0 ? (
             <div className="space-y-4">
-              {profile.documents.map((doc, index) => {
-                // Handle both old string format and new object format
-                const isOldFormat = typeof doc === 'string';
-                const fileName = isOldFormat ? doc.replace('local://', '') : doc.name;
-                const fileUrl = isOldFormat ? '#' : doc.url;
-                const summary = !isOldFormat && doc.summary ? doc.summary : '';
-                const uploadDate = !isOldFormat && doc.uploadedAt
-                  ? new Date(doc.uploadedAt).toLocaleDateString()
-                  : '';
-
-                return (
-                  <div
-                    key={index}
-                    className="relative group p-4 bg-surface rounded-lg border border-border hover:border-primary-500 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3 flex-1">
-                        <FileText className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <a
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-text hover:text-primary-500 transition-colors block truncate"
-                          >
-                            {fileName}
-                          </a>
-                          {uploadDate && (
-                            <p className="text-xs text-text-muted mt-1">
-                              Uploaded: {uploadDate}
-                            </p>
-                          )}
-                          {summary && (
-                            <p className="text-sm text-text-muted mt-2 line-clamp-2">
-                              {summary}
-                            </p>
-                          )}
-                          {!isOldFormat && doc.extractedData && Object.keys(doc.extractedData).length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {Object.entries(doc.extractedData).map(([key, value]) => {
-                                if (Array.isArray(value) && value.length > 0) {
-                                  return (
-                                    <Badge key={key} variant="default" size="sm">
-                                      {key}: {value.length}
-                                    </Badge>
-                                  );
-                                }
-                                return null;
-                              })}
-                            </div>
-                          )}
-                        </div>
+              {profile.documents.map((doc, index) => (
+                <div
+                  key={doc.id || index}
+                  className="relative group p-4 bg-surface rounded-lg border border-border hover:border-primary-500 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1">
+                      <FileText className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-text hover:text-primary-500 transition-colors block truncate"
+                        >
+                          {doc.name}
+                        </a>
+                        {doc.uploadedAt && (
+                          <p className="text-xs text-text-muted mt-1">
+                            Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
+                          </p>
+                        )}
+                        {doc.summary && (
+                          <p className="text-sm text-text-muted mt-2 line-clamp-2">
+                            {doc.summary}
+                          </p>
+                        )}
+                        {doc.extractedData && Object.keys(doc.extractedData).length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {Object.entries(doc.extractedData).map(([key, value]) => {
+                              if (Array.isArray(value) && value.length > 0) {
+                                return (
+                                  <Badge key={key} variant="default" size="sm">
+                                    {key}: {value.length}
+                                  </Badge>
+                                );
+                              }
+                              return null;
+                            })}
+                          </div>
+                        )}
                       </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={async () => {
-                          if (!isOldFormat) {
-                            try {
-                              await fetch(`/api/documents/${doc.id}`, {
-                                method: 'DELETE',
-                              });
-                            } catch (error) {
-                              console.error('Delete error:', error);
-                            }
-                          }
-                          await removeDocument(index);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
                     </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={async () => {
+                        try {
+                          await fetch(`/api/documents/${doc.id}`, {
+                            method: 'DELETE',
+                          });
+                        } catch (error) {
+                          console.error('Delete error:', error);
+                        }
+                        await removeDocument(index);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8 text-text-muted">
