@@ -20,6 +20,12 @@ importers:
       next:
         specifier: 16.0.1
         version: 16.0.1(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      node-appwrite:
+        specifier: ^20.2.1
+        version: 20.2.1
+      pdf-parse-fork:
+        specifier: ^1.2.0
+        version: 1.2.0
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1660,6 +1666,15 @@ packages:
       sass:
         optional: true
 
+  node-appwrite@20.2.1:
+    resolution: {integrity: sha512-RweIh+3RHjprsxhWaJzcQr/UDMBMsZCma50TIJ9t3onVgs5jAT9aqFnsMlaaC9QZn1sXpPUQV90W6uvtm64DnQ==}
+
+  node-ensure@0.0.0:
+    resolution: {integrity: sha512-DRI60hzo2oKN1ma0ckc6nQWlHU69RH6xN0sjQTjMpChPfTYvKZdcQFfdYK2RWbJcKyUizSIy/l8OTGxMAM1QDw==}
+
+  node-fetch-native-with-agent@1.7.2:
+    resolution: {integrity: sha512-5MaOOCuJEvcckoz7/tjdx1M6OusOY6Xc5f459IaruGStWnKzlI1qpNgaAwmn4LmFYcsSlj+jBMk84wmmRxfk5g==}
+
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
 
@@ -1725,6 +1740,10 @@ packages:
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+
+  pdf-parse-fork@1.2.0:
+    resolution: {integrity: sha512-ovXkJaTtw8PfLNhBThKHKsZlT6WrCkVKY/QgsDK5GiD/tuL2qzezSlHpEgqHCnq3r/0GOq3NZ+won78KL/dAjQ==}
+    engines: {node: '>=6.8.1'}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -3811,6 +3830,14 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
+  node-appwrite@20.2.1:
+    dependencies:
+      node-fetch-native-with-agent: 1.7.2
+
+  node-ensure@0.0.0: {}
+
+  node-fetch-native-with-agent@1.7.2: {}
+
   node-releases@2.0.27: {}
 
   object-assign@4.1.1: {}
@@ -3887,6 +3914,13 @@ snapshots:
   path-key@3.1.1: {}
 
   path-parse@1.0.7: {}
+
+  pdf-parse-fork@1.2.0:
+    dependencies:
+      debug: 4.4.3
+      node-ensure: 0.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   picocolors@1.1.1: {}
 
