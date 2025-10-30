@@ -115,16 +115,6 @@ export interface Career {
   matchPercentage?: number;
 }
 
-export interface SkillPathway {
-  id: string;
-  name: string;
-  category: string;
-  level: SkillLevel;
-  estimatedTime: string;
-  resources: string[];
-  completed: boolean;
-}
-
 export interface OnboardingData {
   name: string;
   email: string;

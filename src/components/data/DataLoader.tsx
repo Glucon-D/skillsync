@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfileStore } from '@/store/profileStore';
 import { useCoursesStore } from '@/store/coursesStore';
-import { usePathwaysStore } from '@/store/pathwaysStore';
 
 /**
  * DataLoader component
@@ -22,22 +21,19 @@ import { usePathwaysStore } from '@/store/pathwaysStore';
  * Data loaded:
  * - User profile (education, skills, experience, assessment scores)
  * - Bookmarked courses
- * - Learning pathway progress
  */
 export function DataLoader() {
   const { user } = useAuth();
   const loadProfile = useProfileStore((state) => state.loadProfile);
   const loadCourses = useCoursesStore((state) => state.loadCourses);
-  const loadPathways = usePathwaysStore((state) => state.loadPathways);
 
   useEffect(() => {
     if (user?.id) {
       // Load all user data from the database
       loadProfile(user.id);
       loadCourses(user.id);
-      loadPathways(user.id);
     }
-  }, [user?.id, loadProfile, loadCourses, loadPathways]);
+  }, [user?.id, loadProfile, loadCourses]);
 
   // This component doesn't render anything
   return null;

@@ -5,7 +5,7 @@
  */
 
 import { tablesDB, DB_CONFIG, ID } from "./appwrite";
-import type { Profile, Course, SkillPathway, GeneratedPathwayResponse, StoredAIPathway } from "./types";
+import type { Profile, Course, GeneratedPathwayResponse, StoredAIPathway } from "./types";
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
@@ -375,122 +375,6 @@ export const coursesService = {
   },
 };
 
-// =====================================
-// USER_PATHWAYS COLLECTION
-// =====================================
-
-export interface UserPathwayRow {
-  userId: string; // Size: 36, required
-  pathwayId: string; // Size: 50, required
-  name: string; // Size: 200, required
-  category: string; // Size: 100, required
-  level: string; // Size: 20, required
-  completed: boolean; // default: false
-  completedAt: string | null; // datetime, nullable
-  estimatedTime: string; // Size: 50, nullable
-}
-
-export const pathwaysService = {
-  /**
-   * Add a pathway for a user
-   */
-  async add(userId: string, pathway: SkillPathway): Promise<UserPathwayRow> {
-    const rowData: Omit<UserPathwayRow, "$id" | "$createdAt" | "$updatedAt"> = {
-      userId,
-      pathwayId: pathway.id,
-      name: pathway.name,
-      category: pathway.category,
-      level: pathway.level,
-      completed: false,
-      completedAt: null,
-      estimatedTime: pathway.estimatedTime || "",
-    };
-
-    const response = await tablesDB.createRow({
-      databaseId: DB_CONFIG.databaseId,
-      tableId: DB_CONFIG.tables.userPathways,
-      rowId: ID.unique(),
-      data: rowData,
-      permissions: getUserPermissions(userId),
-    });
-
-    return response as unknown as UserPathwayRow;
-  },
-
-  /**
-   * Get all pathways for a user
-   */
-  async getByUserId(userId: string): Promise<any[]> {
-    try {
-      const response = await tablesDB.listRows({
-        databaseId: DB_CONFIG.databaseId,
-        tableId: DB_CONFIG.tables.userPathways,
-        queries: [Query.equal("userId", userId)],
-      });
-
-      return response.rows as any[];
-    } catch (error) {
-      console.error("Error fetching pathways:", error);
-      return [];
-    }
-  },
-
-  /**
-   * Update pathway
-   */
-  async update(
-    rowId: string,
-    updates: Partial<Omit<UserPathwayRow, "$id" | "$createdAt" | "$updatedAt">>
-  ): Promise<UserPathwayRow> {
-    const response = await tablesDB.updateRow({
-      databaseId: DB_CONFIG.databaseId,
-      tableId: DB_CONFIG.tables.userPathways,
-      rowId,
-      data: updates,
-    });
-
-    return response as unknown as UserPathwayRow;
-  },
-
-  /**
-   * Delete a pathway
-   */
-  async delete(rowId: string): Promise<void> {
-    await tablesDB.deleteRow({
-      databaseId: DB_CONFIG.databaseId,
-      tableId: DB_CONFIG.tables.userPathways,
-      rowId,
-    });
-  },
-
-  /**
-   * Find pathway by userId and pathwayId
-   */
-  async findByPathwayId(
-    userId: string,
-    pathwayId: string
-  ): Promise<(UserPathwayRow & { $id: string }) | null> {
-    try {
-      const response = await tablesDB.listRows({
-        databaseId: DB_CONFIG.databaseId,
-        tableId: DB_CONFIG.tables.userPathways,
-        queries: [
-          Query.equal("userId", userId),
-          Query.equal("pathwayId", pathwayId),
-        ],
-      });
-
-      if (response.total === 0) {
-        return null;
-      }
-
-      return response.rows[0] as any;
-    } catch (error) {
-      console.error("Error finding pathway:", error);
-      return null;
-    }
-  },
-};
 
 // =====================================
 // AI PATHWAYS COLLECTION (EXTENDED USER_PATHWAYS)
