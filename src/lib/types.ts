@@ -32,6 +32,21 @@ export interface Experience {
   techStack: string[];
 }
 
+export interface DocumentMetadata {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  uploadedAt: string;
+  summary: string;
+  extractedData: {
+    grades?: string[];
+    skills?: string[];
+    achievements?: string[];
+    [key: string]: unknown;
+  };
+}
+
 export interface Profile {
   userId: string;
   bio: string;
@@ -39,7 +54,7 @@ export interface Profile {
   education: Education[];
   skills: Skill[];
   experience: Experience[];
-  documents?: string[];
+  documents?: DocumentMetadata[];
   assessmentScores?: AssessmentScores;
   dominantType?: string;
   assessmentCompletedAt?: string | null;
@@ -82,10 +97,10 @@ export interface Course {
   difficulty: CourseDifficulty;
   price: number;
   rating: number;
-  thumbnail?: string;
   url: string;
   category?: string;
   $dbId?: string; // Database row ID for updates/deletes
+  $createdAt?: string; // Creation timestamp from Appwrite
 }
 
 export type GrowthPotential = 'low' | 'medium' | 'high';

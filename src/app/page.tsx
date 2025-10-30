@@ -1,18 +1,26 @@
 /**
  * @file page.tsx
  * @description Enhanced landing page for SkillSync - AI-Powered Career Path Recommender
- * @dependencies next/link, lucide-react, @/lib/constants, @/components/layout/ThemeToggle
+ * @dependencies next/link, react-icons, @/lib/constants, @/components/layout/ThemeToggle
  */
 
 'use client';
 
 import Link from 'next/link';
 import {
-  ArrowRight, Target, TrendingUp, Award, Sparkles, Zap, Users,
-  BookOpen, Briefcase, Map, Compass, BarChart3, Brain, Rocket,
-  CheckCircle2, Play, MessageSquare, Building2, LineChart, GraduationCap,
-  Code, Lightbulb, ShieldCheck
-} from 'lucide-react';
+  FaArrowRight, FaRocket, FaPlay, FaUserGraduate, FaLightbulb,
+  FaCheckCircle, FaAward, FaCode, FaShieldAlt, FaBullseye, FaCompass
+} from 'react-icons/fa';
+import {
+  MdTrendingUp, MdWork, MdSchool, MdAnalytics, MdMessage,
+  MdBusiness, MdShowChart
+} from 'react-icons/md';
+import {
+  HiSparkles, HiLightningBolt, HiUsers, HiBookOpen, HiMap
+} from 'react-icons/hi';
+import {
+  RiBrainFill, RiBarChartBoxFill
+} from 'react-icons/ri';
 import { ROUTES } from '@/lib/constants';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
@@ -60,7 +68,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-surface border border-border text-sm text-text-muted">
-                  <Sparkles className="w-4 h-4 text-primary-500 animate-pulse" />
+                  <HiSparkles className="w-4 h-4 text-primary-500 animate-pulse" />
                   <span>AI-Powered Career Intelligence Platform</span>
                 </div>
 
@@ -82,10 +90,10 @@ export default function Home() {
                     className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-xl bg-primary-500 text-white hover:bg-primary-600 shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all duration-200 group"
                   >
                     Find My Career Path
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <FaArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <button className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-xl border-2 border-border text-text hover:bg-surface transition-all duration-200 group">
-                    <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <FaPlay className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                     Watch Demo
                   </button>
                 </div>
@@ -113,7 +121,7 @@ export default function Home() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
                       <div className="w-64 h-64 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl animate-pulse"></div>
-                      <Rocket className="absolute inset-0 m-auto w-32 h-32 text-primary-500" />
+                      <FaRocket className="absolute inset-0 m-auto w-32 h-32 text-primary-500" />
                     </div>
                   </div>
                 </div>
@@ -156,15 +164,15 @@ export default function Home() {
                 </h2>
                 <div className="space-y-4 text-text-muted">
                   <p className="flex items-start space-x-3">
-                    <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={20} />
+                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
                     <span>Personalized assessments that identify your unique strengths and interests</span>
                   </p>
                   <p className="flex items-start space-x-3">
-                    <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={20} />
+                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
                     <span>Real-time industry data ensuring recommendations align with market demands</span>
                   </p>
                   <p className="flex items-start space-x-3">
-                    <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={20} />
+                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
                     <span>Step-by-step roadmaps with curated courses and portfolio guidance</span>
                   </p>
                 </div>
@@ -173,7 +181,7 @@ export default function Home() {
                   className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-500/25 transition-all duration-200 group"
                 >
                   Start Your Assessment
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <FaArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -200,7 +208,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Target className="w-6 h-6 text-white" />
+                    <FaBullseye className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Student Profiling</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -214,7 +222,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Compass className="w-6 h-6 text-white" />
+                    <FaCompass className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Interest Mapping</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -228,7 +236,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Brain className="w-6 h-6 text-white" />
+                    <RiBrainFill className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Industry Integration</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -242,7 +250,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Map className="w-6 h-6 text-white" />
+                    <HiMap className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Skill Pathways</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -256,7 +264,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <BookOpen className="w-6 h-6 text-white" />
+                    <HiBookOpen className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Course Recommendation</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -270,7 +278,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Briefcase className="w-6 h-6 text-white" />
+                    <MdWork className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Career Role Suggestions</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -284,7 +292,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <Code className="w-6 h-6 text-white" />
+                    <FaCode className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Portfolio Roadmap</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -298,7 +306,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
-                    <BarChart3 className="w-6 h-6 text-white" />
+                    <MdAnalytics className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">Institutional Analytics</h3>
                   <p className="text-sm text-text-muted leading-relaxed">
@@ -327,7 +335,7 @@ export default function Home() {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
-                      <GraduationCap className="w-10 h-10 text-white" />
+                      <FaUserGraduate className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       1
@@ -338,7 +346,7 @@ export default function Home() {
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
-                  <ArrowRight size={32} />
+                  <FaArrowRight size={32} />
                 </div>
               </div>
 
@@ -347,7 +355,7 @@ export default function Home() {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
-                      <Target className="w-10 h-10 text-white" />
+                      <FaBullseye className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       2
@@ -358,7 +366,7 @@ export default function Home() {
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
-                  <ArrowRight size={32} />
+                  <FaArrowRight size={32} />
                 </div>
               </div>
 
@@ -367,7 +375,7 @@ export default function Home() {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
-                      <Lightbulb className="w-10 h-10 text-white" />
+                      <FaLightbulb className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       3
@@ -378,7 +386,7 @@ export default function Home() {
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
-                  <ArrowRight size={32} />
+                  <FaArrowRight size={32} />
                 </div>
               </div>
 
@@ -387,7 +395,7 @@ export default function Home() {
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
                     <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
-                      <Rocket className="w-10 h-10 text-white" />
+                      <FaRocket className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                       4
@@ -405,7 +413,7 @@ export default function Home() {
                 className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-xl bg-primary-500 text-white hover:bg-primary-600 shadow-xl shadow-primary-500/25 hover:shadow-2xl hover:shadow-primary-500/40 transition-all duration-200 group"
               >
                 Start Your Journey Now
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <FaArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </section>
@@ -448,7 +456,7 @@ export default function Home() {
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                      <Target className="w-4 h-4 text-white" />
+                      <FaBullseye className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">+5%</span>
                   </div>
@@ -460,7 +468,7 @@ export default function Home() {
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-white" />
+                      <MdTrendingUp className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">+12%</span>
                   </div>
@@ -472,7 +480,7 @@ export default function Home() {
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-white" />
+                      <HiBookOpen className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">New</span>
                   </div>
@@ -483,7 +491,7 @@ export default function Home() {
                 {/* Next Goal */}
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-2">
-                    <Rocket className="w-4 h-4 text-white" />
+                    <FaRocket className="w-4 h-4 text-white" />
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Next Goal</p>
                   <p className="text-xs font-semibold text-text line-clamp-2">Learn React Advanced</p>
@@ -556,7 +564,7 @@ export default function Home() {
                     {/* Role 1 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
                       <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <BarChart3 className="w-4 h-4 text-white" />
+                        <RiBarChartBoxFill className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
@@ -571,7 +579,7 @@ export default function Home() {
                     {/* Role 2 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
                       <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-4 h-4 text-white" />
+                        <MdWork className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
@@ -586,7 +594,7 @@ export default function Home() {
                     {/* Role 3 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
                       <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Target className="w-4 h-4 text-white" />
+                        <FaBullseye className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
@@ -608,7 +616,7 @@ export default function Home() {
                   className="inline-flex items-center justify-center px-5 py-2.5 text-xs font-semibold rounded-lg bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-500/25 transition-all duration-200 group"
                 >
                   Unlock Full Dashboard
-                  <ArrowRight className="ml-2 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  <FaArrowRight className="ml-2 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -631,7 +639,7 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Sparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
@@ -652,7 +660,7 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Sparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
@@ -673,7 +681,7 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Sparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
@@ -695,15 +703,15 @@ export default function Home() {
             <div className="mt-16 text-center">
               <div className="inline-flex flex-wrap items-center justify-center gap-8 px-8 py-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border">
                 <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-5 h-5 text-primary-500" />
+                  <FaShieldAlt className="w-5 h-5 text-primary-500" />
                   <span className="text-sm font-medium text-text">Verified Students</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Users className="w-5 h-5 text-primary-500" />
+                  <HiUsers className="w-5 h-5 text-primary-500" />
                   <span className="text-sm font-medium text-text">10,000+ Active Users</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Award className="w-5 h-5 text-primary-500" />
+                  <FaAward className="w-5 h-5 text-primary-500" />
                   <span className="text-sm font-medium text-text">98% Success Rate</span>
                 </div>
               </div>
@@ -718,7 +726,7 @@ export default function Home() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
                       <div className="w-48 h-48 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl"></div>
-                      <Brain className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
+                      <RiBrainFill className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
                     </div>
                   </div>
                 </div>
@@ -738,21 +746,21 @@ export default function Home() {
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
-                    <MessageSquare className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <MdMessage className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">24/7 Career Guidance</h4>
                       <p className="text-sm text-text-muted">Ask questions and get instant, personalized career advice</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Users className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <HiUsers className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">Interview Simulation</h4>
                       <p className="text-sm text-text-muted">Practice with AI-powered mock interviews tailored to your field</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <TrendingUp className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <MdTrendingUp className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">Creative Project Ideas</h4>
                       <p className="text-sm text-text-muted">Get unique portfolio project suggestions to stand out</p>
@@ -780,21 +788,21 @@ export default function Home() {
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3">
-                    <LineChart className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <MdShowChart className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">Student Progress Tracking</h4>
                       <p className="text-sm text-text-muted">Monitor career development across your entire student body</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Building2 className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <MdBusiness className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">Program Insights</h4>
                       <p className="text-sm text-text-muted">Evaluate course effectiveness and identify improvement areas</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Award className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                    <FaAward className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-text mb-1">Outcome Metrics</h4>
                       <p className="text-sm text-text-muted">Track placement rates and career success post-graduation</p>
@@ -811,7 +819,7 @@ export default function Home() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
                       <div className="w-48 h-48 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-3xl"></div>
-                      <BarChart3 className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
+                      <MdAnalytics className="absolute inset-0 m-auto w-24 h-24 text-primary-500" />
                     </div>
                   </div>
                 </div>
@@ -828,7 +836,7 @@ export default function Home() {
 
               <div className="relative">
                 <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-8">
-                  <Rocket className="w-5 h-5 text-white" />
+                  <FaRocket className="w-5 h-5 text-white" />
                   <span className="text-sm font-medium text-white">Start Today</span>
                 </div>
 
@@ -848,7 +856,7 @@ export default function Home() {
                     className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-xl bg-white text-primary-600 hover:bg-gray-50 shadow-xl hover:shadow-2xl transition-all duration-200 group"
                   >
                     Get Started for Free
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <FaArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     href={ROUTES.LOGIN}

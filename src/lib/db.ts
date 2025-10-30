@@ -9,11 +9,9 @@ import type { Profile, Course, GeneratedPathwayResponse, StoredAIPathway } from 
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
-const getUserPermissions = (userId: string) => [
-  `read("user:${userId}")`,
-  `update("user:${userId}")`,
-  `delete("user:${userId}")`,
-];
+// Note: Using empty array means permissions inherit from collection settings
+// If you need user-specific permissions, configure them in Appwrite Console
+const getUserPermissions = (_userId: string) => [];
 
 // =====================================
 // USERPROFILES COLLECTION
@@ -25,7 +23,7 @@ export interface UserProfileRow {
   education: string[]; // Array of JSON strings, Size: 10000, nullable
   skills: string[]; // Array of JSON strings, Size: 5000, nullable
   experience: string[]; // Array of JSON strings, Size: 10000, nullable
-  documents: string[]; // Array of strings (URLs), Size: 2000, nullable
+  documents: string; // Single JSON string containing all documents, Size: 1000000, nullable
   assessmentScores: string[]; // Array of JSON strings in Appwrite, Size: 500, nullable (FIXED: was string, now string[])
   dominantType: string; // Size: 50, nullable
   assessmentCompletedAt: string | null; // datetime, nullable
@@ -44,7 +42,8 @@ export const profileService = {
       education: (profile.education || []).map((e) => JSON.stringify(e)),
       skills: (profile.skills || []).map((s) => JSON.stringify(s)),
       experience: (profile.experience || []).map((e) => JSON.stringify(e)),
-      documents: profile.documents || [],
+      // Documents: store ALL documents as a single JSON string
+      documents: JSON.stringify(profile.documents || []),
       // Convert assessmentScores object to JSON string array (Appwrite schema requires array)
       assessmentScores: profile.assessmentScores
         ? [JSON.stringify(profile.assessmentScores)]
@@ -107,8 +106,10 @@ export const profileService = {
       updateData.skills = updates.skills.map((s) => JSON.stringify(s));
     if (updates.experience !== undefined)
       updateData.experience = updates.experience.map((e) => JSON.stringify(e));
-    if (updates.documents !== undefined)
-      updateData.documents = updates.documents;
+    if (updates.documents !== undefined) {
+      // Documents: store ALL documents as a single JSON string
+      updateData.documents = JSON.stringify(updates.documents);
+    }
     if (updates.assessmentScores !== undefined)
       updateData.assessmentScores = [JSON.stringify(updates.assessmentScores)];
     if (updates.dominantType !== undefined)
@@ -178,13 +179,28 @@ export const profileService = {
       return {};
     };
 
+    // Parse documents from single JSON string
+    const parseDocuments = (docs: any): any[] => {
+      if (typeof docs === 'string' && docs) {
+        try {
+          return JSON.parse(docs);
+        } catch {
+          return [];
+        }
+      }
+      if (Array.isArray(docs)) {
+        return docs;
+      }
+      return [];
+    };
+
     return {
       userId: row.userId,
       bio: row.bio || "",
       education: parseJsonArray(row.education),
       skills: parseJsonArray(row.skills),
       experience: parseJsonArray(row.experience),
-      documents: Array.isArray(row.documents) ? row.documents : [],
+      documents: parseDocuments(row.documents),
       assessmentScores: parseAssessmentScores(row.assessmentScores),
       dominantType: row.dominantType || "",
       assessmentCompletedAt: row.assessmentCompletedAt || null,
@@ -208,7 +224,6 @@ export interface UserCourseRow {
   difficulty: string; // Size: 20, nullable
   price: number; // double, Min: 0, nullable
   rating: number; // double, nullable
-  thumbnail: string; // Size: 500, nullable
   url: string; // Size: 1000, nullable
   category: string; // Size: 100, nullable
   bookmarked: boolean; // default: false
@@ -219,7 +234,7 @@ export const coursesService = {
   /**
    * Add a course for a user
    */
-  async add(userId: string, course: Course): Promise<UserCourseRow> {
+  async add(userId: string, course: Course, bookmarked: boolean = false): Promise<UserCourseRow> {
     const rowData: Omit<UserCourseRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
       courseId: course.id,
@@ -228,10 +243,9 @@ export const coursesService = {
       difficulty: course.difficulty,
       price: course.price,
       rating: course.rating,
-      thumbnail: course.thumbnail || "",
       url: course.url,
       category: course.category || "",
-      bookmarked: true,
+      bookmarked,
       completed: false,
     };
 
@@ -344,7 +358,7 @@ export const coursesService = {
   /**
    * Map database row to Course type
    */
-  mapRowToCourse(row: any): Course {
+  mapRowToCourse(row: any): Course & { bookmarked?: boolean } {
     return {
       id: row.courseId,
       title: row.title,
@@ -352,10 +366,11 @@ export const coursesService = {
       difficulty: row.difficulty,
       price: row.price,
       rating: row.rating,
-      thumbnail: row.thumbnail || "",
       url: row.url,
       category: row.category || "",
+      bookmarked: row.bookmarked !== false,
       $dbId: row.$id, // Store the database row ID for updates/deletes
+      $createdAt: row.$createdAt, // Store creation timestamp for sorting
     };
   },
 };
