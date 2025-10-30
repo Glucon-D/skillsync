@@ -5,7 +5,9 @@
       "Bash(nvm --version:*)",
       "Bash(nvm install latest)",
       "Bash(nvm use latest)",
-      "Bash(npm:*)"
+      "Bash(npm:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npm install)"
     ],
     "deny": [],
     "ask": []
