@@ -59,7 +59,7 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <div className="text-center mb-4">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-white font-bold text-2xl">S</span>
               </div>
               <CardTitle className="text-2xl">Welcome to SkillSync!</CardTitle>
