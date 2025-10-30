@@ -19,6 +19,8 @@ import {
   Zap,
   Trash2,
   Plus,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useProfileStore } from "@/store/profileStore";
@@ -39,7 +41,8 @@ export default function PathwaysPage() {
 
   // AI Pathways State
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
-  const [isRecommendationsModalOpen, setIsRecommendationsModalOpen] = useState(false);
+  const [isRecommendationsModalOpen, setIsRecommendationsModalOpen] =
+    useState(false);
   const [aiRecommendations, setAiRecommendations] =
     useState<PathwayRecommendationsResponse | null>(null);
   const [isLoadingRecommendations, setIsLoadingRecommendations] =
@@ -164,7 +167,6 @@ export default function PathwaysPage() {
     }
   };
 
-
   // Generate Custom Skill Pathway
   const handleGenerateCustomPathway = async () => {
     if (!customSkill.trim()) {
@@ -186,6 +188,19 @@ export default function PathwaysPage() {
   // Load a saved pathway
   const handleLoadSavedPathway = (pathwayId: string) => {
     router.push(`/pathways/${pathwayId}`);
+  };
+
+  // Toggle pathway completion
+  const handleToggleCompletion = async (
+    rowId: string,
+    currentCompleted: boolean
+  ) => {
+    try {
+      await aiPathwaysService.updateCompletion(rowId, !currentCompleted);
+      await loadSavedPathways(); // Refresh list
+    } catch (err) {
+      setError("Failed to update completion status");
+    }
   };
 
   // Delete a saved pathway
@@ -267,7 +282,7 @@ export default function PathwaysPage() {
                 key={pathway.$id}
                 className="border-border hover:border-primary-500/50 transition-all duration-200 hover:shadow-lg"
               >
-                <CardContent className="pt-6">
+                <CardContent className="">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -298,6 +313,30 @@ export default function PathwaysPage() {
                         </p>
                       )}
                     </div>
+
+                    {/* Complete Toggle */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleCompletion(pathway.$id, pathway.completed);
+                      }}
+                      className={`p-2 rounded-lg transition-all ${
+                        pathway.completed
+                          ? "bg-green-500 hover:bg-green-600 text-white"
+                          : "bg-surface hover:bg-background text-text-muted border border-border"
+                      }`}
+                      title={
+                        pathway.completed
+                          ? "Mark as incomplete"
+                          : "Mark as complete"
+                      }
+                    >
+                      {pathway.completed ? (
+                        <CheckSquare className="w-5 h-5" />
+                      ) : (
+                        <Square className="w-5 h-5" />
+                      )}
+                    </button>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -373,7 +412,11 @@ export default function PathwaysPage() {
           setCustomSkill("");
           setShowCustomInput(false);
         }}
-        title={aiRecommendations ? "Recommended Career Pathways" : "Generating Recommendations"}
+        title={
+          aiRecommendations
+            ? "Recommended Career Pathways"
+            : "Generating Recommendations"
+        }
       >
         <div className="space-y-6">
           {error && (
@@ -392,9 +435,7 @@ export default function PathwaysPage() {
               <h3 className="text-lg font-semibold text-text mb-2">
                 Analyzing Your Profile...
               </h3>
-              <p className="text-text-muted">
-                This may take a few moments
-              </p>
+              <p className="text-text-muted">This may take a few moments</p>
             </div>
           )}
 
@@ -434,7 +475,11 @@ export default function PathwaysPage() {
                       value={customSkill}
                       onChange={(e) => setCustomSkill(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !isLoadingRoadmap && customSkill.trim()) {
+                        if (
+                          e.key === "Enter" &&
+                          !isLoadingRoadmap &&
+                          customSkill.trim()
+                        ) {
                           handleGenerateCustomPathway();
                         }
                       }}
@@ -483,9 +528,7 @@ export default function PathwaysPage() {
                         <p className="text-sm font-medium text-text mb-2">
                           What You'll Do:
                         </p>
-                        <p className="text-sm text-text-muted">
-                          {rec.summary}
-                        </p>
+                        <p className="text-sm text-text-muted">{rec.summary}</p>
                       </div>
                       <Button
                         onClick={() => handleGenerateRoadmap(rec.title)}
@@ -540,7 +583,9 @@ export default function PathwaysPage() {
               Discover Your Ideal Career Path
             </h3>
             <p className="text-text-muted mb-6">
-              Our AI analyzes your profile, skills, education, and interests to recommend personalized career pathways perfectly suited to your strengths and goals.
+              Our AI analyzes your profile, skills, education, and interests to
+              recommend personalized career pathways perfectly suited to your
+              strengths and goals.
             </p>
           </div>
 
@@ -589,7 +634,8 @@ export default function PathwaysPage() {
                     Learn Any Skill
                   </h4>
                   <p className="text-sm text-text-muted">
-                    Enter any skill, technology, or career path you want to learn, and AI will generate a personalized roadmap.
+                    Enter any skill, technology, or career path you want to
+                    learn, and AI will generate a personalized roadmap.
                   </p>
                 </div>
               </div>
@@ -600,7 +646,11 @@ export default function PathwaysPage() {
                   value={customSkill}
                   onChange={(e) => setCustomSkill(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && !isLoadingRoadmap && customSkill.trim()) {
+                    if (
+                      e.key === "Enter" &&
+                      !isLoadingRoadmap &&
+                      customSkill.trim()
+                    ) {
                       handleGenerateCustomPathway();
                       setIsGenerateModalOpen(false);
                     }
