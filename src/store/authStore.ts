@@ -57,6 +57,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         try {
           set({ isLoading: true });
 
+          // Flush any existing sessions first
+          try {
+            await account.deleteSession({ sessionId: "current" });
+          } catch {
+            // No active session to delete, continue
+          }
+
           // Create email/password session
           await account.createEmailPasswordSession({
             email,
@@ -69,16 +76,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           set({ user, isAuthenticated: true, isLoading: false });
           return { success: true };
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("Login error:", error);
           set({ isLoading: false });
 
           // Return specific error message
           let errorMessage = "Invalid email or password";
 
-          if (error?.code === 401) {
+          if (typeof error === "object" && error !== null && "code" in error && error.code === 401) {
             errorMessage = "Invalid email or password";
-          } else if (error?.message) {
+          } else if (typeof error === "object" && error !== null && "message" in error && typeof error.message === "string") {
             errorMessage = error.message;
           }
 
@@ -89,6 +96,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       signup: async (name: string, email: string, password: string) => {
         try {
           set({ isLoading: true });
+
+          // Flush any existing sessions first
+          try {
+            await account.deleteSession({ sessionId: "current" });
+          } catch {
+            // No active session to delete, continue
+          }
 
           // Create account
           await account.create({
@@ -110,19 +124,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           set({ user, isAuthenticated: true, isLoading: false });
           return { success: true };
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("Signup error:", error);
           set({ isLoading: false });
 
           // Return specific error message
           let errorMessage = "Failed to create account";
 
-          if (error?.code === 409 || error?.type === "user_already_exists") {
-            errorMessage = "Email already exists";
-          } else if (error?.code === 400) {
-            errorMessage = "Invalid email or password format";
-          } else if (error?.message) {
-            errorMessage = error.message;
+          if (typeof error === "object" && error !== null) {
+            if (("code" in error && error.code === 409) || ("type" in error && error.type === "user_already_exists")) {
+              errorMessage = "Email already exists";
+            } else if ("code" in error && error.code === 400) {
+              errorMessage = "Invalid email or password format";
+            } else if ("message" in error && typeof error.message === "string") {
+              errorMessage = error.message;
+            }
           }
 
           return { success: false, error: errorMessage };
@@ -164,7 +180,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           const appwriteUser = await account.get();
           const user = convertAppwriteUser(appwriteUser);
           set({ user, isAuthenticated: true, isLoading: false });
-        } catch (error) {
+        } catch {
           // User not logged in
           set({ user: null, isAuthenticated: false, isLoading: false });
         }

@@ -5,14 +5,16 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
+import { profileService } from '@/lib/db';
 import { ROUTES } from '@/lib/constants';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { getCurrentUser } = useAuth();
+  const getCurrentUser = useAuthStore((state) => state.getCurrentUser);
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -23,16 +25,36 @@ export default function AuthCallbackPage() {
         // Fetch the current user session
         await getCurrentUser();
         
-        // Redirect to dashboard
-        router.push(ROUTES.DASHBOARD);
+        // Get user from store after getCurrentUser completes
+        const user = useAuthStore.getState().user;
+        if (!user) {
+          throw new Error('User not found after authentication');
+        }
+
+        // Check if profile exists directly from database
+        const profile = await profileService.getByUserId(user.id);
+        
+        // If profile exists and has completed onboarding, go to dashboard
+        // Otherwise go to onboarding
+        if (profile && (profile.bio || profile.completionPercentage > 0)) {
+          router.push(ROUTES.DASHBOARD);
+        } else {
+          router.push(ROUTES.ONBOARDING);
+        }
       } catch (error) {
         console.error('OAuth callback error:', error);
         router.push(`${ROUTES.LOGIN}?error=oauth_failed`);
+      } finally {
+        setIsProcessing(false);
       }
     };
 
     handleCallback();
   }, [getCurrentUser, router]);
+
+  if (!isProcessing) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
