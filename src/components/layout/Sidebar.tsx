@@ -16,6 +16,7 @@ import {
   BookOpen,
   Briefcase,
   ExternalLink,
+  Users,
 } from 'lucide-react';
 import { ROUTES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
@@ -29,6 +30,7 @@ const navItems = [
   { name: 'Pathways', href: ROUTES.PATHWAYS, icon: Map },
   { name: 'Courses', href: ROUTES.COURSES, icon: BookOpen },
   { name: 'Careers', href: ROUTES.CAREERS, icon: Briefcase },
+  { name: 'Connect', href: ROUTES.CONNECT, icon: Users },
 ];
 
 export function Sidebar() {

@@ -34,6 +34,7 @@ const client = new Client()
 // Initialize services
 export const account = new Account(client);
 export const tablesDB = new TablesDB(client);
+export const databases = tablesDB; // Alias for consistency
 export const storage = new Storage(client);
 
 // Export database configuration
