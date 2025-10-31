@@ -49,6 +49,10 @@ This document outlines the complete database structure for SkillSync using Appwr
 | `socialLinks`           | string        | 2000  | ✅ Yes | ❌ No     | []      | Array of social media links                        |
 | `projects`              | string        | 10000 | ✅ Yes | ❌ No     | []      | Array of JSON strings (project objects)            |
 | `documents`             | string        | 2000  | ✅ Yes | ❌ No     | []      | Array of document URLs (certificates, transcripts) |
+| `followersCount`        | integer       | -     | ❌ No  | ✅ Yes    | 0       | Count of followers                                 |
+| `followingCount`        | integer       | -     | ❌ No  | ✅ Yes    | 0       | Count of users being followed                      |
+| `followersList`         | string        | 100000| ❌ No  | ❌ No     | ""      | JSON string array of follower user IDs             |
+| `followingList`         | string        | 100000| ❌ No  | ❌ No     | ""      | JSON string array of following user IDs            |
 | `assessmentScores`      | string        | 500   | ❌ No  | ❌ No     | ""      | JSON string of assessment scores object            |
 | `dominantType`          | string        | 50    | ❌ No  | ❌ No     | ""      | Dominant personality type from assessment          |
 | `assessmentCompletedAt` | datetime      | -     | ❌ No  | ❌ No     | null    | When assessment was completed                      |
@@ -57,9 +61,10 @@ This document outlines the complete database structure for SkillSync using Appwr
 | `$updatedAt`            | datetime      | -     | ❌ No  | ✅ Yes    | auto    | Last update timestamp                              |
 
 **IMPORTANT:** When creating attributes in Appwrite Console:
-- For `education`, `skills`, `experience`, `socialLinks`, `projects`: Select **String** type and check **"Array"** option
-- Each array element will be a JSON string representing an object
-- For `assessmentScores`: Select **String** type (NOT array) - store as single JSON string
+- For `education`, `skills`, `experience`, `socialLinks`, `projects`, `documents`: Select **String** type and check **"Array"** option
+- Each array element will be a string (URLs for documents, JSON strings for others)
+- For `assessmentScores`, `followersList`, `followingList`: Select **String** type (NOT array) - store as JSON string arrays
+- For `followersCount`, `followingCount`, `completionPercentage`: Select **Integer** type
 
 ### JSON Structure for Nested Fields:
 
@@ -156,6 +161,8 @@ This document outlines the complete database structure for SkillSync using Appwr
 - `completionPercentage`
 - `dominantType`
 - `assessmentCompletedAt`
+- `followersCount`
+- `followingCount`
 - `$createdAt`
 
 ### Permissions:
