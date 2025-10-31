@@ -18,6 +18,8 @@ import {
   Users,
   UserPlus,
   UserMinus,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -66,29 +68,36 @@ export default function PortfolioPage() {
         {/* Experience Section */}
         {profile.experience && profile.experience.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-text">Experience</h2>
+            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+                <Briefcase className="w-5 h-5 text-white" />
+              </div>
+              Experience
+            </h2>
             <div className="space-y-4">
               {profile.experience.map((exp, index) => (
-                <Card key={index} className="border border-border hover:border-primary-500/30 transition-all">
-                  <CardContent className="pt-6">
-                    <h3 className="font-semibold text-text text-lg mb-1">
+                <div key={index} className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
                       {exp.title}
                     </h3>
-                    <p className="text-text-muted text-sm mb-3">
+                    <p className="text-text-muted text-sm mb-4 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary-500" />
                       {exp.duration}
                     </p>
-                    <p className="text-text mb-3 leading-relaxed">{exp.description}</p>
+                    <p className="text-text mb-4 leading-relaxed">{exp.description}</p>
                     {exp.techStack && exp.techStack.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {exp.techStack.map((tech, idx) => (
-                          <Badge key={idx} variant="secondary" size="sm">
+                          <Badge key={idx} variant="secondary" size="sm" className="shadow-sm">
                             {tech}
                           </Badge>
                         ))}
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -97,19 +106,28 @@ export default function PortfolioPage() {
         {/* Education Section */}
         {profile.education && profile.education.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-text">Education</h2>
+            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+                <GraduationCap className="w-5 h-5 text-white" />
+              </div>
+              Education
+            </h2>
             <div className="space-y-4">
               {profile.education.map((edu, index) => (
-                <Card key={index} className="border border-border hover:border-primary-500/30 transition-all">
-                  <CardContent className="pt-6">
-                    <h3 className="font-semibold text-text text-lg">{edu.degree}</h3>
-                    <p className="text-text-muted mb-2">{edu.school}</p>
+                <div key={index} className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">{edu.degree}</h3>
+                    <p className="text-text-muted text-lg mb-3">{edu.school}</p>
                     <div className="flex gap-4 text-sm text-text-muted">
-                      <span>{edu.year}</span>
-                      {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4 text-primary-500" />
+                        {edu.year}
+                      </span>
+                      {edu.gpa && <span className="font-semibold text-primary-600">GPA: {edu.gpa}</span>}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -120,32 +138,26 @@ export default function PortfolioPage() {
           completedPathways.length > 0) && (
           <div className="space-y-6">
             {/* Tab Switcher */}
-            <div className="flex items-center gap-6 border-b border-border">
+            <div className="flex items-center gap-2 bg-surface/50 backdrop-blur-sm rounded-2xl p-1.5 border-2 border-border">
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`pb-4 px-1 text-base font-semibold transition-all relative ${
+                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
                   activeTab === "projects"
-                    ? "text-text"
-                    : "text-text-muted hover:text-text"
+                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                    : "text-text-muted hover:text-text hover:bg-background"
                 }`}
               >
                 Projects
-                {activeTab === "projects" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
-                )}
               </button>
               <button
                 onClick={() => setActiveTab("pathways")}
-                className={`pb-4 px-1 text-base font-semibold transition-all relative ${
+                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
                   activeTab === "pathways"
-                    ? "text-text"
-                    : "text-text-muted hover:text-text"
+                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                    : "text-text-muted hover:text-text hover:bg-background"
                 }`}
               >
                 Completed Pathways
-                {activeTab === "pathways" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
-                )}
               </button>
             </div>
 
@@ -155,22 +167,26 @@ export default function PortfolioPage() {
               profile.projects.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {profile.projects.map((project, index) => (
-                    <Card key={index} hover>
-                      <CardContent className="space-y-4 p-0">
+                    <div key={index} className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-sm border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="relative">
                         {project.image && (
-                          <img
-                            src={project.image}
-                            alt={project.name}
-                            className="w-full h-48 object-cover rounded-t-lg"
-                          />
+                          <div className="relative overflow-hidden">
+                            <img
+                              src={project.image}
+                              alt={project.name}
+                              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
                         )}
                         <div className="p-6 space-y-4">
                           <div>
-                            <CardTitle className="text-lg">
+                            <h3 className="text-xl font-bold text-text group-hover:text-primary-600 transition-colors mb-2">
                               {project.name}
-                            </CardTitle>
+                            </h3>
                             {project.description && (
-                              <p className="text-text-muted text-sm mt-2">
+                              <p className="text-text-muted text-sm leading-relaxed">
                                 {project.description}
                               </p>
                             )}
@@ -184,6 +200,7 @@ export default function PortfolioPage() {
                                     key={idx}
                                     variant="secondary"
                                     size="sm"
+                                    className="shadow-sm"
                                   >
                                     {tech}
                                   </Badge>
@@ -197,7 +214,7 @@ export default function PortfolioPage() {
                                 href={project.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-sm text-text-muted hover:text-primary-500 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
                               >
                                 <ExternalLink className="w-4 h-4" />
                                 <span>View Project</span>
@@ -205,8 +222,8 @@ export default function PortfolioPage() {
                             </div>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -463,22 +480,6 @@ export default function PortfolioPage() {
     return match ? match[1] : null;
   };
 
-  const getGFGUsername = () => {
-    if (!profile?.socialLinks) return null;
-
-    const gfgLink = profile.socialLinks.find(
-      (link) =>
-        link.toLowerCase().includes("geeksforgeeks.org") ||
-        link.toLowerCase().includes("auth.geeksforgeeks.org")
-    );
-
-    if (!gfgLink) return null;
-
-    // Extract username from GFG URL
-    // Handles: https://auth.geeksforgeeks.org/user/username
-    const match = gfgLink.match(/geeksforgeeks\.org\/user\/([^\/\?#]+)/i);
-    return match ? match[1] : null;
-  };
 
   if (loading) {
     // Show loading within dashboard layout for authenticated users
@@ -559,55 +560,69 @@ export default function PortfolioPage() {
           <Sidebar />
           <main className="flex-1 overflow-y-auto min-h-screen">
             <div className="max-w-7xl mx-auto p-6 md:p-8">
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Profile Header Card */}
-                <Card className="border border-border">
-                  <CardContent className="pt-8 pb-8">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500/10 via-surface to-primary-600/10 border-2 border-border shadow-xl">
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmOGM0MiIgc3Ryb2tlLW9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=')] opacity-50" />
+
+                  <div className="relative pt-12 pb-10 px-8">
                     <div className="text-center">
                       {/* Avatar */}
-                      {profile.userImage ? (
-                        <img
-                          src={profile.userImage}
-                          alt={profile.username || "Profile"}
-                          className="inline-block w-24 h-24 rounded-full object-cover border-4 border-primary-500 shadow-lg mb-4"
-                        />
-                      ) : (
-                        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-3xl font-bold mb-4 shadow-lg">
-                          {getUserInitial()}
+                      <div className="relative inline-block mb-6">
+                        {profile.userImage ? (
+                          <img
+                            src={profile.userImage}
+                            alt={profile.username || "Profile"}
+                            className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-2xl shadow-primary-500/20"
+                          />
+                        ) : (
+                          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-4xl font-bold flex items-center justify-center shadow-2xl shadow-primary-500/30">
+                            {getUserInitial()}
+                          </div>
+                        )}
+                        <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
+                          <Users className="w-5 h-5 text-white" />
                         </div>
-                      )}
+                      </div>
 
                       {/* Username */}
-                      <h1 className="text-3xl font-bold text-text mb-3">
+                      <h1 className="text-4xl font-bold bg-gradient-to-r from-text to-text/80 bg-clip-text text-transparent mb-3">
                         {profile.username}
                       </h1>
 
                       {/* Bio */}
                       {profile.bio && (
-                        <p className="text-text-muted text-base max-w-2xl mx-auto mb-6 leading-relaxed">
+                        <p className="text-text-muted text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
                           {profile.bio}
                         </p>
                       )}
 
                       {/* Followers/Following Counts & Follow Button */}
-                      <div className="flex items-center justify-center gap-6 mb-6">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="w-4 h-4 text-text-muted" />
-                          <span className="font-semibold text-text">{profile.followersCount || 0}</span>
-                          <span className="text-text-muted">Followers</span>
+                      <div className="flex items-center justify-center gap-6 mb-8">
+                        <div className="group relative px-4 py-2 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
+                          <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold text-text">{profile.followersCount || 0}</span>
+                            <span className="text-sm text-text-muted">Followers</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="w-4 h-4 text-text-muted" />
-                          <span className="font-semibold text-text">{profile.followingCount || 0}</span>
-                          <span className="text-text-muted">Following</span>
+                        <div className="group relative px-4 py-2 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
+                          <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold text-text">{profile.followingCount || 0}</span>
+                            <span className="text-sm text-text-muted">Following</span>
+                          </div>
                         </div>
-                        {user && user.id !== profile.userId && (
+                      </div>
+
+                      {/* Follow Button */}
+                      {user && user.id !== profile.userId && (
+                        <div className="mb-8">
                           <Button
                             onClick={handleFollowToggle}
                             disabled={followLoading}
-                            size="sm"
+                            size="lg"
                             variant={isFollowing ? "outline" : "primary"}
-                            className="ml-2"
+                            className="shadow-lg"
                           >
                             {followLoading ? (
                               "Loading..."
@@ -623,14 +638,14 @@ export default function PortfolioPage() {
                               </>
                             )}
                           </Button>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {/* Location & Website */}
-                      <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-6">
+                      <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-8">
                         {profile.location && (
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4" />
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+                            <MapPin className="w-4 h-4 text-primary-500" />
                             <span>{profile.location}</span>
                           </div>
                         )}
@@ -639,14 +654,14 @@ export default function PortfolioPage() {
                             href={profile.websiteUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all group"
                           >
-                            <LinkIcon className="w-4 h-4" />
-                            <span>Website</span>
+                            <LinkIcon className="w-4 h-4 text-primary-500" />
+                            <span className="group-hover:text-primary-500 transition-colors">Website</span>
                           </a>
                         )}
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+                          <Calendar className="w-4 h-4 text-primary-500" />
                           <span>Joined {getJoinDate()}</span>
                         </div>
                       </div>
@@ -654,14 +669,14 @@ export default function PortfolioPage() {
                       {/* Social Links */}
                       {profile.socialLinks &&
                         profile.socialLinks.length > 0 && (
-                          <div className="flex items-center justify-center gap-2 mb-8">
+                          <div className="flex items-center justify-center gap-3 mb-10">
                             {profile.socialLinks.map((link, index) => (
                               <a
                                 key={index}
                                 href={link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2.5 rounded-lg border border-border hover:border-primary-500 hover:bg-primary-50 transition-all text-text-muted hover:text-primary-500"
+                                className="p-3 rounded-xl border-2 border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500 hover:scale-110 hover:shadow-lg group"
                               >
                                 {getSocialIcon(link)}
                               </a>
@@ -671,7 +686,7 @@ export default function PortfolioPage() {
 
                       {/* Skills Tags */}
                       {profile.skills && profile.skills.length > 0 && (
-                        <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto mb-6">
+                        <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto">
                           {profile.skills.map((skill, index) => (
                             <Badge
                               key={index}
@@ -682,6 +697,7 @@ export default function PortfolioPage() {
                                   ? "warning"
                                   : "default"
                               }
+                              className="text-sm px-4 py-1.5 shadow-sm"
                             >
                               {skill.name}
                               {skill.level && ` • ${skill.level}`}
@@ -692,19 +708,18 @@ export default function PortfolioPage() {
 
                       {/* Coding Platform Heatmaps */}
                       {(getGithubUsername() ||
-                        getLeetCodeUsername() ||
-                        getGFGUsername()) && (
-                        <div className="mt-8 pt-6 border-t border-border space-y-6">
+                        getLeetCodeUsername()) && (
+                        <div className="mt-10 pt-8 border-t border-border/50 space-y-8">
                           {/* GitHub Heatmap */}
                           {getGithubUsername() && (
                             <div>
                               <div className="flex items-center justify-center gap-2 mb-4">
-                                <IoLogoGithub className="w-5 h-5 text-text-muted" />
-                                <h3 className="text-sm font-semibold text-text">
+                                <IoLogoGithub className="w-6 h-6 text-primary-500" />
+                                <h3 className="text-lg font-semibold text-text">
                                   GitHub Contributions
                                 </h3>
                               </div>
-                              <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
+                              <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                                 <img
                                   src={`https://ghchart.rshah.org/ff8c42/${getGithubUsername()}`}
                                   alt="GitHub Contribution Heatmap"
@@ -719,12 +734,12 @@ export default function PortfolioPage() {
                           {getLeetCodeUsername() && (
                             <div>
                               <div className="flex items-center justify-center gap-2 mb-4">
-                                <SiLeetcode className="w-5 h-5 text-text-muted" />
-                                <h3 className="text-sm font-semibold text-text">
+                                <SiLeetcode className="w-6 h-6 text-primary-500" />
+                                <h3 className="text-lg font-semibold text-text">
                                   LeetCode Stats
                                 </h3>
                               </div>
-                              <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
+                              <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                                 <img
                                   src={`https://leetcard.jacoblin.cool/${getLeetCodeUsername()}?theme=light&font=Karma&ext=heatmap`}
                                   alt="LeetCode Stats"
@@ -733,30 +748,11 @@ export default function PortfolioPage() {
                               </div>
                             </div>
                           )}
-
-                          {/* GFG Heatmap */}
-                          {getGFGUsername() && (
-                            <div>
-                              <div className="flex items-center justify-center gap-2 mb-4">
-                                <SiGeeksforgeeks className="w-5 h-5 text-text-muted" />
-                                <h3 className="text-sm font-semibold text-text">
-                                  GeeksforGeeks Profile
-                                </h3>
-                              </div>
-                              <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
-                                <img
-                                  src={`https://geeks-for-geeks-stats-card.vercel.app/?username=${getGFGUsername()}`}
-                                  alt="GFG Stats"
-                                  className="w-full max-w-md"
-                                />
-                              </div>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
                 {renderPortfolioContent()}
               </div>
@@ -905,8 +901,7 @@ export default function PortfolioPage() {
 
           {/* Coding Platform Heatmaps */}
           {(getGithubUsername() ||
-            getLeetCodeUsername() ||
-            getGFGUsername()) && (
+            getLeetCodeUsername()) && (
             <div className="mt-8 pt-8 border-t border-border max-w-4xl mx-auto space-y-8">
               {/* GitHub Heatmap */}
               {getGithubUsername() && (
@@ -942,25 +937,6 @@ export default function PortfolioPage() {
                       src={`https://leetcard.jacoblin.cool/${getLeetCodeUsername()}?theme=light&font=Karma&ext=heatmap`}
                       alt="LeetCode Stats"
                       className="w-full max-w-2xl"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* GFG Heatmap */}
-              {getGFGUsername() && (
-                <div>
-                  <div className="flex items-center justify-center gap-2 mb-4">
-                    <SiGeeksforgeeks className="w-5 h-5 text-text-muted" />
-                    <h3 className="text-sm font-semibold text-text">
-                      GeeksforGeeks Profile
-                    </h3>
-                  </div>
-                  <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
-                    <img
-                      src={`https://geeks-for-geeks-stats-card.vercel.app/?username=${getGFGUsername()}`}
-                      alt="GFG Stats"
-                      className="w-full max-w-md"
                     />
                   </div>
                 </div>
