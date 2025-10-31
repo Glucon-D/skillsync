@@ -43,7 +43,7 @@ export function LoginForm() {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-    } catch (error) {
+    } catch {
       setError("Failed to login with Google");
     }
   };
