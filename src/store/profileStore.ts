@@ -472,6 +472,19 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
 
       // Database sync methods
       loadProfile: async (userId: string) => {
+        const currentState = get();
+        
+        // Prevent duplicate calls - return early if already loading or profile exists
+        if (currentState.isLoading) {
+          console.log("⏳ Profile already loading, skipping...");
+          return;
+        }
+        
+        if (currentState.profile?.userId === userId) {
+          console.log("✅ Profile already loaded, skipping...");
+          return;
+        }
+        
         set({ isLoading: true, error: null });
         try {
           console.log("🔍 Loading profile for user:", userId);

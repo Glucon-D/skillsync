@@ -178,6 +178,26 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
       loginWithGoogle: async () => {
         try {
+          // Flush any existing sessions first
+          try {
+            await account.deleteSessions();
+          } catch {
+            // No active session to delete, continue
+          }
+
+          // Clear local storage and session storage
+          if (typeof window !== "undefined") {
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Clear all cookies
+            document.cookie.split(";").forEach((c) => {
+              document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+          }
+
           // Get current origin for redirect URLs
           const origin =
             typeof window !== "undefined" ? window.location.origin : "";

@@ -41,6 +41,33 @@ export const profileService = {
    * Create a new user profile
    */
   async create(userId: string, profile: Profile): Promise<UserProfileRow> {
+    // First check if profile already exists to prevent duplicates
+    const existingProfile = await this.getByUserId(userId);
+    if (existingProfile) {
+      console.log("⚠️ Profile already exists for user:", userId);
+      // Return the existing profile as a row format
+      return {
+        userId: existingProfile.userId,
+        username: existingProfile.username || "",
+        userImage: existingProfile.userImage || "",
+        bio: existingProfile.bio || "",
+        location: existingProfile.location || "",
+        websiteUrl: existingProfile.websiteUrl || "",
+        socialLinks: existingProfile.socialLinks || [],
+        education: (existingProfile.education || []).map((e) => JSON.stringify(e)),
+        skills: (existingProfile.skills || []).map((s) => JSON.stringify(s)),
+        experience: (existingProfile.experience || []).map((e) => JSON.stringify(e)),
+        projects: (existingProfile.projects || []).map((p) => JSON.stringify(p)),
+        documents: JSON.stringify(existingProfile.documents || []),
+        assessmentScores: existingProfile.assessmentScores
+          ? [JSON.stringify(existingProfile.assessmentScores)]
+          : [],
+        dominantType: existingProfile.dominantType || "",
+        assessmentCompletedAt: existingProfile.assessmentCompletedAt || null,
+        completionPercentage: existingProfile.completionPercentage || 0,
+      } as unknown as UserProfileRow;
+    }
+
     const rowData: Omit<UserProfileRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
       username: profile.username || "",
