@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfileStore } from '@/store/profileStore';
 import { useCoursesStore } from '@/store/coursesStore';
@@ -26,9 +26,13 @@ export function DataLoader() {
   const { user } = useAuth();
   const loadProfile = useProfileStore((state) => state.loadProfile);
   const loadCourses = useCoursesStore((state) => state.loadCourses);
+  const loadedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (user?.id) {
+    // Only load if user exists and we haven't loaded for this user yet
+    if (user?.id && loadedUserIdRef.current !== user.id) {
+      loadedUserIdRef.current = user.id;
+      
       // Load all user data from the database
       loadProfile(user.id);
       loadCourses(user.id);
