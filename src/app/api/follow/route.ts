@@ -64,7 +64,8 @@ export async function POST(request: NextRequest) {
       currentFollowingList = currentUserDoc.followingList 
         ? JSON.parse(currentUserDoc.followingList) 
         : [];
-    } catch (e) {
+      console.log('Current user following list:', currentFollowingList);
+    } catch {
       currentFollowingList = [];
     }
 
@@ -72,7 +73,8 @@ export async function POST(request: NextRequest) {
       targetFollowersList = targetUserDoc.followersList 
         ? JSON.parse(targetUserDoc.followersList) 
         : [];
-    } catch (e) {
+      console.log('Target user followers list:', targetFollowersList);
+    } catch {
       targetFollowersList = [];
     }
 
@@ -88,23 +90,29 @@ export async function POST(request: NextRequest) {
       }
 
       // Update current user (add to following list)
+      const followingListJson = JSON.stringify(currentFollowingList);
+      console.log('Saving followingList as JSON:', followingListJson);
+      
       await tablesDB.updateRow({
         databaseId: DATABASE_ID,
         tableId: COLLECTIONS.USERPROFILES,
         rowId: currentUserDoc.$id,
         data: {
-          followingList: JSON.stringify(currentFollowingList),
+          followingList: followingListJson,
           followingCount: currentFollowingList.length,
         },
       });
 
       // Update target user (add to followers list)
+      const followersListJson = JSON.stringify(targetFollowersList);
+      console.log('Saving followersList as JSON:', followersListJson);
+      
       await tablesDB.updateRow({
         databaseId: DATABASE_ID,
         tableId: COLLECTIONS.USERPROFILES,
         rowId: targetUserDoc.$id,
         data: {
-          followersList: JSON.stringify(targetFollowersList),
+          followersList: followersListJson,
           followersCount: targetFollowersList.length,
         },
       });
@@ -128,23 +136,29 @@ export async function POST(request: NextRequest) {
       );
 
       // Update current user (remove from following list)
+      const updatedFollowingListJson = JSON.stringify(updatedFollowingList);
+      console.log('Saving updated followingList as JSON:', updatedFollowingListJson);
+      
       await tablesDB.updateRow({
         databaseId: DATABASE_ID,
         tableId: COLLECTIONS.USERPROFILES,
         rowId: currentUserDoc.$id,
         data: {
-          followingList: JSON.stringify(updatedFollowingList),
+          followingList: updatedFollowingListJson,
           followingCount: updatedFollowingList.length,
         },
       });
 
       // Update target user (remove from followers list)
+      const updatedFollowersListJson = JSON.stringify(updatedFollowersList);
+      console.log('Saving updated followersList as JSON:', updatedFollowersListJson);
+      
       await tablesDB.updateRow({
         databaseId: DATABASE_ID,
         tableId: COLLECTIONS.USERPROFILES,
         rowId: targetUserDoc.$id,
         data: {
-          followersList: JSON.stringify(updatedFollowersList),
+          followersList: updatedFollowersListJson,
           followersCount: updatedFollowersList.length,
         },
       });
@@ -162,10 +176,10 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in follow/unfollow:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to process follow/unfollow request' },
+      { error: error instanceof Error ? error.message : 'Failed to process follow/unfollow request' },
       { status: 500 }
     );
   }

@@ -5,7 +5,12 @@
  */
 
 import { tablesDB, DB_CONFIG, ID } from "./appwrite";
-import type { Profile, Course, GeneratedPathwayResponse, StoredAIPathway } from "./types";
+import type {
+  Profile,
+  Course,
+  GeneratedPathwayResponse,
+  StoredAIPathway,
+} from "./types";
 import { Query } from "appwrite";
 
 // Permission helper for user-owned rows
@@ -54,10 +59,16 @@ export const profileService = {
         location: existingProfile.location || "",
         websiteUrl: existingProfile.websiteUrl || "",
         socialLinks: existingProfile.socialLinks || [],
-        education: (existingProfile.education || []).map((e) => JSON.stringify(e)),
+        education: (existingProfile.education || []).map((e) =>
+          JSON.stringify(e)
+        ),
         skills: (existingProfile.skills || []).map((s) => JSON.stringify(s)),
-        experience: (existingProfile.experience || []).map((e) => JSON.stringify(e)),
-        projects: (existingProfile.projects || []).map((p) => JSON.stringify(p)),
+        experience: (existingProfile.experience || []).map((e) =>
+          JSON.stringify(e)
+        ),
+        projects: (existingProfile.projects || []).map((p) =>
+          JSON.stringify(p)
+        ),
         documents: JSON.stringify(existingProfile.documents || []),
         assessmentScores: existingProfile.assessmentScores
           ? [JSON.stringify(existingProfile.assessmentScores)]
@@ -162,11 +173,14 @@ export const profileService = {
     const updateData: Partial<UserProfileRow> = {};
 
     if (updates.username !== undefined) updateData.username = updates.username;
-    if (updates.userImage !== undefined) updateData.userImage = updates.userImage;
+    if (updates.userImage !== undefined)
+      updateData.userImage = updates.userImage;
     if (updates.bio !== undefined) updateData.bio = updates.bio;
     if (updates.location !== undefined) updateData.location = updates.location;
-    if (updates.websiteUrl !== undefined) updateData.websiteUrl = updates.websiteUrl;
-    if (updates.socialLinks !== undefined) updateData.socialLinks = updates.socialLinks;
+    if (updates.websiteUrl !== undefined)
+      updateData.websiteUrl = updates.websiteUrl;
+    if (updates.socialLinks !== undefined)
+      updateData.socialLinks = updates.socialLinks;
     if (updates.education !== undefined)
       updateData.education = updates.education.map((e) => JSON.stringify(e));
     if (updates.skills !== undefined)
@@ -250,7 +264,7 @@ export const profileService = {
 
     // Parse documents from single JSON string
     const parseDocuments = (docs: any): any[] => {
-      if (typeof docs === 'string' && docs) {
+      if (typeof docs === "string" && docs) {
         try {
           return JSON.parse(docs);
         } catch {
@@ -276,6 +290,10 @@ export const profileService = {
       experience: parseJsonArray(row.experience),
       projects: parseJsonArray(row.projects),
       documents: parseDocuments(row.documents),
+      followersCount: row.followersCount || 0,
+      followingCount: row.followingCount || 0,
+      followersList: row.followersList || "",
+      followingList: row.followingList || "",
       assessmentScores: parseAssessmentScores(row.assessmentScores),
       dominantType: row.dominantType || "",
       assessmentCompletedAt: row.assessmentCompletedAt || null,
@@ -309,7 +327,11 @@ export const coursesService = {
   /**
    * Add a course for a user
    */
-  async add(userId: string, course: Course, bookmarked: boolean = false): Promise<UserCourseRow> {
+  async add(
+    userId: string,
+    course: Course,
+    bookmarked: boolean = false
+  ): Promise<UserCourseRow> {
     const rowData: Omit<UserCourseRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
       courseId: course.id,
@@ -450,7 +472,6 @@ export const coursesService = {
   },
 };
 
-
 // =====================================
 // AI PATHWAYS COLLECTION (EXTENDED USER_PATHWAYS)
 // =====================================
@@ -484,7 +505,9 @@ export const aiPathwaysService = {
     pathwayData: GeneratedPathwayResponse,
     isCustom: boolean = false
   ): Promise<AIPathwayRow> {
-    const pathwayId = `ai-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const pathwayId = `ai-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(7)}`;
 
     const rowData: Omit<AIPathwayRow, "$id" | "$createdAt" | "$updatedAt"> = {
       userId,
@@ -499,7 +522,9 @@ export const aiPathwaysService = {
       // Store steps as array of JSON strings (each step is a separate string)
       stepsData: pathwayData.steps.map((step) => JSON.stringify(step)),
       // Store resources as array of JSON strings (each resource is a separate string)
-      resourcesData: (pathwayData.resources || []).map((resource) => JSON.stringify(resource)),
+      resourcesData: (pathwayData.resources || []).map((resource) =>
+        JSON.stringify(resource)
+      ),
       isCustom,
     };
 
@@ -565,7 +590,9 @@ export const aiPathwaysService = {
         : [];
 
       const resources = row.resourcesData
-        ? row.resourcesData.map((resourceStr: string) => JSON.parse(resourceStr))
+        ? row.resourcesData.map((resourceStr: string) =>
+            JSON.parse(resourceStr)
+          )
         : [];
 
       return {
