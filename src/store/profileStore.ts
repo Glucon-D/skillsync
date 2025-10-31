@@ -37,7 +37,7 @@ interface ProfileActions {
   removeDocument: (index: number) => Promise<void>;
   getCompletionPercentage: () => number;
   // Database sync methods
-  loadProfile: (userId: string) => Promise<void>;
+  loadProfile: (userId: string, forceRefresh?: boolean) => Promise<void>;
   syncProfile: (userId: string) => Promise<void>;
   createProfile: (userId: string, profile: Profile) => Promise<void>;
   setLoading: (loading: boolean) => void;
@@ -471,18 +471,23 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
       },
 
       // Database sync methods
-      loadProfile: async (userId: string) => {
+      loadProfile: async (userId: string, forceRefresh: boolean = false) => {
         const currentState = get();
         
-        // Prevent duplicate calls - return early if already loading or profile exists
+        // Prevent duplicate calls - return early if already loading
         if (currentState.isLoading) {
           console.log("⏳ Profile already loading, skipping...");
           return;
         }
         
-        if (currentState.profile?.userId === userId) {
+        // Skip if profile exists and not forcing refresh
+        if (currentState.profile?.userId === userId && !forceRefresh) {
           console.log("✅ Profile already loaded, skipping...");
           return;
+        }
+        
+        if (forceRefresh) {
+          console.log("🔄 Force refreshing profile for user:", userId);
         }
         
         set({ isLoading: true, error: null });

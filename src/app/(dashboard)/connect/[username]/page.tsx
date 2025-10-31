@@ -8,7 +8,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   MapPin,
   Link as LinkIcon,
   ExternalLink,
@@ -17,6 +16,8 @@ import {
   Users,
   UserPlus,
   UserMinus,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -33,14 +34,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
+import { useFollowStore } from "@/store/followStore";
 
 export default function ConnectProfilePage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const username = params.username as string;
+
+  const {
+    followUser,
+    unfollowUser,
+    isFollowing: checkIsFollowing,
+    loadFollowData,
+  } = useFollowStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,9 +59,7 @@ export default function ConnectProfilePage() {
   const [completedPathways, setCompletedPathways] = useState<AIPathwayRow[]>(
     []
   );
-  const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
-  const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
 
   // Render portfolio content sections
   const renderPortfolioContent = () => {
@@ -64,29 +70,46 @@ export default function ConnectProfilePage() {
         {/* Experience Section */}
         {profile.experience && profile.experience.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-text">Experience</h2>
+            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+                <Briefcase className="w-5 h-5 text-white" />
+              </div>
+              Experience
+            </h2>
             <div className="space-y-4">
               {profile.experience.map((exp, index) => (
-                <Card key={index} className="border border-border hover:border-primary-500/30 transition-all">
-                  <CardContent className="pt-6">
-                    <h3 className="font-semibold text-text text-lg mb-1">
+                <div
+                  key={index}
+                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
                       {exp.title}
                     </h3>
-                    <p className="text-text-muted text-sm mb-3">
+                    <p className="text-text-muted text-sm mb-4 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary-500" />
                       {exp.duration}
                     </p>
-                    <p className="text-text mb-3 leading-relaxed">{exp.description}</p>
+                    <p className="text-text mb-4 leading-relaxed">
+                      {exp.description}
+                    </p>
                     {exp.techStack && exp.techStack.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {exp.techStack.map((tech, idx) => (
-                          <Badge key={idx} variant="secondary" size="sm">
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            size="sm"
+                            className="shadow-sm"
+                          >
                             {tech}
                           </Badge>
                         ))}
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -95,19 +118,37 @@ export default function ConnectProfilePage() {
         {/* Education Section */}
         {profile.education && profile.education.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-text">Education</h2>
+            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
+                <GraduationCap className="w-5 h-5 text-white" />
+              </div>
+              Education
+            </h2>
             <div className="space-y-4">
               {profile.education.map((edu, index) => (
-                <Card key={index} className="border border-border hover:border-primary-500/30 transition-all">
-                  <CardContent className="pt-6">
-                    <h3 className="font-semibold text-text text-lg">{edu.degree}</h3>
-                    <p className="text-text-muted mb-2">{edu.school}</p>
+                <div
+                  key={index}
+                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
+                      {edu.degree}
+                    </h3>
+                    <p className="text-text-muted text-lg mb-3">{edu.school}</p>
                     <div className="flex gap-4 text-sm text-text-muted">
-                      <span>{edu.year}</span>
-                      {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4 text-primary-500" />
+                        {edu.year}
+                      </span>
+                      {edu.gpa && (
+                        <span className="font-semibold text-primary-600">
+                          GPA: {edu.gpa}
+                        </span>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -118,32 +159,26 @@ export default function ConnectProfilePage() {
           completedPathways.length > 0) && (
           <div className="space-y-6">
             {/* Tab Switcher */}
-            <div className="flex items-center gap-6 border-b border-border">
+            <div className="flex items-center gap-2 bg-surface/50 backdrop-blur-sm rounded-2xl p-1.5 border-2 border-border">
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`pb-4 px-1 text-base font-semibold transition-all relative ${
+                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
                   activeTab === "projects"
-                    ? "text-text"
-                    : "text-text-muted hover:text-text"
+                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                    : "text-text-muted hover:text-text hover:bg-background"
                 }`}
               >
                 Projects
-                {activeTab === "projects" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
-                )}
               </button>
               <button
                 onClick={() => setActiveTab("pathways")}
-                className={`pb-4 px-1 text-base font-semibold transition-all relative ${
+                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
                   activeTab === "pathways"
-                    ? "text-text"
-                    : "text-text-muted hover:text-text"
+                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                    : "text-text-muted hover:text-text hover:bg-background"
                 }`}
               >
                 Completed Pathways
-                {activeTab === "pathways" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
-                )}
               </button>
             </div>
 
@@ -153,22 +188,29 @@ export default function ConnectProfilePage() {
               profile.projects.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {profile.projects.map((project, index) => (
-                    <Card key={index}>
-                      <CardContent className="space-y-4 p-0">
+                    <div
+                      key={index}
+                      className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-sm border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="relative">
                         {project.image && (
-                          <img
-                            src={project.image}
-                            alt={project.name}
-                            className="w-full h-48 object-cover rounded-t-lg"
-                          />
+                          <div className="relative overflow-hidden">
+                            <img
+                              src={project.image}
+                              alt={project.name}
+                              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
                         )}
                         <div className="p-6 space-y-4">
                           <div>
-                            <CardTitle className="text-lg">
+                            <h3 className="text-xl font-bold text-text group-hover:text-primary-600 transition-colors mb-2">
                               {project.name}
-                            </CardTitle>
+                            </h3>
                             {project.description && (
-                              <p className="text-text-muted text-sm mt-2">
+                              <p className="text-text-muted text-sm leading-relaxed">
                                 {project.description}
                               </p>
                             )}
@@ -182,6 +224,7 @@ export default function ConnectProfilePage() {
                                     key={idx}
                                     variant="secondary"
                                     size="sm"
+                                    className="shadow-sm"
                                   >
                                     {tech}
                                   </Badge>
@@ -195,7 +238,7 @@ export default function ConnectProfilePage() {
                                 href={project.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-sm text-text-muted hover:text-primary-500 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
                               >
                                 <ExternalLink className="w-4 h-4" />
                                 <span>View Project</span>
@@ -203,8 +246,8 @@ export default function ConnectProfilePage() {
                             </div>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -292,7 +335,12 @@ export default function ConnectProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       try {
+        console.log("Loading profile for username:", username);
         const data = await profileService.getByUsername(username);
+        console.log("Profile data received:", data);
+        console.log("Followers count:", data?.followersCount);
+        console.log("Following count:", data?.followingCount);
+
         if (data) {
           setProfile(data);
           // Load completed pathways
@@ -308,22 +356,18 @@ export default function ConnectProfilePage() {
             }
           }
 
-          // Check if current user is following this profile
+          // Load follow data for current user
           if (user) {
-            const currentProfile = await profileService.getByUserId(user.id);
-            if (currentProfile) {
-              setCurrentUserProfile(currentProfile);
-              try {
-                const following = currentProfile.followingList 
-                  ? JSON.parse(currentProfile.followingList) 
-                  : [];
-                setIsFollowing(following.includes(data.userId));
-              } catch (e) {
-                setIsFollowing(false);
-              }
+            try {
+              await loadFollowData(user.id);
+              console.log("Follow data loaded successfully");
+            } catch (err) {
+              console.error("Error loading follow data:", err);
+              // Don't set notFound on follow data error
             }
           }
         } else {
+          console.log("No profile found for username:", username);
           setNotFound(true);
         }
       } catch (error) {
@@ -337,7 +381,8 @@ export default function ConnectProfilePage() {
     if (username) {
       loadProfile();
     }
-  }, [username, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username]);
 
   const handleBack = () => {
     router.push(ROUTES.CONNECT);
@@ -345,29 +390,72 @@ export default function ConnectProfilePage() {
 
   const handleFollowToggle = async () => {
     if (!user || !profile) return;
-    
-    setFollowLoading(true);
-    try {
-      const response = await fetch('/api/follow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentUserId: user.id,
-          targetUserId: profile.userId,
-          action: isFollowing ? 'unfollow' : 'follow',
-        }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        setIsFollowing(!isFollowing);
+    setFollowLoading(true);
+    const isCurrentlyFollowing = checkIsFollowing(profile.userId);
+    const previousFollowersCount = profile.followersCount || 0;
+
+    console.log("=== FOLLOW ACTION START ===");
+    console.log("Current follow state:", isCurrentlyFollowing);
+    console.log("Previous followers count:", previousFollowersCount);
+
+    // Optimistic UI update for followers count
+    const optimisticCount = isCurrentlyFollowing
+      ? previousFollowersCount - 1
+      : previousFollowersCount + 1;
+    console.log("Setting optimistic count to:", optimisticCount);
+
+    setProfile({
+      ...profile,
+      followersCount: optimisticCount,
+    });
+
+    try {
+      console.log("Calling follow API...");
+      const result = isCurrentlyFollowing
+        ? await unfollowUser(user.id, profile.userId)
+        : await followUser(user.id, profile.userId);
+
+      console.log("Follow API result:", result);
+
+      if (result.success) {
+        console.log("Reloading follow data for current user...");
+        await loadFollowData(user.id);
+
+        console.log("Fetching updated target profile...");
+        const updatedProfile = await profileService.getByUserId(profile.userId);
+        console.log(
+          "Updated profile followers count:",
+          updatedProfile?.followersCount
+        );
+        console.log(
+          "Updated profile following count:",
+          updatedProfile?.followingCount
+        );
+
+        if (updatedProfile) {
+          // Update entire profile with fresh data from server
+          console.log("Setting complete updated profile");
+          setProfile(updatedProfile);
+        }
+        console.log("=== FOLLOW ACTION SUCCESS ===");
+      } else {
+        // Revert on error
+        console.error("Follow operation failed:", result.error);
         setProfile({
           ...profile,
-          followersCount: data.followersCount,
+          followersCount: previousFollowersCount,
         });
+        console.log("=== FOLLOW ACTION FAILED - REVERTED ===");
       }
     } catch (error) {
-      console.error('Error toggling follow:', error);
+      console.error("Error toggling follow:", error);
+      // Revert on error
+      setProfile({
+        ...profile,
+        followersCount: previousFollowersCount,
+      });
+      console.log("=== FOLLOW ACTION ERROR - REVERTED ===");
     } finally {
       setFollowLoading(false);
     }
@@ -471,70 +559,93 @@ export default function ConnectProfilePage() {
   }
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-8 py-8 px-8">
       {/* Back Button */}
-      <Button
-        onClick={handleBack}
-        variant="ghost"
-        size="sm"
-        className="gap-2"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Connect
-      </Button>
 
       {/* Profile Header Card */}
-      <Card className="border border-border">
-        <CardContent className="pt-8 pb-8">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500/10 via-surface to-primary-600/10 border-2 border-border shadow-xl">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmOGM0MiIgc3Ryb2tlLW9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=')] opacity-50" />
+
+        <div className="relative pt-12 pb-10 px-8">
           <div className="text-center">
             {/* Avatar */}
-            {profile.userImage ? (
-              <img
-                src={profile.userImage}
-                alt={profile.username || "Profile"}
-                className="inline-block w-24 h-24 rounded-full object-cover border-4 border-primary-500 shadow-lg mb-4"
-              />
-            ) : (
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-3xl font-bold mb-4 shadow-lg">
-                {getUserInitial()}
+            <div className="relative inline-block mb-6">
+              {profile.userImage ? (
+                <img
+                  src={profile.userImage}
+                  alt={profile.username || "Profile"}
+                  className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-2xl shadow-primary-500/20"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-4xl font-bold flex items-center justify-center shadow-2xl shadow-primary-500/30">
+                  {getUserInitial()}
+                </div>
+              )}
+              <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
+                <Users className="w-5 h-5 text-white" />
               </div>
-            )}
+            </div>
 
             {/* Username */}
-            <h1 className="text-3xl font-bold text-text mb-3">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-text to-text/80 bg-clip-text text-transparent mb-3">
               {profile.username}
             </h1>
 
             {/* Bio */}
             {profile.bio && (
-              <p className="text-text-muted text-base max-w-2xl mx-auto mb-6 leading-relaxed">
+              <p className="text-text-muted text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
                 {profile.bio}
               </p>
             )}
 
-            {/* Followers/Following Counts & Follow Button */}
-            <div className="flex items-center justify-center gap-6 mb-6">
-              <div className="flex items-center gap-2 text-sm">
-                <Users className="w-4 h-4 text-text-muted" />
-                <span className="font-semibold text-text">{profile.followersCount || 0}</span>
-                <span className="text-text-muted">Followers</span>
+            {/* Followers/Following/Skills Counts */}
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-bold text-text">
+                    {(() => {
+                      const count = profile.followersCount || 0;
+                      console.log("Rendering followers count:", count);
+                      return count;
+                    })()}
+                  </span>
+                  <span className="text-sm text-text-muted">Followers</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Users className="w-4 h-4 text-text-muted" />
-                <span className="font-semibold text-text">{profile.followingCount || 0}</span>
-                <span className="text-text-muted">Following</span>
+              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-bold text-text">
+                    {profile.followingCount || 0}
+                  </span>
+                  <span className="text-sm text-text-muted">Following</span>
+                </div>
               </div>
-              {user && user.id !== profile.userId && (
+              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-bold text-text">
+                    {profile.skills?.length || 0}
+                  </span>
+                  <span className="text-sm text-text-muted">Skills</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Follow Button */}
+            {user && user.id !== profile.userId && (
+              <div className="mb-8">
                 <Button
                   onClick={handleFollowToggle}
                   disabled={followLoading}
-                  size="sm"
-                  variant={isFollowing ? "outline" : "primary"}
-                  className="ml-2"
+                  size="lg"
+                  variant={
+                    checkIsFollowing(profile.userId) ? "outline" : "primary"
+                  }
+                  className="shadow-lg"
                 >
                   {followLoading ? (
                     "Loading..."
-                  ) : isFollowing ? (
+                  ) : checkIsFollowing(profile.userId) ? (
                     <>
                       <UserMinus className="w-4 h-4 mr-2" />
                       Unfollow
@@ -546,14 +657,14 @@ export default function ConnectProfilePage() {
                     </>
                   )}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Location & Website */}
-            <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-6">
+            <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-8">
               {profile.location && (
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+                  <MapPin className="w-4 h-4 text-primary-500" />
                   <span>{profile.location}</span>
                 </div>
               )}
@@ -562,28 +673,30 @@ export default function ConnectProfilePage() {
                   href={profile.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all group"
                 >
-                  <LinkIcon className="w-4 h-4" />
-                  <span>Website</span>
+                  <LinkIcon className="w-4 h-4 text-primary-500" />
+                  <span className="group-hover:text-primary-500 transition-colors">
+                    Website
+                  </span>
                 </a>
               )}
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+                <Calendar className="w-4 h-4 text-primary-500" />
                 <span>Joined {getJoinDate()}</span>
               </div>
             </div>
 
             {/* Social Links */}
             {profile.socialLinks && profile.socialLinks.length > 0 && (
-              <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="flex items-center justify-center gap-3">
                 {profile.socialLinks.map((link, index) => (
                   <a
                     key={index}
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-border hover:border-primary-500 hover:bg-primary-50 transition-all text-text-muted hover:text-primary-500"
+                    className="p-3 rounded-xl border-2 border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500 hover:scale-110 hover:shadow-lg group"
                   >
                     {getSocialIcon(link)}
                   </a>
@@ -591,39 +704,20 @@ export default function ConnectProfilePage() {
               </div>
             )}
 
-            {/* Skills Tags */}
-            {profile.skills && profile.skills.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto mb-6">
-                {profile.skills.map((skill, index) => (
-                  <Badge
-                    key={index}
-                    variant={
-                      skill.level === "advanced"
-                        ? "primary"
-                        : skill.level === "intermediate"
-                        ? "warning"
-                        : "default"
-                    }
-                  >
-                    {skill.name}
-                    {skill.level && ` • ${skill.level}`}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
             {/* Coding Platform Heatmaps */}
-            {(getGithubUsername() || getLeetCodeUsername() || getGFGUsername()) && (
-              <div className="mt-8 pt-6 border-t border-border space-y-6">
+            {(getGithubUsername() ||
+              getLeetCodeUsername() ||
+              getGFGUsername()) && (
+              <div className="mt-8 pt-8 border-t border-border/50 space-y-8">
                 {getGithubUsername() && (
                   <div>
                     <div className="flex items-center justify-center gap-2 mb-4">
-                      <IoLogoGithub className="w-5 h-5 text-text-muted" />
-                      <h3 className="text-sm font-semibold text-text">
+                      <IoLogoGithub className="w-6 h-6 text-primary-500" />
+                      <h3 className="text-lg font-semibold text-text">
                         GitHub Contributions
                       </h3>
                     </div>
-                    <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
+                    <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img
                         src={`https://ghchart.rshah.org/ff8c42/${getGithubUsername()}`}
                         alt="GitHub Contribution Heatmap"
@@ -637,12 +731,12 @@ export default function ConnectProfilePage() {
                 {getLeetCodeUsername() && (
                   <div>
                     <div className="flex items-center justify-center gap-2 mb-4">
-                      <SiLeetcode className="w-5 h-5 text-text-muted" />
-                      <h3 className="text-sm font-semibold text-text">
+                      <SiLeetcode className="w-6 h-6 text-primary-500" />
+                      <h3 className="text-lg font-semibold text-text">
                         LeetCode Stats
                       </h3>
                     </div>
-                    <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
+                    <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img
                         src={`https://leetcard.jacoblin.cool/${getLeetCodeUsername()}?theme=light&font=Karma&ext=heatmap`}
                         alt="LeetCode Stats"
@@ -655,12 +749,12 @@ export default function ConnectProfilePage() {
                 {getGFGUsername() && (
                   <div>
                     <div className="flex items-center justify-center gap-2 mb-4">
-                      <SiGeeksforgeeks className="w-5 h-5 text-text-muted" />
-                      <h3 className="text-sm font-semibold text-text">
+                      <SiGeeksforgeeks className="w-6 h-6 text-primary-500" />
+                      <h3 className="text-lg font-semibold text-text">
                         GeeksforGeeks Profile
                       </h3>
                     </div>
-                    <div className="flex justify-center overflow-x-auto bg-background rounded-lg p-4 border border-border">
+                    <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img
                         src={`https://geeks-for-geeks-stats-card.vercel.app/?username=${getGFGUsername()}`}
                         alt="GFG Stats"
@@ -672,8 +766,8 @@ export default function ConnectProfilePage() {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Portfolio Content Sections */}
       {renderPortfolioContent()}

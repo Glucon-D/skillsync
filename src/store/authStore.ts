@@ -160,6 +160,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           // Clear auth state
           set({ user: null, isAuthenticated: false, isLoading: false });
           
+          // Clear follow store
+          const { useFollowStore } = await import("./followStore");
+          useFollowStore.getState().resetFollowState();
+          
           // Clear all local storage
           if (typeof window !== "undefined") {
             localStorage.clear();
