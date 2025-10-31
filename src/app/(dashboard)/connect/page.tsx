@@ -225,26 +225,6 @@ export default function ConnectPage() {
                       <div className="text-xs text-text-muted">Skills</div>
                     </div>
                   </div>
-
-                  {/* Skills */}
-                  {user.skills && user.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 justify-center">
-                      {user.skills.slice(0, 3).map((skill, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {skill.name}
-                        </Badge>
-                      ))}
-                      {user.skills.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{user.skills.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             </Link>

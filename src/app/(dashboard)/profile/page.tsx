@@ -10,6 +10,7 @@ import { useEffect, useState, useRef } from "react";
 import { Plus, Trash2, Edit2, Save, X, Upload, FileText, ExternalLink, Link as LinkIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileStore } from "@/store/profileStore";
+import type { Education, Experience, Project } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,13 +50,13 @@ export default function ProfilePage() {
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [educationDialogOpen, setEducationDialogOpen] = useState(false);
   const [editEducationDialogOpen, setEditEducationDialogOpen] = useState(false);
-  const [editingEducation, setEditingEducation] = useState<{ index: number; education: any } | null>(null);
+  const [editingEducation, setEditingEducation] = useState<{ index: number; education: Education } | null>(null);
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
   const [editExperienceDialogOpen, setEditExperienceDialogOpen] = useState(false);
-  const [editingExperience, setEditingExperience] = useState<{ index: number; experience: any } | null>(null);
+  const [editingExperience, setEditingExperience] = useState<{ index: number; experience: Experience } | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [editProjectDialogOpen, setEditProjectDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<{ index: number; project: any } | null>(null);
+  const [editingProject, setEditingProject] = useState<{ index: number; project: Project } | null>(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingBasicInfo, setIsEditingBasicInfo] = useState(false);
   const [editingSocialLinkIndex, setEditingSocialLinkIndex] = useState<number | null>(null);
@@ -70,11 +71,11 @@ export default function ProfilePage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (user?.id && !profile && !isLoading) {
+    if (user?.id) {
       console.log("Profile page: Loading profile for user", user.id);
-      loadProfile(user.id);
+      loadProfile(user.id, true); // Force refresh on page load
     }
-  }, [user?.id, profile, isLoading, loadProfile]);
+  }, [user?.id, loadProfile]);
 
   useEffect(() => {
     if (profile) {

@@ -38,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { useFollowStore } from "@/store/followStore";
 import Link from "next/link";
 
 export default function PortfolioPage() {
@@ -45,6 +46,13 @@ export default function PortfolioPage() {
   const router = useRouter();
   const { user } = useAuth();
   const username = params.username as string;
+
+  const {
+    followUser,
+    unfollowUser,
+    isFollowing: checkIsFollowing,
+    loadFollowData,
+  } = useFollowStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,9 +63,7 @@ export default function PortfolioPage() {
   const [completedPathways, setCompletedPathways] = useState<AIPathwayRow[]>(
     []
   );
-  const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
-  const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
 
   // Render portfolio content sections
   const renderPortfolioContent = () => {
@@ -76,7 +82,10 @@ export default function PortfolioPage() {
             </h2>
             <div className="space-y-4">
               {profile.experience.map((exp, index) => (
-                <div key={index} className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                <div
+                  key={index}
+                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
@@ -86,11 +95,18 @@ export default function PortfolioPage() {
                       <Calendar className="w-4 h-4 text-primary-500" />
                       {exp.duration}
                     </p>
-                    <p className="text-text mb-4 leading-relaxed">{exp.description}</p>
+                    <p className="text-text mb-4 leading-relaxed">
+                      {exp.description}
+                    </p>
                     {exp.techStack && exp.techStack.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {exp.techStack.map((tech, idx) => (
-                          <Badge key={idx} variant="secondary" size="sm" className="shadow-sm">
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            size="sm"
+                            className="shadow-sm"
+                          >
                             {tech}
                           </Badge>
                         ))}
@@ -114,17 +130,26 @@ export default function PortfolioPage() {
             </h2>
             <div className="space-y-4">
               {profile.education.map((edu, index) => (
-                <div key={index} className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                <div
+                  key={index}
+                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">{edu.degree}</h3>
+                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
+                      {edu.degree}
+                    </h3>
                     <p className="text-text-muted text-lg mb-3">{edu.school}</p>
                     <div className="flex gap-4 text-sm text-text-muted">
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4 text-primary-500" />
                         {edu.year}
                       </span>
-                      {edu.gpa && <span className="font-semibold text-primary-600">GPA: {edu.gpa}</span>}
+                      {edu.gpa && (
+                        <span className="font-semibold text-primary-600">
+                          GPA: {edu.gpa}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -167,7 +192,10 @@ export default function PortfolioPage() {
               profile.projects.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {profile.projects.map((project, index) => (
-                    <div key={index} className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-sm border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300">
+                    <div
+                      key={index}
+                      className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-sm border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                    >
                       <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div className="relative">
                         {project.image && (
@@ -310,8 +338,18 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     async function loadProfile() {
+      // Reset state on every load
+      setLoading(true);
+      setNotFound(false);
+      setProfile(null);
+
       try {
+        console.log("Loading profile for username:", username);
         const data = await profileService.getByUsername(username);
+        console.log("Profile data received:", data);
+        console.log("Followers count:", data?.followersCount);
+        console.log("Following count:", data?.followingCount);
+
         if (data) {
           setProfile(data);
           // Load completed pathways
@@ -338,22 +376,18 @@ export default function PortfolioPage() {
             console.log("No userId found in profile");
           }
 
-          // Check if current user is following this profile
+          // Load follow data for current user
           if (user) {
-            const currentProfile = await profileService.getByUserId(user.id);
-            if (currentProfile) {
-              setCurrentUserProfile(currentProfile);
-              try {
-                const following = currentProfile.followingList 
-                  ? JSON.parse(currentProfile.followingList) 
-                  : [];
-                setIsFollowing(following.includes(data.userId));
-              } catch (e) {
-                setIsFollowing(false);
-              }
+            try {
+              await loadFollowData(user.id);
+              console.log("Follow data loaded successfully");
+            } catch (err) {
+              console.error("Error loading follow data:", err);
+              // Don't set notFound on follow data error
             }
           }
         } else {
+          console.log("No profile found for username:", username);
           setNotFound(true);
         }
       } catch (error) {
@@ -367,7 +401,8 @@ export default function PortfolioPage() {
     if (username) {
       loadProfile();
     }
-  }, [username, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username]);
 
   const handleBack = () => {
     if (user) {
@@ -379,30 +414,48 @@ export default function PortfolioPage() {
 
   const handleFollowToggle = async () => {
     if (!user || !profile) return;
-    
-    setFollowLoading(true);
-    try {
-      const response = await fetch('/api/follow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentUserId: user.id,
-          targetUserId: profile.userId,
-          action: isFollowing ? 'unfollow' : 'follow',
-        }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        setIsFollowing(!isFollowing);
-        // Update the profile counts
+    setFollowLoading(true);
+    const isCurrentlyFollowing = checkIsFollowing(profile.userId);
+    const previousFollowersCount = profile.followersCount || 0;
+
+    // Optimistic UI update for followers count
+    setProfile({
+      ...profile,
+      followersCount: isCurrentlyFollowing
+        ? previousFollowersCount - 1
+        : previousFollowersCount + 1,
+    });
+
+    try {
+      const result = isCurrentlyFollowing
+        ? await unfollowUser(user.id, profile.userId)
+        : await followUser(user.id, profile.userId);
+
+      if (result.success) {
+        // Reload follow data to get accurate counts
+        await loadFollowData(user.id);
+
+        // Update target profile with actual server data - replace entire profile
+        const updatedProfile = await profileService.getByUserId(profile.userId);
+        if (updatedProfile) {
+          setProfile(updatedProfile);
+        }
+      } else {
+        // Revert on error
+        console.error("Follow operation failed:", result.error);
         setProfile({
           ...profile,
-          followersCount: data.followersCount,
+          followersCount: previousFollowersCount,
         });
       }
     } catch (error) {
-      console.error('Error toggling follow:', error);
+      console.error("Error toggling follow:", error);
+      // Revert on error
+      setProfile({
+        ...profile,
+        followersCount: previousFollowersCount,
+      });
     } finally {
       setFollowLoading(false);
     }
@@ -480,7 +533,6 @@ export default function PortfolioPage() {
     return match ? match[1] : null;
   };
 
-
   if (loading) {
     // Show loading within dashboard layout for authenticated users
     if (user) {
@@ -528,7 +580,10 @@ export default function PortfolioPage() {
                 <div className="flex items-center justify-center h-96">
                   <div className="text-center">
                     <h1 className="text-4xl font-bold text-text mb-4">404</h1>
-                    <p className="text-text-muted mb-6">Portfolio not found</p>
+                    <p className="text-text-muted mb-4">Portfolio not found</p>
+                    <p className="text-text-muted text-sm mb-6">
+                      Username &quot;{username}&quot; does not exist
+                    </p>
                     <Button onClick={handleBack}>Go Back</Button>
                   </div>
                 </div>
@@ -544,7 +599,10 @@ export default function PortfolioPage() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-text mb-4">404</h1>
-          <p className="text-text-muted mb-6">Portfolio not found</p>
+          <p className="text-text-muted mb-4">Portfolio not found</p>
+          <p className="text-text-muted text-sm mb-6">
+            Username &quot;{username}&quot; does not exist
+          </p>
           <Button onClick={handleBack}>Go Back</Button>
         </div>
       </div>
@@ -602,14 +660,22 @@ export default function PortfolioPage() {
                       <div className="flex items-center justify-center gap-6 mb-8">
                         <div className="group relative px-4 py-2 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
                           <div className="flex flex-col items-center">
-                            <span className="text-2xl font-bold text-text">{profile.followersCount || 0}</span>
-                            <span className="text-sm text-text-muted">Followers</span>
+                            <span className="text-2xl font-bold text-text">
+                              {profile.followersCount || 0}
+                            </span>
+                            <span className="text-sm text-text-muted">
+                              Followers
+                            </span>
                           </div>
                         </div>
                         <div className="group relative px-4 py-2 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
                           <div className="flex flex-col items-center">
-                            <span className="text-2xl font-bold text-text">{profile.followingCount || 0}</span>
-                            <span className="text-sm text-text-muted">Following</span>
+                            <span className="text-2xl font-bold text-text">
+                              {profile.followingCount || 0}
+                            </span>
+                            <span className="text-sm text-text-muted">
+                              Following
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -621,12 +687,16 @@ export default function PortfolioPage() {
                             onClick={handleFollowToggle}
                             disabled={followLoading}
                             size="lg"
-                            variant={isFollowing ? "outline" : "primary"}
+                            variant={
+                              checkIsFollowing(profile.userId)
+                                ? "outline"
+                                : "primary"
+                            }
                             className="shadow-lg"
                           >
                             {followLoading ? (
                               "Loading..."
-                            ) : isFollowing ? (
+                            ) : checkIsFollowing(profile.userId) ? (
                               <>
                                 <UserMinus className="w-4 h-4 mr-2" />
                                 Unfollow
@@ -657,7 +727,9 @@ export default function PortfolioPage() {
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all group"
                           >
                             <LinkIcon className="w-4 h-4 text-primary-500" />
-                            <span className="group-hover:text-primary-500 transition-colors">Website</span>
+                            <span className="group-hover:text-primary-500 transition-colors">
+                              Website
+                            </span>
                           </a>
                         )}
                         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
@@ -707,8 +779,7 @@ export default function PortfolioPage() {
                       )}
 
                       {/* Coding Platform Heatmaps */}
-                      {(getGithubUsername() ||
-                        getLeetCodeUsername()) && (
+                      {(getGithubUsername() || getLeetCodeUsername()) && (
                         <div className="mt-10 pt-8 border-t border-border/50 space-y-8">
                           {/* GitHub Heatmap */}
                           {getGithubUsername() && (
@@ -825,12 +896,16 @@ export default function PortfolioPage() {
           <div className="flex items-center justify-center gap-6 mb-8">
             <div className="flex items-center gap-2 text-sm">
               <Users className="w-4 h-4 text-text-muted" />
-              <span className="font-semibold text-text">{profile.followersCount || 0}</span>
+              <span className="font-semibold text-text">
+                {profile.followersCount || 0}
+              </span>
               <span className="text-text-muted">Followers</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Users className="w-4 h-4 text-text-muted" />
-              <span className="font-semibold text-text">{profile.followingCount || 0}</span>
+              <span className="font-semibold text-text">
+                {profile.followingCount || 0}
+              </span>
               <span className="text-text-muted">Following</span>
             </div>
           </div>
@@ -900,8 +975,7 @@ export default function PortfolioPage() {
           )}
 
           {/* Coding Platform Heatmaps */}
-          {(getGithubUsername() ||
-            getLeetCodeUsername()) && (
+          {(getGithubUsername() || getLeetCodeUsername()) && (
             <div className="mt-8 pt-8 border-t border-border max-w-4xl mx-auto space-y-8">
               {/* GitHub Heatmap */}
               {getGithubUsername() && (
