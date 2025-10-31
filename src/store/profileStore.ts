@@ -42,6 +42,7 @@ interface ProfileActions {
   createProfile: (userId: string, profile: Profile) => Promise<void>;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  resetProfile: () => void;
 }
 
 export const useProfileStore = create<ProfileState & ProfileActions>()(
@@ -482,8 +483,15 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
           } else {
             // No profile exists, create a default one
             console.log("📝 No profile found, creating default profile");
+            
+            // Get user email from auth store to extract username
+            const { useAuthStore } = await import("./authStore");
+            const user = useAuthStore.getState().user;
+            const username = user?.email ? user.email.split("@")[0] : "";
+            
             const defaultProfile: Profile = {
               userId,
+              username,
               bio: "",
               education: [],
               skills: [],
@@ -498,7 +506,7 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
             );
             const createdProfile =
               profileService.mapRowToProfile(newProfileRow);
-            console.log("✅ Default profile created");
+            console.log("✅ Default profile created with username:", username);
             set({ profile: createdProfile, isLoading: false });
           }
         } catch (error) {
@@ -543,6 +551,10 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
 
       setError: (error: string | null) => {
         set({ error });
+      },
+
+      resetProfile: () => {
+        set({ profile: null, isLoading: false, error: null });
       },
     }),
     {

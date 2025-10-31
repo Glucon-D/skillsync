@@ -34,7 +34,7 @@ export function SignupForm() {
     const result = await signup(data.name, data.email, data.password);
 
     if (result.success) {
-      router.push(ROUTES.ONBOARDING);
+      router.push(ROUTES.DASHBOARD);
     } else {
       setError(result.error || "Failed to create account");
     }
@@ -43,7 +43,7 @@ export function SignupForm() {
   const handleGoogleSignup = async () => {
     try {
       await loginWithGoogle();
-    } catch (error) {
+    } catch {
       setError("Failed to sign up with Google");
     }
   };

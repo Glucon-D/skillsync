@@ -148,11 +148,31 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       logout: async () => {
         try {
           set({ isLoading: true });
-          await account.deleteSession({ sessionId: "current" });
+          
+          // Delete all sessions (not just current)
+          try {
+            await account.deleteSessions();
+          } catch (sessionError) {
+            console.error("Error deleting sessions:", sessionError);
+            // Continue with logout even if session deletion fails
+          }
+          
+          // Clear auth state
           set({ user: null, isAuthenticated: false, isLoading: false });
+          
+          // Clear all local storage
+          if (typeof window !== "undefined") {
+            localStorage.clear();
+            sessionStorage.clear();
+          }
         } catch (error) {
           console.error("Logout error:", error);
-          set({ isLoading: false });
+          // Force clear state even if there's an error
+          set({ user: null, isAuthenticated: false, isLoading: false });
+          if (typeof window !== "undefined") {
+            localStorage.clear();
+            sessionStorage.clear();
+          }
         }
       },
 

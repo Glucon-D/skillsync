@@ -10,17 +10,32 @@ import Link from 'next/link';
 import { LogOut, Menu, X, User, ChevronDown, MessageSquare, Briefcase, TrendingUp, Settings } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfileStore } from '@/store/profileStore';
 import { ROUTES } from '@/lib/constants';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
+  const resetProfile = useProfileStore((state) => state.resetProfile);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    // Clear profile store
+    resetProfile();
+    
+    // Logout from auth (this clears sessions and storage)
+    await logout();
+    
+    // Clear all cookies as an extra safety measure
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    
+    // Force reload to login page to clear all state
     window.location.href = ROUTES.LOGIN;
   };
 
