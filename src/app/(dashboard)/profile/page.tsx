@@ -55,6 +55,8 @@ export default function ProfilePage() {
     removeProject,
     removeSocialLink,
     removeDocument,
+    loadFromLocalDB,
+    syncWithAppwrite,
   } = useProfileStore();
 
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
@@ -93,10 +95,16 @@ export default function ProfilePage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    console.log('[Profile] 🚀 Page loaded');
+    
+    loadFromLocalDB();
+
     if (user?.id) {
-      loadProfile(user.id, true); // Force refresh on page load
+      syncWithAppwrite(user.id, { silentSync: true }).then(() => {
+        console.log('[Profile] ✅ Background sync completed');
+      });
     }
-  }, [user?.id, loadProfile]);
+  }, [user?.id, loadFromLocalDB, syncWithAppwrite]);
 
   useEffect(() => {
     if (profile) {

@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Briefcase,
   MapPin,
@@ -52,6 +52,7 @@ export default function CareersPage() {
   });
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
+  const prevFiltersRef = useRef(filters);
 
   // Scroll to top when page changes
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function CareersPage() {
   // Update individual filter
   const updateFilter = (key: keyof FilterState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
   };
 
   // Clear all filters
@@ -72,13 +74,11 @@ export default function CareersPage() {
       workMode: "all",
       companyType: "all",
     });
+    setCurrentPage(1);
   };
 
   // Filter jobs based on all criteria
   const filteredJobs = useMemo(() => {
-    // Reset to page 1 when filters change
-    setCurrentPage(1);
-
     return JobsData.jobs.filter((job: JobListing) => {
       // Search filter (job title or company name)
       const matchesSearch =
@@ -369,7 +369,7 @@ export default function CareersPage() {
                       No jobs found
                     </h3>
                     <p className="text-text-muted mb-8 max-w-md mx-auto leading-relaxed">
-                      We couldn't find any jobs matching your criteria. Try
+                      We couldn&apos;t find any jobs matching your criteria. Try
                       adjusting your filters or search query.
                     </p>
                     {hasActiveFilters && (

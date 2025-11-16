@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Users, Loader2 } from "lucide-react";
-import { profileService } from "@/lib/db";
 import type { Profile } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { useFollowStore } from "@/store/followStore";
+import { useProfileStore } from "@/store/profileStore";
 import Link from "next/link";
 
 type TabType = "followers" | "following";
@@ -29,6 +29,8 @@ export default function NetworkPage() {
     loadNetworkProfiles,
   } = useFollowStore();
 
+  const { getCachedProfileByUsername, syncProfileByUsername } = useProfileStore();
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("followers");
@@ -40,25 +42,26 @@ export default function NetworkPage() {
 
   useEffect(() => {
     async function loadProfile() {
-      setLoading(true);
+      console.log('[Network] 🚀 Loading network for:', username);
+      
+      // Try cache first
+      const cachedProfile = getCachedProfileByUsername(username);
+      if (cachedProfile) {
+        console.log('[Network] ⚡ Loaded from cache');
+        setProfile(cachedProfile);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
+
       try {
-        const data = await profileService.getByUsername(username);
+        // Sync in background with cache TTL
+        const data = await syncProfileByUsername(username, { silentSync: true });
+        
         if (data) {
           setProfile(data);
-
-          console.log("Profile data:", {
-            followersList: data.followersList,
-            followingList: data.followingList,
-            followersCount: data.followersCount,
-            followingCount: data.followingCount,
-          });
-
+          
           const networkData = await loadNetworkProfiles(data.userId);
-          console.log("Network data loaded:", {
-            followers: networkData.followers.length,
-            following: networkData.following.length,
-          });
-
           setFollowers(networkData.followers as Profile[]);
           setFollowing(networkData.following as Profile[]);
 
@@ -76,7 +79,7 @@ export default function NetworkPage() {
     if (username) {
       loadProfile();
     }
-  }, [username, user, loadFollowData, loadNetworkProfiles]);
+  }, [username, user, loadFollowData, loadNetworkProfiles, getCachedProfileByUsername, syncProfileByUsername]);
 
   const handleFollowToggle = async (targetUserId: string) => {
     if (!user || !profile) return;

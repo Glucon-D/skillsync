@@ -7,6 +7,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   BookOpen,
   Map,
@@ -27,8 +28,30 @@ import IndustryTrends from "@/components/dashboard/IndustryTrends";
 export default function DashboardPage() {
   const { user } = useAuth();
   const profile = useProfileStore((state) => state.profile);
+  const loadProfileFromLocalDB = useProfileStore((state) => state.loadFromLocalDB);
+  const syncProfileWithAppwrite = useProfileStore((state) => state.syncWithAppwrite);
+  
   const bookmarkedCourses = useCoursesStore((state) => state.bookmarkedCourses);
+  const loadCoursesFromLocalDB = useCoursesStore((state) => state.loadFromLocalDB);
+  const syncCoursesWithAppwrite = useCoursesStore((state) => state.syncWithAppwrite);
+  
   const completionPercentage = profile?.completionPercentage || 0;
+
+  useEffect(() => {
+    console.log('[Dashboard] 🚀 Page loaded');
+    
+    loadProfileFromLocalDB();
+    loadCoursesFromLocalDB();
+
+    if (user?.id) {
+      Promise.allSettled([
+        syncProfileWithAppwrite(user.id, { silentSync: true }),
+        syncCoursesWithAppwrite(user.id, { silentSync: true }),
+      ]).then(() => {
+        console.log('[Dashboard] ✅ Background sync completed');
+      });
+    }
+  }, [user?.id, loadProfileFromLocalDB, syncProfileWithAppwrite, loadCoursesFromLocalDB, syncCoursesWithAppwrite]);
 
   return (
     <div className="space-y-8 pb-8 p-6 md:p-8 max-w-6xl mx-auto">

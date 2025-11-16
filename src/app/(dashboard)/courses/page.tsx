@@ -58,6 +58,8 @@ export default function CoursesPage() {
     bookmarkedCourses,
     loadCourses,
     isLoading: storeLoading,
+    loadFromLocalDB,
+    syncWithAppwrite,
   } = useCoursesStore();
 
   const [activeTab, setActiveTab] = useState<"all" | "bookmarked">("all");
@@ -82,12 +84,17 @@ export default function CoursesPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<string>("");
 
-  // Load user's courses on mount
   useEffect(() => {
+    console.log('[Courses] 🚀 Page loaded');
+    
+    loadFromLocalDB();
+
     if (user?.id) {
-      loadCourses(user.id);
+      syncWithAppwrite(user.id, { silentSync: true }).then(() => {
+        console.log('[Courses] ✅ Background sync completed');
+      });
     }
-  }, [user?.id, loadCourses]);
+  }, [user?.id, loadFromLocalDB, syncWithAppwrite]);
 
   // Scroll to top when page changes
   useEffect(() => {

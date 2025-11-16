@@ -28,7 +28,7 @@ import {
 import { CiLinkedin, CiYoutube } from "react-icons/ci";
 import { IoLogoGithub } from "react-icons/io";
 import { RiTwitterXLine } from "react-icons/ri";
-import { profileService, aiPathwaysService, type AIPathwayRow } from "@/lib/db";
+import { aiPathwaysService, type AIPathwayRow } from "@/lib/db";
 import type { Profile } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { useFollowStore } from "@/store/followStore";
+import { useProfileStore } from "@/store/profileStore";
 import Link from "next/link";
 
 export default function PortfolioPage() {
@@ -51,6 +52,8 @@ export default function PortfolioPage() {
     isFollowing: checkIsFollowing,
     loadFollowData,
   } = useFollowStore();
+
+  const { getCachedProfileByUsername, syncProfileByUsername, loadProfileByUserId } = useProfileStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -336,61 +339,54 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     async function loadProfile() {
-      // Reset state on every load
-      setLoading(true);
-      setNotFound(false);
-      setProfile(null);
+      console.log('[Portfolio] 🚀 Loading portfolio for:', username);
+      
+      // Try to load from cache first
+      const cachedProfile = getCachedProfileByUsername(username);
+      if (cachedProfile) {
+        console.log('[Portfolio] ⚡ Loaded from cache');
+        setProfile(cachedProfile);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
 
       try {
-        console.log("Loading profile for username:", username);
-        const data = await profileService.getByUsername(username);
-        console.log("Profile data received:", data);
-        console.log("Followers count:", data?.followersCount);
-        console.log("Following count:", data?.followingCount);
-
+        // Sync in background with cache TTL (5 minutes)
+        const data = await syncProfileByUsername(username, { silentSync: true });
+        
         if (data) {
+          console.log('[Portfolio] ✅ Profile synced');
           setProfile(data);
+          setNotFound(false);
+          
           // Load completed pathways
           if (data.userId) {
-            console.log("Loading pathways for userId:", data.userId);
             try {
-              const pathways = await aiPathwaysService.getAIPathways(
-                data.userId
-              );
-              console.log("All pathways fetched:", pathways);
-              console.log("Number of pathways:", pathways.length);
-
-              const completed = pathways.filter((p) => {
-                console.log(`Pathway "${p.name}" - completed:`, p.completed);
-                return p.completed === true;
-              });
-              console.log("Completed pathways:", completed);
-              console.log("Number of completed:", completed.length);
+              const pathways = await aiPathwaysService.getAIPathways(data.userId);
+              const completed = pathways.filter((p) => p.completed === true);
               setCompletedPathways(completed);
             } catch (err) {
               console.error("Error loading pathways:", err);
             }
-          } else {
-            console.log("No userId found in profile");
           }
 
           // Load follow data for current user
           if (user) {
             try {
               await loadFollowData(user.id);
-              console.log("Follow data loaded successfully");
             } catch (err) {
               console.error("Error loading follow data:", err);
-              // Don't set notFound on follow data error
             }
           }
         } else {
-          console.log("No profile found for username:", username);
           setNotFound(true);
         }
       } catch (error) {
         console.error("Error loading portfolio:", error);
-        setNotFound(true);
+        if (!cachedProfile) {
+          setNotFound(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -435,7 +431,7 @@ export default function PortfolioPage() {
         await loadFollowData(user.id);
 
         // Update target profile with actual server data - replace entire profile
-        const updatedProfile = await profileService.getByUserId(profile.userId);
+        const updatedProfile = await loadProfileByUserId(profile.userId);
         if (updatedProfile) {
           setProfile(updatedProfile);
         }

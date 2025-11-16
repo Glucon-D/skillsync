@@ -43,18 +43,18 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 export default function Home() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-primary-600/5 dark:from-primary-500/10 dark:to-primary-600/10" />
+      {/* Animated background linear */}
+      <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 via-transparent to-primary-600/5 dark:from-primary-500/10 dark:to-primary-600/10" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/20 dark:bg-primary-500/10 rounded-full blur-3xl opacity-20 animate-pulse" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-600/20 dark:bg-primary-600/10 rounded-full blur-3xl opacity-20 animate-pulse" />
 
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+        <nav className="fixed w-full top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <div className="w-9 h-9 bg-linear-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
                   <span className="text-white font-bold text-lg">S</span>
                 </div>
                 <span className="text-xl font-bold text-text">SkillSync</span>
@@ -90,7 +90,7 @@ export default function Home() {
 
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-text tracking-tight">
                   Find Your
-                  <span className="block mt-2 bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
+                  <span className="block mt-2 bg-linear-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
                     Perfect Career Path
                   </span>
                 </h1>
@@ -246,9 +246,9 @@ export default function Home() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Feature Card 1 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaBullseye className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -263,9 +263,9 @@ export default function Home() {
 
               {/* Feature Card 2 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaCompass className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -280,9 +280,9 @@ export default function Home() {
 
               {/* Feature Card 3 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <RiBrainFill className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -296,9 +296,9 @@ export default function Home() {
 
               {/* Feature Card 4 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <HiMap className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -312,9 +312,9 @@ export default function Home() {
 
               {/* Feature Card 5 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <HiBookOpen className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -328,9 +328,9 @@ export default function Home() {
 
               {/* Feature Card 6 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <MdWork className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -344,9 +344,9 @@ export default function Home() {
 
               {/* Feature Card 7 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaCode className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -360,9 +360,9 @@ export default function Home() {
 
               {/* Feature Card 8 */}
               <div className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 hover:-translate-y-1">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
+                  <div className="w-12 h-12 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <MdAnalytics className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-text mb-2">
@@ -397,7 +397,7 @@ export default function Home() {
               <div className="relative">
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
+                    <div className="w-20 h-20 bg-linear-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
                       <FaUserGraduate className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
@@ -420,7 +420,7 @@ export default function Home() {
               <div className="relative">
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
+                    <div className="w-20 h-20 bg-linear-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
                       <FaBullseye className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
@@ -445,7 +445,7 @@ export default function Home() {
               <div className="relative">
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
+                    <div className="w-20 h-20 bg-linear-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
                       <FaLightbulb className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
@@ -470,7 +470,7 @@ export default function Home() {
               <div className="relative">
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
+                    <div className="w-20 h-20 bg-linear-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/25">
                       <FaRocket className="w-10 h-10 text-white" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
@@ -518,7 +518,7 @@ export default function Home() {
             </div>
 
             {/* Dummy Dashboard */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-primary-500/5 to-primary-600/5 border border-border shadow-xl overflow-hidden p-4 sm:p-6">
+            <div className="relative rounded-2xl bg-linear-to-br from-primary-500/5 to-primary-600/5 border border-border shadow-xl overflow-hidden p-4 sm:p-6">
               {/* Welcome Header */}
               <div className="mb-4 pb-4 border-b border-border">
                 <div className="flex items-center justify-between flex-wrap gap-3">
@@ -544,7 +544,7 @@ export default function Home() {
                 {/* Career Fit Score */}
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <FaBullseye className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
@@ -558,7 +558,7 @@ export default function Home() {
                 {/* Skills Progress */}
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <MdTrendingUp className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
@@ -572,7 +572,7 @@ export default function Home() {
                 {/* Recommended Courses */}
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <HiBookOpen className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
@@ -585,7 +585,7 @@ export default function Home() {
 
                 {/* Next Goal */}
                 <div className="relative p-3 bg-surface/70 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-2">
+                  <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-2">
                     <FaRocket className="w-4 h-4 text-white" />
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Next Goal</p>
@@ -619,7 +619,7 @@ export default function Home() {
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          className="h-full bg-linear-to-r from-primary-500 to-primary-600 rounded-full"
                           style={{ width: "85%" }}
                         ></div>
                       </div>
@@ -636,7 +636,7 @@ export default function Home() {
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          className="h-full bg-linear-to-r from-primary-500 to-primary-600 rounded-full"
                           style={{ width: "75%" }}
                         ></div>
                       </div>
@@ -653,7 +653,7 @@ export default function Home() {
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          className="h-full bg-linear-to-r from-primary-500 to-primary-600 rounded-full"
                           style={{ width: "65%" }}
                         ></div>
                       </div>
@@ -670,7 +670,7 @@ export default function Home() {
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          className="h-full bg-linear-to-r from-primary-500 to-primary-600 rounded-full"
                           style={{ width: "70%" }}
                         ></div>
                       </div>
@@ -692,7 +692,7 @@ export default function Home() {
                   <div className="space-y-2.5">
                     {/* Role 1 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <RiBarChartBoxFill className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -715,7 +715,7 @@ export default function Home() {
 
                     {/* Role 2 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <MdWork className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -738,7 +738,7 @@ export default function Home() {
 
                     {/* Role 3 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <FaBullseye className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -808,7 +808,7 @@ export default function Home() {
                   what I needed to transition careers successfully."
                 </p>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-linear-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
                     S
                   </div>
                   <div>
@@ -834,7 +834,7 @@ export default function Home() {
                   never considered. Best decision ever!"
                 </p>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-linear-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
                     M
                   </div>
                   <div>
@@ -862,7 +862,7 @@ export default function Home() {
                   backed by real industry data."
                 </p>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-linear-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
                     P
                   </div>
                   <div>
@@ -902,7 +902,7 @@ export default function Home() {
 
           {/* Final CTA Section */}
           <section className="py-20 sm:py-32">
-            <div className="relative rounded-3xl bg-gradient-to-br from-primary-500 to-primary-600 p-8 sm:p-16 text-center overflow-hidden shadow-2xl">
+            <div className="relative rounded-3xl bg-linear-to-br from-primary-500 to-primary-600 p-8 sm:p-16 text-center overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20" />
               <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
               <div className="absolute bottom-10 left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
@@ -955,7 +955,7 @@ export default function Home() {
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold">S</span>
                   </div>
                   <span className="font-semibold text-text">SkillSync</span>

@@ -7,8 +7,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AssessmentResult, AssessmentScores } from '@/lib/types';
-import { STORAGE_KEYS } from '@/lib/constants';
+import { STORAGE_KEYS, LOCALDB_KEYS } from '@/lib/constants';
 import { profileService } from '@/lib/db';
+import { localDB } from '@/lib/localDB';
 
 interface AssessmentState {
   currentQuestion: number;
@@ -25,6 +26,9 @@ interface AssessmentActions {
   previousQuestion: () => void;
   calculateResults: (userId: string) => Promise<void>;
   resetAssessment: () => void;
+  saveProgressToLocalDB: () => void;
+  loadProgressFromLocalDB: () => void;
+  clearLocalDBProgress: () => void;
 }
 
 export const useAssessmentStore = create<AssessmentState & AssessmentActions>()(
@@ -152,6 +156,50 @@ export const useAssessmentStore = create<AssessmentState & AssessmentActions>()(
           isSaving: false,
           saveError: null,
         });
+      },
+
+      saveProgressToLocalDB: () => {
+        console.log('[AssessmentStore] 💾 Saving progress to LocalDB...');
+        
+        const state = get();
+        const progressData = {
+          currentQuestion: state.currentQuestion,
+          answers: state.answers,
+          isCompleted: state.isCompleted,
+        };
+        
+        localDB.setItems(LOCALDB_KEYS.ASSESSMENTS, [progressData]);
+        console.log('[AssessmentStore] ✅ Progress saved');
+      },
+
+      loadProgressFromLocalDB: () => {
+        console.log('[AssessmentStore] 📂 Loading progress from LocalDB...');
+        
+        interface ProgressData {
+          currentQuestion: number;
+          answers: Record<string, number>;
+          isCompleted: boolean;
+        }
+        
+        const progressList = localDB.getAll<ProgressData>(LOCALDB_KEYS.ASSESSMENTS);
+        
+        if (progressList.length > 0) {
+          const progress = progressList[0];
+          console.log('[AssessmentStore] ✅ Loaded progress from LocalDB');
+          set({
+            currentQuestion: progress.currentQuestion,
+            answers: progress.answers,
+            isCompleted: progress.isCompleted,
+          });
+        } else {
+          console.log('[AssessmentStore] ⚠️ No progress found in LocalDB');
+        }
+      },
+
+      clearLocalDBProgress: () => {
+        console.log('[AssessmentStore] 🗑️ Clearing progress from LocalDB...');
+        localDB.clear(LOCALDB_KEYS.ASSESSMENTS);
+        console.log('[AssessmentStore] ✅ Progress cleared');
       },
     }),
     {

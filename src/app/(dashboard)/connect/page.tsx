@@ -7,15 +7,24 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { Users, Loader2, Search, UserPlus, UserMinus, X } from "lucide-react";
-import { tablesDB } from "@/lib/appwrite";
-import { DATABASE_ID, COLLECTIONS } from "@/lib/constants";
+import {
+  Users,
+  Loader2,
+  Search,
+  UserPlus,
+  UserMinus,
+  X,
+  MapPin,
+  Briefcase,
+  Filter,
+} from "lucide-react";
 import { type Profile } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useFollowStore } from "@/store/followStore";
+import { useProfileStore } from "@/store/profileStore";
 
 export default function ConnectPage() {
   const { user } = useAuth();
@@ -24,9 +33,13 @@ export default function ConnectPage() {
     unfollowUser,
     isFollowing: checkIsFollowing,
     loadFollowData,
+    loadFromLocalDB: loadFollowsFromLocalDB,
+    syncWithAppwrite: syncFollowsWithAppwrite,
   } = useFollowStore();
 
-  const [users, setUsers] = useState<Profile[]>([]);
+  const { getAllUsers, loadAllUsersFromLocalDB, syncAllUsersWithAppwrite } =
+    useProfileStore();
+
   const [filteredUsers, setFilteredUsers] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,12 +53,32 @@ export default function ConnectPage() {
   const [locationSearchQuery, setLocationSearchQuery] = useState("");
   const [jobTitleSearchQuery, setJobTitleSearchQuery] = useState("");
 
+  const users = getAllUsers();
+
   useEffect(() => {
-    fetchUsers();
+    console.log("[Connect] 🚀 Page loaded");
+
+    loadAllUsersFromLocalDB();
+    setIsLoading(false);
+
+    loadFollowsFromLocalDB();
+
     if (user) {
-      loadFollowData(user.id);
+      syncAllUsersWithAppwrite({ silentSync: true }).then(() => {
+        console.log("[Connect] ✅ Users sync completed");
+      });
+
+      syncFollowsWithAppwrite(user.id, { silentSync: true }).then(() => {
+        console.log("[Connect] ✅ Follows sync completed");
+      });
     }
-  }, [user, loadFollowData]);
+  }, [
+    user,
+    loadAllUsersFromLocalDB,
+    syncAllUsersWithAppwrite,
+    loadFollowsFromLocalDB,
+    syncFollowsWithAppwrite,
+  ]);
 
   const allSkills = useMemo(() => {
     const skillsSet = new Set<string>();
@@ -124,87 +157,6 @@ export default function ConnectPage() {
     selectedJobTitles,
   ]);
 
-  const fetchUsers = async () => {
-    try {
-      setIsLoading(true);
-      const response = await tablesDB.listRows({
-        databaseId: DATABASE_ID,
-        tableId: COLLECTIONS.USERPROFILES,
-        queries: [],
-      });
-
-      const profiles = response.rows.map((doc: Record<string, unknown>) => {
-        const parseField = (field: unknown): unknown[] => {
-          // If it's already an array, parse each string item
-          if (Array.isArray(field)) {
-            return field
-              .map((item) => {
-                if (typeof item === "string" && item.trim()) {
-                  try {
-                    return JSON.parse(item);
-                  } catch {
-                    return item;
-                  }
-                }
-                return item;
-              })
-              .filter(Boolean);
-          }
-
-          // If it's a single string
-          if (typeof field === "string" && field.trim()) {
-            const trimmedField = field.trim();
-
-            // Try parsing as-is first (for proper JSON arrays)
-            try {
-              const parsed = JSON.parse(trimmedField);
-              if (Array.isArray(parsed)) return parsed;
-              return [parsed]; // Single object
-            } catch {
-              // Not a valid JSON, continue
-            }
-
-            // Try wrapping with brackets (for comma-separated objects)
-            try {
-              const wrapped = `[${trimmedField}]`;
-              const parsed = JSON.parse(wrapped);
-              if (Array.isArray(parsed)) return parsed;
-            } catch (e) {
-              console.error(
-                "Failed to parse field:",
-                trimmedField.substring(0, 50),
-                e
-              );
-            }
-          }
-          return [];
-        };
-
-        return {
-          ...doc,
-          education: parseField(doc.education),
-          skills: parseField(doc.skills),
-          experience: parseField(doc.experience),
-          socialLinks: parseField(doc.socialLinks),
-          projects: parseField(doc.projects),
-          documents: parseField(doc.documents),
-          followersList: doc.followersList || "",
-          followingList: doc.followingList || "",
-        };
-      }) as Profile[];
-
-      console.log("Fetched profiles:", profiles.length);
-      console.log("Sample profile raw skills:", response.rows[0]?.skills);
-      console.log("Sample profile parsed skills:", profiles[0]?.skills);
-      setUsers(profiles);
-      setFilteredUsers(profiles);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const getUserInitial = (userProfile: Profile) => {
     if (userProfile.username) {
       return userProfile.username.charAt(0).toUpperCase();
@@ -275,7 +227,7 @@ export default function ConnectPage() {
 
       if (result.success) {
         await loadFollowData(user.id);
-        await fetchUsers();
+        await syncAllUsersWithAppwrite({ silentSync: true });
       }
     } catch (error) {
       console.error("Error toggling follow:", error);
@@ -302,9 +254,9 @@ export default function ConnectPage() {
   }
 
   return (
-    <div className="flex gap-6 pb-8 p-8">
-      {/* Main Content */}
-      <div className="flex-1 space-y-6">
+    <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-4rem)] overflow-hidden p-8">
+      {/* Main Content - Scrollable */}
+      <div className="flex-1 overflow-y-auto pr-2 scrollbar-invisible space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4">
@@ -319,21 +271,18 @@ export default function ConnectPage() {
           </div>
         </div>
 
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted group-focus-within:text-primary-500 transition-colors duration-200" />
+          <input
+            type="text"
+            placeholder="Search by username, bio, location, or skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 text-sm rounded-full border-2 border-border bg-background focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-200 hover:border-primary-400"
+          />
+        </div>
+
         {/* Search Bar */}
-        <Card>
-          <CardContent className="">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-              <input
-                type="text"
-                placeholder="Search by username, bio, location, or skills..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-border bg-background focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
-              />
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Active Filters */}
         {(selectedSkills.length > 0 ||
@@ -384,17 +333,6 @@ export default function ConnectPage() {
             </Button>
           </div>
         )}
-
-        {/* Stats */}
-        <div className="flex items-center gap-4 text-sm text-text-muted">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
-            <span>
-              {filteredUsers.length}{" "}
-              {filteredUsers.length === 1 ? "user" : "users"} found
-            </span>
-          </div>
-        </div>
 
         {/* Users Grid */}
         {filteredUsers.length === 0 ? (
@@ -482,224 +420,243 @@ export default function ConnectPage() {
         )}
       </div>
 
-      {/* Right Sidebar - Filters */}
-      <div className="w-80 space-y-4">
-        <Card>
+      {/* Right Sidebar - Filters (Fixed) */}
+      <aside className="lg:block lg:w-80 shrink-0 overflow-y-auto scrollbar-invisible">
+        <Card className="shadow-lg border-border/50">
           <CardContent className="p-4">
-            <h3 className="font-semibold text-text mb-3">Filter by Skills</h3>
-            <div className="relative">
-              <div className="min-h-[42px] w-full px-3 py-2 bg-background border border-border rounded-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-all flex flex-wrap gap-2 items-center">
-                {selectedSkills.map((skill, index) => (
-                  <span
-                    key={`selected-${index}`}
-                    className="flex items-center gap-1.5 bg-primary-500 text-white px-3 py-1 rounded-md text-sm font-medium"
-                  >
-                    {skill}
-                    <button
-                      type="button"
-                      onClick={() => toggleSkill(skill)}
-                      className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-                <input
-                  type="text"
-                  value={skillSearchQuery}
-                  onChange={(e) => setSkillSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && filteredSkills.length > 0) {
-                      e.preventDefault();
-                      toggleSkill(filteredSkills[0]);
-                      setSkillSearchQuery("");
-                    } else if (
-                      e.key === "Backspace" &&
-                      !skillSearchQuery &&
-                      selectedSkills.length > 0
-                    ) {
-                      toggleSkill(selectedSkills[selectedSkills.length - 1]);
-                    }
-                  }}
-                  placeholder={
-                    selectedSkills.length === 0
-                      ? "Type to search skills..."
-                      : ""
-                  }
-                  className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
-                />
-              </div>
-
-              {filteredSkills.length > 0 && skillSearchQuery && (
-                <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                  {filteredSkills.slice(0, 5).map((skill, index) => (
-                    <button
-                      key={`suggestion-${index}`}
-                      type="button"
-                      onClick={() => {
-                        toggleSkill(skill);
-                        setSkillSearchQuery("");
-                      }}
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
-                    >
-                      {skill}
-                    </button>
-                  ))}
-                </div>
+            {/* Main Header with Clear All */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-text flex items-center gap-2">
+                <Filter className="w-4 h-4 text-primary-500" />
+                Filters
+              </h2>
+              {(selectedSkills.length > 0 ||
+                selectedLocations.length > 0 ||
+                selectedJobTitles.length > 0) && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-sm text-primary-500 hover:text-primary-600 font-semibold flex items-center gap-1 transition-all duration-200 hover:scale-105"
+                >
+                  <X className="w-4 h-4" />
+                  Clear
+                </button>
               )}
             </div>
-            <p className="text-xs text-text-muted mt-1">
-              Type and press Enter to add skill filter
-            </p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-text mb-3">Filter by Location</h3>
-            <div className="relative">
-              <div className="min-h-[42px] w-full px-3 py-2 bg-background border border-border rounded-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-all flex flex-wrap gap-2 items-center">
-                {selectedLocations.map((location, index) => (
-                  <span
-                    key={`selected-${index}`}
-                    className="flex items-center gap-1.5 bg-primary-500 text-white px-3 py-1 rounded-md text-sm font-medium"
-                  >
-                    {location}
-                    <button
-                      type="button"
-                      onClick={() => toggleLocation(location)}
-                      className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-                <input
-                  type="text"
-                  value={locationSearchQuery}
-                  onChange={(e) => setLocationSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && filteredLocations.length > 0) {
-                      e.preventDefault();
-                      toggleLocation(filteredLocations[0]);
-                      setLocationSearchQuery("");
-                    } else if (
-                      e.key === "Backspace" &&
-                      !locationSearchQuery &&
-                      selectedLocations.length > 0
-                    ) {
-                      toggleLocation(
-                        selectedLocations[selectedLocations.length - 1]
-                      );
-                    }
-                  }}
-                  placeholder={
-                    selectedLocations.length === 0
-                      ? "Type to search locations..."
-                      : ""
-                  }
-                  className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
-                />
+            <div className="space-y-4">
+              {/* Skills Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-text mb-1.5 flex items-center gap-2">
+                  Skills
+                </label>
+                <div className="relative">
+                  <div className="min-h-[42px] w-full px-3 py-2 bg-background border-2 border-border rounded-xl focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all duration-200 hover:border-primary-400 flex flex-wrap gap-2 items-center">
+                    {selectedSkills.map((skill, index) => (
+                      <span
+                        key={`selected-${index}`}
+                        className="flex items-center gap-1.5 bg-linear-to-r from-primary-500 to-primary-600 text-white px-3 py-1.5 rounded-full shadow-sm text-sm font-medium"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => toggleSkill(skill)}
+                          className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                    <input
+                      type="text"
+                      value={skillSearchQuery}
+                      onChange={(e) => setSkillSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && filteredSkills.length > 0) {
+                          e.preventDefault();
+                          toggleSkill(filteredSkills[0]);
+                          setSkillSearchQuery("");
+                        } else if (
+                          e.key === "Backspace" &&
+                          !skillSearchQuery &&
+                          selectedSkills.length > 0
+                        ) {
+                          toggleSkill(
+                            selectedSkills[selectedSkills.length - 1]
+                          );
+                        }
+                      }}
+                      placeholder={
+                        selectedSkills.length === 0
+                          ? "Type to search skills..."
+                          : ""
+                      }
+                      className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
+                    />
+                  </div>
+
+                  {filteredSkills.length > 0 && skillSearchQuery && (
+                    <div className="absolute z-10 w-full mt-1 bg-surface border-2 border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                      {filteredSkills.slice(0, 5).map((skill, index) => (
+                        <button
+                          key={`suggestion-${index}`}
+                          type="button"
+                          onClick={() => {
+                            toggleSkill(skill);
+                            setSkillSearchQuery("");
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                        >
+                          {skill}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {filteredLocations.length > 0 && locationSearchQuery && (
-                <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                  {filteredLocations.slice(0, 5).map((location, index) => (
-                    <button
-                      key={`suggestion-${index}`}
-                      type="button"
-                      onClick={() => {
-                        toggleLocation(location);
-                        setLocationSearchQuery("");
+              {/* Location Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-text mb-1.5 flex items-center gap-2">
+                  Location
+                </label>
+                <div className="relative">
+                  <div className="min-h-[42px] w-full px-3 py-2 bg-background border-2 border-border rounded-xl focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all duration-200 hover:border-primary-400 flex flex-wrap gap-2 items-center">
+                    {selectedLocations.map((location, index) => (
+                      <span
+                        key={`selected-${index}`}
+                        className="flex items-center gap-1.5 bg-linear-to-r from-primary-500 to-primary-600 text-white px-3 py-1.5 rounded-full shadow-sm text-sm font-medium"
+                      >
+                        {location}
+                        <button
+                          type="button"
+                          onClick={() => toggleLocation(location)}
+                          className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                    <input
+                      type="text"
+                      value={locationSearchQuery}
+                      onChange={(e) => setLocationSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && filteredLocations.length > 0) {
+                          e.preventDefault();
+                          toggleLocation(filteredLocations[0]);
+                          setLocationSearchQuery("");
+                        } else if (
+                          e.key === "Backspace" &&
+                          !locationSearchQuery &&
+                          selectedLocations.length > 0
+                        ) {
+                          toggleLocation(
+                            selectedLocations[selectedLocations.length - 1]
+                          );
+                        }
                       }}
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
-                    >
-                      {location}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <p className="text-xs text-text-muted mt-1">
-              Type and press Enter to add location filter
-            </p>
-          </CardContent>
-        </Card>
+                      placeholder={
+                        selectedLocations.length === 0
+                          ? "Type to search locations..."
+                          : ""
+                      }
+                      className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
+                    />
+                  </div>
 
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-text mb-3">
-              Filter by Job Title
-            </h3>
-            <div className="relative">
-              <div className="min-h-[42px] w-full px-3 py-2 bg-background border border-border rounded-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-all flex flex-wrap gap-2 items-center">
-                {selectedJobTitles.map((title, index) => (
-                  <span
-                    key={`selected-${index}`}
-                    className="flex items-center gap-1.5 bg-primary-500 text-white px-3 py-1 rounded-md text-sm font-medium"
-                  >
-                    {title}
-                    <button
-                      type="button"
-                      onClick={() => toggleJobTitle(title)}
-                      className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-                <input
-                  type="text"
-                  value={jobTitleSearchQuery}
-                  onChange={(e) => setJobTitleSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && filteredJobTitles.length > 0) {
-                      e.preventDefault();
-                      toggleJobTitle(filteredJobTitles[0]);
-                      setJobTitleSearchQuery("");
-                    } else if (
-                      e.key === "Backspace" &&
-                      !jobTitleSearchQuery &&
-                      selectedJobTitles.length > 0
-                    ) {
-                      toggleJobTitle(
-                        selectedJobTitles[selectedJobTitles.length - 1]
-                      );
-                    }
-                  }}
-                  placeholder={
-                    selectedJobTitles.length === 0
-                      ? "Type to search job titles..."
-                      : ""
-                  }
-                  className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
-                />
+                  {filteredLocations.length > 0 && locationSearchQuery && (
+                    <div className="absolute z-10 w-full mt-1 bg-surface border-2 border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                      {filteredLocations.slice(0, 5).map((location, index) => (
+                        <button
+                          key={`suggestion-${index}`}
+                          type="button"
+                          onClick={() => {
+                            toggleLocation(location);
+                            setLocationSearchQuery("");
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                        >
+                          {location}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {filteredJobTitles.length > 0 && jobTitleSearchQuery && (
-                <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                  {filteredJobTitles.slice(0, 5).map((title, index) => (
-                    <button
-                      key={`suggestion-${index}`}
-                      type="button"
-                      onClick={() => {
-                        toggleJobTitle(title);
-                        setJobTitleSearchQuery("");
+              {/* Job Title Filter */}
+              <div>
+                <label className="block text-sm font-semibold text-text mb-1.5 flex items-center gap-2">
+                  Job Title
+                </label>
+                <div className="relative">
+                  <div className="min-h-[42px] w-full px-3 py-2 bg-background border-2 border-border rounded-xl focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all duration-200 hover:border-primary-400 flex flex-wrap gap-2 items-center">
+                    {selectedJobTitles.map((title, index) => (
+                      <span
+                        key={`selected-${index}`}
+                        className="flex items-center gap-1.5 bg-linear-to-r from-primary-500 to-primary-600 text-white px-3 py-1.5 rounded-full shadow-sm text-sm font-medium"
+                      >
+                        {title}
+                        <button
+                          type="button"
+                          onClick={() => toggleJobTitle(title)}
+                          className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                    <input
+                      type="text"
+                      value={jobTitleSearchQuery}
+                      onChange={(e) => setJobTitleSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && filteredJobTitles.length > 0) {
+                          e.preventDefault();
+                          toggleJobTitle(filteredJobTitles[0]);
+                          setJobTitleSearchQuery("");
+                        } else if (
+                          e.key === "Backspace" &&
+                          !jobTitleSearchQuery &&
+                          selectedJobTitles.length > 0
+                        ) {
+                          toggleJobTitle(
+                            selectedJobTitles[selectedJobTitles.length - 1]
+                          );
+                        }
                       }}
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors truncate"
-                    >
-                      {title}
-                    </button>
-                  ))}
+                      placeholder={
+                        selectedJobTitles.length === 0
+                          ? "Type to search job titles..."
+                          : ""
+                      }
+                      className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-text placeholder:text-text-muted text-sm"
+                    />
+                  </div>
+
+                  {filteredJobTitles.length > 0 && jobTitleSearchQuery && (
+                    <div className="absolute z-10 w-full mt-1 bg-surface border-2 border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                      {filteredJobTitles.slice(0, 5).map((title, index) => (
+                        <button
+                          key={`suggestion-${index}`}
+                          type="button"
+                          onClick={() => {
+                            toggleJobTitle(title);
+                            setJobTitleSearchQuery("");
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors truncate"
+                        >
+                          {title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-            <p className="text-xs text-text-muted mt-1">
-              Type and press Enter to add job title filter
-            </p>
           </CardContent>
         </Card>
-      </div>
+      </aside>
     </div>
   );
 }

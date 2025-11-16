@@ -4,20 +4,24 @@
  * @dependencies next/link, @/components/auth/SignupForm, @/lib/constants
  */
 
-import Link from 'next/link';
-import { SignupForm } from '@/components/auth/SignupForm';
-import { ROUTES } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from "next/link";
+import { SignupForm } from "@/components/auth/SignupForm";
+import { ROUTES } from "@/lib/constants";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SignupPage() {
   return (
-    <Card className="border-border/50 shadow-2xl backdrop-blur-sm bg-surface/95 dark:bg-surface/90">
+    <Card className="border-border/50 p-8 shadow-2xl backdrop-blur-sm bg-surface/95 dark:bg-surface/90">
       <CardHeader className="text-center space-y-2 pb-6">
-        <div className="mx-auto w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-2 shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-shadow duration-300">
+        <div className="mx-auto w-14 h-14 bg-linear-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-2 shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-shadow duration-300">
           <span className="text-white font-bold text-2xl">S</span>
         </div>
-        <CardTitle className="text-3xl font-bold text-text">Create Account</CardTitle>
-        <p className="text-text-muted text-base">Start your career journey today</p>
+        <CardTitle className="text-3xl font-bold text-text">
+          Create Account
+        </CardTitle>
+        <p className="text-text-muted text-base">
+          Start your career journey today
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <SignupForm />
@@ -30,8 +34,11 @@ export default function SignupPage() {
           </div>
         </div>
         <p className="text-center text-sm text-text-muted">
-          Already have an account?{' '}
-          <Link href={ROUTES.LOGIN} className="text-primary-500 hover:text-primary-600 font-semibold transition-colors duration-200 hover:underline">
+          Already have an account?{" "}
+          <Link
+            href={ROUTES.LOGIN}
+            className="text-primary-500 hover:text-primary-600 font-semibold transition-colors duration-200 hover:underline"
+          >
             Sign in
           </Link>
         </p>

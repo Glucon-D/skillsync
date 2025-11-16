@@ -7,7 +7,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callOpenRouter } from "@/lib/openrouter";
 import { coursesService } from "@/lib/db";
-import type { Course } from "@/lib/types";
+import type { Course, CourseDifficulty } from "@/lib/types";
+
+interface GeneratedCourse {
+  title?: string;
+  platform?: string;
+  difficulty?: string;
+  price?: number;
+  rating?: number;
+  url?: string;
+  category?: string;
+}
 
 const COURSE_GENERATION_PROMPT = `You are a course recommendation expert. Based on the provided domain/topic, recommend exactly 5 high-quality online courses.
 
@@ -73,14 +83,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse the AI response
-    let generatedCourses: any[];
+    let generatedCourses: GeneratedCourse[];
     try {
       // Extract JSON from response (in case there's extra text)
       const jsonMatch = responseText.match(/\[[\s\S]*\]/);
       if (!jsonMatch) {
         throw new Error("No JSON array found in response");
       }
-      generatedCourses = JSON.parse(jsonMatch[0]);
+      generatedCourses = JSON.parse(jsonMatch[0]) as GeneratedCourse[];
     } catch (parseError) {
       console.error("Failed to parse AI response:", parseError);
       console.error("Response text:", responseText);
@@ -112,11 +122,11 @@ export async function POST(request: NextRequest) {
           id: courseId,
           title: course.title || "Untitled Course",
           platform: course.platform || "Unknown",
-          difficulty: ["beginner", "intermediate", "advanced"].includes(
-            course.difficulty
+          difficulty: (["beginner", "intermediate", "advanced"].includes(
+            course.difficulty || ""
           )
             ? course.difficulty
-            : "intermediate",
+            : "intermediate") as CourseDifficulty,
           price: typeof course.price === "number" ? course.price : 0,
           rating:
             typeof course.rating === "number"
@@ -128,9 +138,10 @@ export async function POST(request: NextRequest) {
 
         // Save to Appwrite
         const savedCourse = await coursesService.add(userId, courseData);
+        const courseWithId = savedCourse as unknown as { $id: string };
         savedCourses.push({
           ...courseData,
-          $dbId: (savedCourse as any).$id,
+          $dbId: courseWithId.$id,
         });
       } catch (saveError) {
         console.error("Failed to save course:", saveError);

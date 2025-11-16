@@ -6,6 +6,9 @@
 
 import { create } from "zustand";
 import { profileService } from "@/lib/db";
+import { localDB } from "@/lib/localDB";
+import { LOCALDB_KEYS } from "@/lib/constants";
+import type { SyncOptions } from "@/lib/types";
 
 interface FollowState {
   followingList: string[];
@@ -29,6 +32,8 @@ interface FollowActions {
   resetFollowState: () => void;
   getFollowersList: () => string[];
   getFollowingList: () => string[];
+  loadFromLocalDB: () => void;
+  syncWithAppwrite: (userId: string, options?: SyncOptions) => Promise<void>;
 }
 
 export const useFollowStore = create<FollowState & FollowActions>((set, get) => ({
@@ -331,5 +336,95 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
 
   getFollowingList: () => {
     return get().followingList;
+  },
+
+  loadFromLocalDB: () => {
+    console.log('[FollowStore] 📂 Loading follow data from LocalDB...');
+    
+    interface FollowData {
+      followingList: string[];
+      followersList: string[];
+      followingCount: number;
+      followersCount: number;
+    }
+    
+    const followDataList = localDB.getAll<FollowData>(LOCALDB_KEYS.FOLLOWS);
+    
+    if (followDataList.length > 0) {
+      const data = followDataList[0];
+      console.log('[FollowStore] ✅ Loaded follow data from LocalDB');
+      set({
+        followingList: data.followingList || [],
+        followersList: data.followersList || [],
+        followingCount: data.followingCount || 0,
+        followersCount: data.followersCount || 0,
+        error: null,
+      });
+    } else {
+      console.log('[FollowStore] ⚠️ No follow data found in LocalDB');
+    }
+  },
+
+  syncWithAppwrite: async (userId: string, options?: SyncOptions) => {
+    const { silentSync = true } = options || {};
+    
+    console.log(`[FollowStore] 🔄 Starting Appwrite sync for user: ${userId}`);
+    
+    if (!silentSync) {
+      set({ isLoading: true, error: null });
+    }
+
+    try {
+      const profile = await profileService.getByUserId(userId);
+      
+      if (profile) {
+        console.log('[FollowStore] 📥 Received follow data from Appwrite');
+        
+        let followingList: string[] = [];
+        let followersList: string[] = [];
+
+        try {
+          followingList = profile.followingList ? JSON.parse(profile.followingList) : [];
+        } catch {
+          followingList = profile.followingList
+            ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
+        }
+
+        try {
+          followersList = profile.followersList ? JSON.parse(profile.followersList) : [];
+        } catch {
+          followersList = profile.followersList
+            ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
+        }
+
+        const followData = {
+          followingList,
+          followersList,
+          followingCount: profile.followingCount || 0,
+          followersCount: profile.followersCount || 0,
+        };
+
+        set({
+          ...followData,
+          isLoading: false,
+        });
+        
+        localDB.setItems(LOCALDB_KEYS.FOLLOWS, [followData]);
+        console.log('[FollowStore] ✅ Sync complete - Updated Zustand & LocalDB');
+      } else {
+        console.log('[FollowStore] ⚠️ No profile found on Appwrite');
+        if (!silentSync) {
+          set({ isLoading: false, error: 'Profile not found' });
+        }
+      }
+    } catch (error) {
+      console.error('[FollowStore] ❌ Appwrite sync failed:', error);
+      set({ 
+        error: 'Failed to sync follow data',
+        isLoading: false 
+      });
+    }
   },
 }));

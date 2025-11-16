@@ -29,7 +29,7 @@ import {
 import { CiLinkedin, CiYoutube } from "react-icons/ci";
 import { IoLogoGithub } from "react-icons/io";
 import { RiTwitterXLine } from "react-icons/ri";
-import { profileService, aiPathwaysService, type AIPathwayRow } from "@/lib/db";
+import { aiPathwaysService, type AIPathwayRow } from "@/lib/db";
 import type { Profile } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTES } from "@/lib/constants";
 import { useFollowStore } from "@/store/followStore";
+import { useProfileStore } from "@/store/profileStore";
 
 export default function ConnectProfilePage() {
   const params = useParams();
@@ -50,6 +51,8 @@ export default function ConnectProfilePage() {
     isFollowing: checkIsFollowing,
     loadFollowData,
   } = useFollowStore();
+
+  const { loadProfileByUsername, getCachedProfile } = useProfileStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -336,15 +339,14 @@ export default function ConnectProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       try {
-        console.log("Loading profile for username:", username);
-        const data = await profileService.getByUsername(username);
-        console.log("Profile data received:", data);
-        console.log("Followers count:", data?.followersCount);
-        console.log("Following count:", data?.followingCount);
+        console.log('[ConnectProfile] 🚀 Loading profile for username:', username);
+        
+        const data = await loadProfileByUsername(username);
+        console.log('[ConnectProfile] 📥 Profile data received:', data ? 'Found' : 'Not found');
 
         if (data) {
           setProfile(data);
-          // Load completed pathways
+          
           if (data.userId) {
             try {
               const pathways = await aiPathwaysService.getAIPathways(
@@ -357,22 +359,20 @@ export default function ConnectProfilePage() {
             }
           }
 
-          // Load follow data for current user
           if (user) {
             try {
               await loadFollowData(user.id);
-              console.log("Follow data loaded successfully");
+              console.log('[ConnectProfile] ✅ Follow data loaded');
             } catch (err) {
               console.error("Error loading follow data:", err);
-              // Don't set notFound on follow data error
             }
           }
         } else {
-          console.log("No profile found for username:", username);
+          console.log('[ConnectProfile] ⚠️ No profile found for username:', username);
           setNotFound(true);
         }
       } catch (error) {
-        console.error("Error loading portfolio:", error);
+        console.error('[ConnectProfile] ❌ Error loading portfolio:', error);
         setNotFound(true);
       } finally {
         setLoading(false);
@@ -382,8 +382,7 @@ export default function ConnectProfilePage() {
     if (username) {
       loadProfile();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+  }, [username, loadProfileByUsername, user, loadFollowData]);
 
   const handleBack = () => {
     router.push(ROUTES.CONNECT);
@@ -424,7 +423,7 @@ export default function ConnectProfilePage() {
         await loadFollowData(user.id);
 
         console.log("Fetching updated target profile...");
-        const updatedProfile = await profileService.getByUserId(profile.userId);
+        const updatedProfile = await loadProfileByUsername(username);
         console.log(
           "Updated profile followers count:",
           updatedProfile?.followersCount
@@ -435,7 +434,6 @@ export default function ConnectProfilePage() {
         );
 
         if (updatedProfile) {
-          // Update entire profile with fresh data from server
           console.log("Setting complete updated profile");
           setProfile(updatedProfile);
         }

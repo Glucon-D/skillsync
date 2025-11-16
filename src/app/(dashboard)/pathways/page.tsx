@@ -24,14 +24,12 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useProfileStore } from "@/store/profileStore";
+import { usePathwaysStore } from "@/store/pathwaysStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import type {
-  PathwayRecommendationsResponse,
-  GeneratedPathwayResponse,
-} from "@/lib/types";
+import type { PathwayRecommendationsResponse } from "@/lib/types";
 import { aiPathwaysService, type AIPathwayRow } from "@/lib/db";
 
 export default function PathwaysPage() {
@@ -39,7 +37,15 @@ export default function PathwaysPage() {
   const user = useAuthStore((state) => state.user);
   const { profile } = useProfileStore();
 
-  // AI Pathways State
+  const {
+    pathways: savedPathways,
+    loadFromLocalDB,
+    syncWithAppwrite,
+    addPathway,
+    updateCompletion,
+    deletePathway,
+  } = usePathwaysStore();
+
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [isRecommendationsModalOpen, setIsRecommendationsModalOpen] =
     useState(false);
@@ -49,34 +55,23 @@ export default function PathwaysPage() {
     useState(false);
   const [isLoadingRoadmap, setIsLoadingRoadmap] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Custom Skill State
   const [customSkill, setCustomSkill] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
-
-  // Saved Pathways State
-  const [savedPathways, setSavedPathways] = useState<AIPathwayRow[]>([]);
   const [pathwayFilter, setPathwayFilter] = useState<"active" | "completed">(
     "active"
-  ); // Tab state
+  );
 
   useEffect(() => {
+    console.log("[Pathways] 🚀 Page loaded");
+
+    loadFromLocalDB();
+
     if (user?.id) {
-      loadSavedPathways();
+      syncWithAppwrite(user.id, { silentSync: true }).then(() => {
+        console.log("[Pathways] ✅ Background sync completed");
+      });
     }
-  }, [user?.id]);
-
-  // Load saved AI pathways from database
-  const loadSavedPathways = async () => {
-    if (!user?.id) return;
-
-    try {
-      const pathways = await aiPathwaysService.getAIPathways(user.id);
-      setSavedPathways(pathways);
-    } catch (error) {
-      console.error("Error loading saved pathways:", error);
-    }
-  };
+  }, [user?.id, loadFromLocalDB, syncWithAppwrite]);
 
   // Get AI Career Recommendations
   const handleGetRecommendations = async () => {
@@ -141,7 +136,6 @@ export default function PathwaysPage() {
       const result = await response.json();
       const pathwayData = result.data;
 
-      // Auto-save to database
       if (user?.id) {
         try {
           const savedPathway = await aiPathwaysService.saveAIPathway(
@@ -149,9 +143,10 @@ export default function PathwaysPage() {
             pathwayData,
             isCustom
           );
-          await loadSavedPathways(); // Refresh saved pathways list
 
-          // Close modals and navigate to the new pathway page
+          addPathway(savedPathway);
+          console.log("[Pathways] ✅ Pathway saved and added to store");
+
           setIsRecommendationsModalOpen(false);
           setIsGenerateModalOpen(false);
           router.push(`/pathways/${savedPathway.pathwayId}`);
@@ -190,26 +185,24 @@ export default function PathwaysPage() {
     router.push(`/pathways/${pathwayId}`);
   };
 
-  // Toggle pathway completion
   const handleToggleCompletion = async (
-    rowId: string,
+    pathwayId: string,
     currentCompleted: boolean
   ) => {
     try {
-      await aiPathwaysService.updateCompletion(rowId, !currentCompleted);
-      await loadSavedPathways(); // Refresh list
+      await updateCompletion(pathwayId, !currentCompleted);
+      console.log("[Pathways] ✅ Completion status updated");
     } catch (err) {
       setError("Failed to update completion status");
     }
   };
 
-  // Delete a saved pathway
-  const handleDeletePathway = async (rowId: string) => {
+  const handleDeletePathway = async (pathwayId: string) => {
     if (!confirm("Are you sure you want to delete this pathway?")) return;
 
     try {
-      await aiPathwaysService.delete(rowId);
-      await loadSavedPathways();
+      await deletePathway(pathwayId);
+      console.log("[Pathways] ✅ Pathway deleted");
     } catch (err) {
       setError("Failed to delete pathway");
     }
@@ -220,7 +213,7 @@ export default function PathwaysPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-2">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-linear-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
             Career Pathways
           </h1>
           <p className="text-text-muted text-lg">
@@ -230,7 +223,7 @@ export default function PathwaysPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setIsGenerateModalOpen(true)}
-            className="flex items-center gap-2 whitespace-nowrap bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="flex items-center gap-2 whitespace-nowrap bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             <Sparkles className="w-4 h-4" />
             Generate Pathway
@@ -247,22 +240,21 @@ export default function PathwaysPage() {
               onClick={() => setPathwayFilter("active")}
               className={`px-6 py-2.5 font-semibold rounded-full transition-all duration-200 ${
                 pathwayFilter === "active"
-                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md"
+                  ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md"
                   : "text-text-muted hover:text-text hover:bg-background"
               }`}
             >
-              Your Pathways (
-              {savedPathways.filter((p: any) => !p.completed).length})
+              Your Pathways ({savedPathways.filter((p) => !p.completed).length})
             </button>
             <button
               onClick={() => setPathwayFilter("completed")}
               className={`px-6 py-2.5 font-semibold rounded-full transition-all duration-200 ${
                 pathwayFilter === "completed"
-                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md"
+                  ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md"
                   : "text-text-muted hover:text-text hover:bg-background"
               }`}
             >
-              Completed ({savedPathways.filter((p: any) => p.completed).length})
+              Completed ({savedPathways.filter((p) => p.completed).length})
             </button>
           </div>
         </div>
@@ -272,12 +264,12 @@ export default function PathwaysPage() {
       {savedPathways.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {savedPathways
-            .filter((pathway: any) =>
+            .filter((pathway) =>
               pathwayFilter === "active"
                 ? !pathway.completed
                 : pathway.completed
             )
-            .map((pathway: any) => (
+            .map((pathway) => (
               <Card
                 key={pathway.$id}
                 className="border-border hover:border-primary-500/50 transition-all duration-200 hover:shadow-lg"
@@ -318,7 +310,10 @@ export default function PathwaysPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleToggleCompletion(pathway.$id, pathway.completed);
+                        handleToggleCompletion(
+                          pathway.pathwayId,
+                          pathway.completed
+                        );
                       }}
                       className={`p-2 rounded-lg transition-all ${
                         pathway.completed
@@ -347,7 +342,7 @@ export default function PathwaysPage() {
                       View Roadmap
                     </Button>
                     <Button
-                      onClick={() => handleDeletePathway(pathway.$id)}
+                      onClick={() => handleDeletePathway(pathway.pathwayId)}
                       variant="outline"
                       size="sm"
                       className="text-red-500 border-red-500 hover:bg-red-500/10"
@@ -378,7 +373,7 @@ export default function PathwaysPage() {
             <Button
               onClick={() => setIsGenerateModalOpen(true)}
               size="lg"
-              className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg"
+              className="bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg"
             >
               <Sparkles className="w-5 h-5 mr-2" />
               Generate Your First Pathway
@@ -389,7 +384,7 @@ export default function PathwaysPage() {
 
       {/* Empty State for Active/Completed Tabs */}
       {savedPathways.length > 0 &&
-        savedPathways.filter((pathway: any) =>
+        savedPathways.filter((pathway) =>
           pathwayFilter === "active" ? !pathway.completed : pathway.completed
         ).length === 0 && (
           <Card className="border-dashed border-2 border-border">
@@ -526,7 +521,7 @@ export default function PathwaysPage() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-text mb-2">
-                          What You'll Do:
+                          What You&apos;ll Do:
                         </p>
                         <p className="text-sm text-text-muted">{rec.summary}</p>
                       </div>
@@ -598,7 +593,7 @@ export default function PathwaysPage() {
               }}
               disabled={isLoadingRecommendations || !profile}
               size="lg"
-              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg"
+              className="w-full bg-linear-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg"
             >
               {isLoadingRecommendations ? (
                 <>
