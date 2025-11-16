@@ -56,7 +56,10 @@ export default function PathwayDetailPage() {
 
     try {
       // Get the pathway data
-      const pathwayData = await aiPathwaysService.getAIPathwayById(user.id, pathwayId);
+      const pathwayData = await aiPathwaysService.getAIPathwayById(
+        user.id,
+        pathwayId
+      );
 
       if (!pathwayData) {
         setError("Pathway not found");
@@ -164,7 +167,7 @@ export default function PathwayDetailPage() {
 
       {/* Pathway Header */}
       <Card className="border-primary-500/20 bg-gradient-to-br from-primary-500/5 to-primary-600/5">
-        <CardContent className="pt-6">
+        <CardContent className="">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-3">
@@ -220,7 +223,10 @@ export default function PathwayDetailPage() {
         </h2>
         <div className="space-y-4">
           {pathway.steps.map((step, index) => (
-            <Card key={index} className="border-border hover:border-primary-500/50 transition-all duration-200">
+            <Card
+              key={index}
+              className="border-border hover:border-primary-500/50 transition-all duration-200"
+            >
               <CardHeader className="pb-3">
                 <div
                   className="flex items-center justify-between cursor-pointer"
@@ -300,7 +306,7 @@ export default function PathwayDetailPage() {
                 key={index}
                 className="border-border hover:border-primary-500/50 transition-colors"
               >
-                <CardContent className="pt-6">
+                <CardContent className="">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <Badge variant="default" size="sm" className="mb-2">

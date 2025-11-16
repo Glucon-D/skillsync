@@ -182,7 +182,7 @@ export default function CareersPage() {
     filters.companyType !== "all";
 
   return (
-    <div className="flex flex-col pt-6 overflow-hidden h-[calc(100vh-4rem)] bg-background">
+    <div className="flex flex-col  overflow-hidden h-[calc(100vh-4rem)] bg-background">
       {/* Header - Fixed */}
       <div className="bg-white mx-8 rounded-xl dark:bg-surface border border-border backdrop-blur-sm flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8">

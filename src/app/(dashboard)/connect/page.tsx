@@ -122,7 +122,7 @@ export default function ConnectPage() {
 
       {/* Search Bar */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
             <input
@@ -172,7 +172,7 @@ export default function ConnectPage() {
               href={`/connect/${user.username || user.userId}`}
             >
               <Card className="h-full border-border hover:border-primary-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                <CardContent className="pt-6">
+                <CardContent className="">
                   {/* Avatar and Name */}
                   <div className="text-center mb-4">
                     {user.userImage ? (

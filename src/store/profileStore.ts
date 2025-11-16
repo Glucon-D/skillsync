@@ -6,7 +6,14 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Profile, Education, Skill, Experience, DocumentMetadata, Project } from "@/lib/types";
+import type {
+  Profile,
+  Education,
+  Skill,
+  Experience,
+  DocumentMetadata,
+  Project,
+} from "@/lib/types";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { calculateProfileCompletion } from "@/lib/utils";
 import { profileService } from "@/lib/db";
@@ -395,7 +402,9 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
 
         const updatedProfile = {
           ...profile,
-          socialLinks: (profile.socialLinks || []).filter((_, i) => i !== index),
+          socialLinks: (profile.socialLinks || []).filter(
+            (_, i) => i !== index
+          ),
         };
         updatedProfile.completionPercentage =
           calculateProfileCompletion(updatedProfile);
@@ -421,7 +430,10 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
         // Add document to the array in memory
         const updatedProfile = {
           ...profile,
-          documents: [...(profile.documents || []), document as DocumentMetadata],
+          documents: [
+            ...(profile.documents || []),
+            document as DocumentMetadata,
+          ],
         };
         updatedProfile.completionPercentage =
           calculateProfileCompletion(updatedProfile);
@@ -473,62 +485,91 @@ export const useProfileStore = create<ProfileState & ProfileActions>()(
       // Database sync methods
       loadProfile: async (userId: string, forceRefresh: boolean = false) => {
         const currentState = get();
-        
-        // Prevent duplicate calls - return early if already loading
-        if (currentState.isLoading) {
+
+        // Prevent duplicate calls - return early if already loading (unless force refresh)
+        if (currentState.isLoading && !forceRefresh) {
           console.log("⏳ Profile already loading, skipping...");
           return;
         }
-        
+
         // Skip if profile exists and not forcing refresh
         if (currentState.profile?.userId === userId && !forceRefresh) {
           console.log("✅ Profile already loaded, skipping...");
           return;
         }
-        
+
         if (forceRefresh) {
           console.log("🔄 Force refreshing profile for user:", userId);
         }
-        
+
         set({ isLoading: true, error: null });
+
         try {
           console.log("🔍 Loading profile for user:", userId);
           const profile = await profileService.getByUserId(userId);
+
           if (profile) {
             // Documents are already parsed by db.ts
-            console.log("✅ Profile loaded from database");
+            console.log("✅ Profile loaded from database:", profile);
             set({ profile, isLoading: false });
           } else {
             // No profile exists, create a default one
             console.log("📝 No profile found, creating default profile");
-            
-            // Get user email from auth store to extract username
-            const { useAuthStore } = await import("./authStore");
-            const user = useAuthStore.getState().user;
-            const username = user?.email ? user.email.split("@")[0] : "";
-            
-            const defaultProfile: Profile = {
-              userId,
-              username,
-              bio: "",
-              education: [],
-              skills: [],
-              experience: [],
-              completionPercentage: 0,
-            };
 
-            // Create in database
-            const newProfileRow = await profileService.create(
-              userId,
-              defaultProfile
-            );
-            const createdProfile =
-              profileService.mapRowToProfile(newProfileRow);
-            console.log("✅ Default profile created with username:", username);
-            set({ profile: createdProfile, isLoading: false });
+            try {
+              // Get user email from auth store to extract username
+              const { useAuthStore } = await import("./authStore");
+              const user = useAuthStore.getState().user;
+              const username = user?.email ? user.email.split("@")[0] : "";
+
+              const defaultProfile: Profile = {
+                userId,
+                username,
+                bio: "",
+                education: [],
+                skills: [],
+                experience: [],
+                completionPercentage: 0,
+              };
+
+              // Create in database
+              console.log("📝 Creating profile in database...");
+              const newProfileRow = await profileService.create(
+                userId,
+                defaultProfile
+              );
+              const createdProfile =
+                profileService.mapRowToProfile(newProfileRow);
+              console.log(
+                "✅ Default profile created with username:",
+                username
+              );
+              set({ profile: createdProfile, isLoading: false });
+            } catch (createError) {
+              console.error(
+                "❌ Failed to create default profile:",
+                createError
+              );
+              // Set a minimal profile to unblock the UI
+              const fallbackProfile: Profile = {
+                userId,
+                username: "",
+                bio: "",
+                education: [],
+                skills: [],
+                experience: [],
+                completionPercentage: 0,
+              };
+              set({
+                profile: fallbackProfile,
+                isLoading: false,
+                error: "Failed to create profile in database",
+              });
+            }
           }
         } catch (error) {
           console.error("❌ Failed to load profile:", error);
+          // Always set loading to false, even on error
           set({ error: "Failed to load profile", isLoading: false });
         }
       },

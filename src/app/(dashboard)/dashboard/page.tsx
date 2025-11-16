@@ -51,7 +51,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <Target className="w-6 h-6 text-primary-500" />
@@ -74,7 +74,7 @@ export default function DashboardPage() {
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-primary-500" />
@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <Award className="w-6 h-6 text-primary-500" />
@@ -110,7 +110,7 @@ export default function DashboardPage() {
       {/* Profile Completion Banner */}
       {completionPercentage < 100 && (
         <Card className="border-2 border-primary-500/30 bg-gradient-to-br from-primary-500/5 to-primary-600/10 shadow-lg">
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center shrink-0">
