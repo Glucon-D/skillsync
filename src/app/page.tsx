@@ -4,25 +4,41 @@
  * @dependencies next/link, react-icons, @/lib/constants, @/components/layout/ThemeToggle
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 import {
-  FaArrowRight, FaRocket, FaPlay, FaUserGraduate, FaLightbulb,
-  FaCheckCircle, FaAward, FaCode, FaShieldAlt, FaBullseye, FaCompass
-} from 'react-icons/fa';
+  FaArrowRight,
+  FaRocket,
+  FaPlay,
+  FaUserGraduate,
+  FaLightbulb,
+  FaCheckCircle,
+  FaAward,
+  FaCode,
+  FaShieldAlt,
+  FaBullseye,
+  FaCompass,
+} from "react-icons/fa";
 import {
-  MdTrendingUp, MdWork, MdSchool, MdAnalytics, MdMessage,
-  MdBusiness, MdShowChart
-} from 'react-icons/md';
+  MdTrendingUp,
+  MdWork,
+  MdSchool,
+  MdAnalytics,
+  MdMessage,
+  MdBusiness,
+  MdShowChart,
+} from "react-icons/md";
 import {
-  HiSparkles, HiLightningBolt, HiUsers, HiBookOpen, HiMap
-} from 'react-icons/hi';
-import {
-  RiBrainFill, RiBarChartBoxFill
-} from 'react-icons/ri';
-import { ROUTES } from '@/lib/constants';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
+  HiSparkles,
+  HiLightningBolt,
+  HiUsers,
+  HiBookOpen,
+  HiMap,
+} from "react-icons/hi";
+import { RiBrainFill, RiBarChartBoxFill } from "react-icons/ri";
+import { ROUTES } from "@/lib/constants";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function Home() {
   return (
@@ -80,8 +96,10 @@ export default function Home() {
                 </h1>
 
                 <p className="text-lg sm:text-xl text-text-muted leading-relaxed max-w-3xl mx-auto">
-                  SkillSync uses AI to analyze your strengths, interests, and goals—delivering personalized career recommendations,
-                  skill pathways, and curated learning resources to accelerate your professional journey.
+                  SkillSync uses AI to analyze your strengths, interests, and
+                  goals—delivering personalized career recommendations, skill
+                  pathways, and curated learning resources to accelerate your
+                  professional journey.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -101,15 +119,23 @@ export default function Home() {
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-6 pt-8 max-w-2xl mx-auto">
                   <div className="space-y-1">
-                    <div className="text-3xl sm:text-4xl font-bold text-text">10K+</div>
-                    <div className="text-sm text-text-muted">Students Guided</div>
+                    <div className="text-3xl sm:text-4xl font-bold text-text">
+                      10K+
+                    </div>
+                    <div className="text-sm text-text-muted">
+                      Students Guided
+                    </div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-3xl sm:text-4xl font-bold text-text">500+</div>
+                    <div className="text-3xl sm:text-4xl font-bold text-text">
+                      500+
+                    </div>
                     <div className="text-sm text-text-muted">Career Paths</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-3xl sm:text-4xl font-bold text-text">98%</div>
+                    <div className="text-3xl sm:text-4xl font-bold text-text">
+                      98%
+                    </div>
                     <div className="text-sm text-text-muted">Success Rate</div>
                   </div>
                 </div>
@@ -122,7 +148,9 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div className="space-y-6 order-2 lg:order-1">
                 <div className="inline-block px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full">
-                  <span className="text-sm font-medium text-red-600 dark:text-red-400">The Problem</span>
+                  <span className="text-sm font-medium text-red-600 dark:text-red-400">
+                    The Problem
+                  </span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-text">
                   Career Misalignment is Costing Students Their Future
@@ -130,38 +158,58 @@ export default function Home() {
                 <div className="space-y-4 text-text-muted">
                   <p className="flex items-start space-x-3">
                     <span className="text-red-500 mt-1">•</span>
-                    <span>70% of students feel uncertain about their career choices after graduation</span>
+                    <span>
+                      70% of students feel uncertain about their career choices
+                      after graduation
+                    </span>
                   </p>
                   <p className="flex items-start space-x-3">
                     <span className="text-red-500 mt-1">•</span>
-                    <span>Students waste years pursuing paths that don't align with their strengths</span>
+                    <span>
+                      Students waste years pursuing paths that don't align with
+                      their strengths
+                    </span>
                   </p>
                   <p className="flex items-start space-x-3">
                     <span className="text-red-500 mt-1">•</span>
-                    <span>Traditional career counseling is generic, outdated, and inaccessible</span>
+                    <span>
+                      Traditional career counseling is generic, outdated, and
+                      inaccessible
+                    </span>
                   </p>
                 </div>
               </div>
 
               <div className="space-y-6 order-1 lg:order-2">
                 <div className="inline-block px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full">
-                  <span className="text-sm font-medium text-green-600 dark:text-green-400">The Solution</span>
+                  <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                    The Solution
+                  </span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-text">
                   AI-Driven Career Intelligence That Actually Works
                 </h2>
                 <div className="space-y-4 text-text-muted">
                   <p className="flex items-start space-x-3">
-                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
-                    <span>Personalized assessments that identify your unique strengths and interests</span>
+                    <FaCheckCircle className="text-green-500 mt-1 shrink-0 w-5 h-5" />
+                    <span>
+                      Personalized assessments that identify your unique
+                      strengths and interests
+                    </span>
                   </p>
                   <p className="flex items-start space-x-3">
-                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
-                    <span>Real-time industry data ensuring recommendations align with market demands</span>
+                    <FaCheckCircle className="text-green-500 mt-1 shrink-0 w-5 h-5" />
+                    <span>
+                      Real-time industry data ensuring recommendations align
+                      with market demands
+                    </span>
                   </p>
                   <p className="flex items-start space-x-3">
-                    <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0 w-5 h-5" />
-                    <span>Step-by-step roadmaps with curated courses and portfolio guidance</span>
+                    <FaCheckCircle className="text-green-500 mt-1 shrink-0 w-5 h-5" />
+                    <span>
+                      Step-by-step roadmaps with curated courses and portfolio
+                      guidance
+                    </span>
                   </p>
                 </div>
                 <Link
@@ -179,14 +227,19 @@ export default function Home() {
           <section className="py-20 border-t border-border">
             <div className="text-center mb-16">
               <div className="inline-block px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
-                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">Platform Features</span>
+                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                  Platform Features
+                </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text">
                 Everything You Need to
-                <span className="block mt-2 text-primary-500">Build Your Dream Career</span>
+                <span className="block mt-2 text-primary-500">
+                  Build Your Dream Career
+                </span>
               </h2>
               <p className="mt-6 text-lg text-text-muted max-w-2xl mx-auto">
-                Comprehensive AI-powered tools designed to guide every step of your professional journey
+                Comprehensive AI-powered tools designed to guide every step of
+                your professional journey
               </p>
             </div>
 
@@ -198,9 +251,12 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaBullseye className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Student Profiling</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Student Profiling
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
-                    Comprehensive analysis of your skills, personality, and aspirations
+                    Comprehensive analysis of your skills, personality, and
+                    aspirations
                   </p>
                 </div>
               </div>
@@ -212,9 +268,12 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaCompass className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Interest Mapping</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Interest Mapping
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
-                    Discover careers that truly align with your passions and values
+                    Discover careers that truly align with your passions and
+                    values
                   </p>
                 </div>
               </div>
@@ -226,7 +285,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <RiBrainFill className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Industry Integration</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Industry Integration
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Real-time market insights powered by RAG technology
                   </p>
@@ -240,7 +301,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <HiMap className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Skill Pathways</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Skill Pathways
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Step-by-step roadmaps to build in-demand professional skills
                   </p>
@@ -254,7 +317,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <HiBookOpen className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Course Recommendation</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Course Recommendation
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Curated learning resources tailored to your career goals
                   </p>
@@ -268,7 +333,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <MdWork className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Career Role Suggestions</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Career Role Suggestions
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Discover roles with salary insights and growth potential
                   </p>
@@ -282,7 +349,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <FaCode className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Portfolio Roadmap</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Portfolio Roadmap
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Build a standout portfolio with project recommendations
                   </p>
@@ -296,7 +365,9 @@ export default function Home() {
                   <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mb-4 shadow-lg shadow-primary-500/20">
                     <MdAnalytics className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-text mb-2">Institutional Analytics</h3>
+                  <h3 className="text-lg font-bold text-text mb-2">
+                    Institutional Analytics
+                  </h3>
                   <p className="text-sm text-text-muted leading-relaxed">
                     Data-driven insights for universities and educators
                   </p>
@@ -309,11 +380,15 @@ export default function Home() {
           <section className="py-20 border-t border-border">
             <div className="text-center mb-16">
               <div className="inline-block px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
-                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">Simple Process</span>
+                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                  Simple Process
+                </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text">
                 Your Journey to Career Success
-                <span className="block mt-2 text-primary-500">in 4 Simple Steps</span>
+                <span className="block mt-2 text-primary-500">
+                  in 4 Simple Steps
+                </span>
               </h2>
             </div>
 
@@ -330,7 +405,10 @@ export default function Home() {
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-text">Sign Up Free</h3>
-                  <p className="text-text-muted">Create your account in seconds and get started with your assessment</p>
+                  <p className="text-text-muted">
+                    Create your account in seconds and get started with your
+                    assessment
+                  </p>
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
@@ -349,8 +427,13 @@ export default function Home() {
                       2
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-text">Take Assessment</h3>
-                  <p className="text-text-muted">Complete our AI-powered test to identify your skills and interests</p>
+                  <h3 className="text-xl font-bold text-text">
+                    Take Assessment
+                  </h3>
+                  <p className="text-text-muted">
+                    Complete our AI-powered test to identify your skills and
+                    interests
+                  </p>
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
@@ -369,8 +452,13 @@ export default function Home() {
                       3
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-text">Get AI Insights</h3>
-                  <p className="text-text-muted">Receive personalized career recommendations and skill gap analysis</p>
+                  <h3 className="text-xl font-bold text-text">
+                    Get AI Insights
+                  </h3>
+                  <p className="text-text-muted">
+                    Receive personalized career recommendations and skill gap
+                    analysis
+                  </p>
                 </div>
                 {/* Arrow */}
                 <div className="hidden lg:block absolute top-10 -right-4 text-primary-500/30">
@@ -389,8 +477,13 @@ export default function Home() {
                       4
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-text">Follow Roadmap</h3>
-                  <p className="text-text-muted">Access your customized learning path with courses and milestones</p>
+                  <h3 className="text-xl font-bold text-text">
+                    Follow Roadmap
+                  </h3>
+                  <p className="text-text-muted">
+                    Access your customized learning path with courses and
+                    milestones
+                  </p>
                 </div>
               </div>
             </div>
@@ -410,13 +503,17 @@ export default function Home() {
           <section className="py-12 border-t border-border">
             <div className="text-center mb-8">
               <div className="inline-block px-3 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-full mb-4">
-                <span className="text-xs font-medium text-primary-600 dark:text-primary-400">Platform Preview</span>
+                <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
+                  Platform Preview
+                </span>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text">
-                Your Personalized <span className="text-primary-500">Career Dashboard</span>
+                Your Personalized{" "}
+                <span className="text-primary-500">Career Dashboard</span>
               </h2>
               <p className="mt-3 text-sm text-text-muted max-w-2xl mx-auto">
-                Track your progress, explore pathways, and access resources—all in one interface
+                Track your progress, explore pathways, and access resources—all
+                in one interface
               </p>
             </div>
 
@@ -426,8 +523,12 @@ export default function Home() {
               <div className="mb-4 pb-4 border-b border-border">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-text">Welcome back, Gautam Kakkar!</h3>
-                    <p className="text-xs text-text-muted">Here's your career progress overview</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-text">
+                      Welcome back, Gautam Kakkar!
+                    </h3>
+                    <p className="text-xs text-text-muted">
+                      Here's your career progress overview
+                    </p>
                   </div>
                   <Link
                     href={ROUTES.SIGNUP}
@@ -446,7 +547,9 @@ export default function Home() {
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <FaBullseye className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">+5%</span>
+                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                      +5%
+                    </span>
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Career Fit</p>
                   <p className="text-xl font-bold text-text">85%</p>
@@ -458,7 +561,9 @@ export default function Home() {
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <MdTrendingUp className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">+12%</span>
+                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                      +12%
+                    </span>
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Skills</p>
                   <p className="text-xl font-bold text-text">70%</p>
@@ -470,7 +575,9 @@ export default function Home() {
                     <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                       <HiBookOpen className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">New</span>
+                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                      New
+                    </span>
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Courses</p>
                   <p className="text-xl font-bold text-text">3</p>
@@ -482,7 +589,9 @@ export default function Home() {
                     <FaRocket className="w-4 h-4 text-white" />
                   </div>
                   <p className="text-xs text-text-muted mb-0.5">Next Goal</p>
-                  <p className="text-xs font-semibold text-text line-clamp-2">Learn React Advanced</p>
+                  <p className="text-xs font-semibold text-text line-clamp-2">
+                    Learn React Advanced
+                  </p>
                 </div>
               </div>
 
@@ -491,7 +600,9 @@ export default function Home() {
                 {/* Skill Growth Chart */}
                 <div className="p-4 bg-surface/70 backdrop-blur-sm rounded-xl border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-bold text-text">Skill Growth</h4>
+                    <h4 className="text-sm font-bold text-text">
+                      Skill Growth
+                    </h4>
                     <span className="text-xs text-text-muted">6 months</span>
                   </div>
 
@@ -499,41 +610,69 @@ export default function Home() {
                   <div className="space-y-2.5">
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-text">JavaScript</span>
-                        <span className="text-xs font-semibold text-primary-500">85%</span>
+                        <span className="text-xs font-medium text-text">
+                          JavaScript
+                        </span>
+                        <span className="text-xs font-semibold text-primary-500">
+                          85%
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full" style={{ width: '85%' }}></div>
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          style={{ width: "85%" }}
+                        ></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-text">React</span>
-                        <span className="text-xs font-semibold text-primary-500">75%</span>
+                        <span className="text-xs font-medium text-text">
+                          React
+                        </span>
+                        <span className="text-xs font-semibold text-primary-500">
+                          75%
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full" style={{ width: '75%' }}></div>
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          style={{ width: "75%" }}
+                        ></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-text">TypeScript</span>
-                        <span className="text-xs font-semibold text-primary-500">65%</span>
+                        <span className="text-xs font-medium text-text">
+                          TypeScript
+                        </span>
+                        <span className="text-xs font-semibold text-primary-500">
+                          65%
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full" style={{ width: '65%' }}></div>
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          style={{ width: "65%" }}
+                        ></div>
                       </div>
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-text">Node.js</span>
-                        <span className="text-xs font-semibold text-primary-500">70%</span>
+                        <span className="text-xs font-medium text-text">
+                          Node.js
+                        </span>
+                        <span className="text-xs font-semibold text-primary-500">
+                          70%
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-background rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full" style={{ width: '70%' }}></div>
+                        <div
+                          className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+                          style={{ width: "70%" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -542,7 +681,9 @@ export default function Home() {
                 {/* Recommended Career Roles */}
                 <div className="p-4 bg-surface/70 backdrop-blur-sm rounded-xl border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-bold text-text">Top Career Matches</h4>
+                    <h4 className="text-sm font-bold text-text">
+                      Top Career Matches
+                    </h4>
                     <button className="text-xs font-medium text-primary-500 hover:text-primary-600 transition-colors">
                       View All
                     </button>
@@ -551,46 +692,70 @@ export default function Home() {
                   <div className="space-y-2.5">
                     {/* Role 1 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <RiBarChartBoxFill className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
-                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">Data Analyst</h5>
-                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">92%</span>
+                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">
+                            Data Analyst
+                          </h5>
+                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                            92%
+                          </span>
                         </div>
-                        <p className="text-xs text-text-muted mb-1">Drive decisions with data analysis</p>
-                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">$75k - $120k</span>
+                        <p className="text-xs text-text-muted mb-1">
+                          Drive decisions with data analysis
+                        </p>
+                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                          $75k - $120k
+                        </span>
                       </div>
                     </div>
 
                     {/* Role 2 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <MdWork className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
-                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">Product Manager</h5>
-                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">88%</span>
+                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">
+                            Product Manager
+                          </h5>
+                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                            88%
+                          </span>
                         </div>
-                        <p className="text-xs text-text-muted mb-1">Lead product development</p>
-                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">$90k - $150k</span>
+                        <p className="text-xs text-text-muted mb-1">
+                          Lead product development
+                        </p>
+                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                          $90k - $150k
+                        </span>
                       </div>
                     </div>
 
                     {/* Role 3 */}
                     <div className="flex items-start space-x-3 p-2.5 bg-background/50 rounded-lg border border-border hover:border-primary-500/50 transition-all duration-300 group">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
                         <FaBullseye className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
-                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">UX Designer</h5>
-                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">85%</span>
+                          <h5 className="text-sm font-semibold text-text group-hover:text-primary-500 transition-colors">
+                            UX Designer
+                          </h5>
+                          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                            85%
+                          </span>
                         </div>
-                        <p className="text-xs text-text-muted mb-1">Create intuitive experiences</p>
-                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">$70k - $130k</span>
+                        <p className="text-xs text-text-muted mb-1">
+                          Create intuitive experiences
+                        </p>
+                        <span className="text-xs text-text-muted bg-primary-500/10 px-1.5 py-0.5 rounded-full">
+                          $70k - $130k
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -614,11 +779,15 @@ export default function Home() {
           <section className="py-20 border-t border-border">
             <div className="text-center mb-16">
               <div className="inline-block px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
-                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">Student Success Stories</span>
+                <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                  Student Success Stories
+                </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text">
                 Trusted by Students
-                <span className="block mt-2 text-primary-500">Across the Globe</span>
+                <span className="block mt-2 text-primary-500">
+                  Across the Globe
+                </span>
               </h2>
             </div>
 
@@ -627,11 +796,16 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles
+                      key={i}
+                      className="w-4 h-4 text-primary-500 fill-primary-500"
+                    />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
-                  "SkillSync helped me discover my passion for UX design. The personalized roadmap and course recommendations were exactly what I needed to transition careers successfully."
+                  "SkillSync helped me discover my passion for UX design. The
+                  personalized roadmap and course recommendations were exactly
+                  what I needed to transition careers successfully."
                 </p>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
@@ -648,18 +822,25 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles
+                      key={i}
+                      className="w-4 h-4 text-primary-500 fill-primary-500"
+                    />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
-                  "The AI assessment was incredibly accurate. It identified skills I didn't even know I had and suggested career paths I never considered. Best decision ever!"
+                  "The AI assessment was incredibly accurate. It identified
+                  skills I didn't even know I had and suggested career paths I
+                  never considered. Best decision ever!"
                 </p>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
                     M
                   </div>
                   <div>
-                    <div className="font-semibold text-text">Michael Roberts</div>
+                    <div className="font-semibold text-text">
+                      Michael Roberts
+                    </div>
                     <div className="text-sm text-text-muted">Data Analyst</div>
                   </div>
                 </div>
@@ -669,11 +850,16 @@ export default function Home() {
               <div className="relative p-8 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border hover:border-primary-500/50 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center space-x-2 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <HiSparkles key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                    <HiSparkles
+                      key={i}
+                      className="w-4 h-4 text-primary-500 fill-primary-500"
+                    />
                   ))}
                 </div>
                 <p className="text-text-muted mb-6 leading-relaxed">
-                  "As a career counselor, I recommend SkillSync to all my students. The platform's insights and recommendations are backed by real industry data."
+                  "As a career counselor, I recommend SkillSync to all my
+                  students. The platform's insights and recommendations are
+                  backed by real industry data."
                 </p>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
@@ -681,7 +867,9 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="font-semibold text-text">Priya Sharma</div>
-                    <div className="text-sm text-text-muted">Career Counselor</div>
+                    <div className="text-sm text-text-muted">
+                      Career Counselor
+                    </div>
                   </div>
                 </div>
               </div>
@@ -692,15 +880,21 @@ export default function Home() {
               <div className="inline-flex flex-wrap items-center justify-center gap-8 px-8 py-6 bg-surface/50 backdrop-blur-sm rounded-2xl border border-border">
                 <div className="flex items-center space-x-2">
                   <FaShieldAlt className="w-5 h-5 text-primary-500" />
-                  <span className="text-sm font-medium text-text">Verified Students</span>
+                  <span className="text-sm font-medium text-text">
+                    Verified Students
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <HiUsers className="w-5 h-5 text-primary-500" />
-                  <span className="text-sm font-medium text-text">10,000+ Active Users</span>
+                  <span className="text-sm font-medium text-text">
+                    10,000+ Active Users
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <FaAward className="w-5 h-5 text-primary-500" />
-                  <span className="text-sm font-medium text-text">98% Success Rate</span>
+                  <span className="text-sm font-medium text-text">
+                    98% Success Rate
+                  </span>
                 </div>
               </div>
             </div>
@@ -716,7 +910,9 @@ export default function Home() {
               <div className="relative">
                 <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-8">
                   <FaRocket className="w-5 h-5 text-white" />
-                  <span className="text-sm font-medium text-white">Start Today</span>
+                  <span className="text-sm font-medium text-white">
+                    Start Today
+                  </span>
                 </div>
 
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
@@ -725,8 +921,8 @@ export default function Home() {
                 </h2>
 
                 <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-10">
-                  Join thousands of students who have already discovered their perfect career path with SkillSync.
-                  Your future starts here.
+                  Join thousands of students who have already discovered their
+                  perfect career path with SkillSync. Your future starts here.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -765,37 +961,122 @@ export default function Home() {
                   <span className="font-semibold text-text">SkillSync</span>
                 </div>
                 <p className="text-sm text-text-muted">
-                  AI-powered career intelligence platform helping students discover their perfect career path.
+                  AI-powered career intelligence platform helping students
+                  discover their perfect career path.
                 </p>
               </div>
 
               <div>
                 <h3 className="font-semibold text-text mb-4">Platform</h3>
                 <ul className="space-y-2 text-sm text-text-muted">
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Features</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">How It Works</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Pricing</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">For Universities</Link></li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Features
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      How It Works
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Pricing
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      For Universities
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold text-text mb-4">Resources</h3>
                 <ul className="space-y-2 text-sm text-text-muted">
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Blog</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Career Guide</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Help Center</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">API Docs</Link></li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Blog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Career Guide
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Help Center
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      API Docs
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold text-text mb-4">Company</h3>
                 <ul className="space-y-2 text-sm text-text-muted">
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">About Us</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Careers</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Privacy Policy</Link></li>
-                  <li><Link href="#" className="hover:text-primary-500 transition-colors">Terms of Service</Link></li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Careers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="#"
+                      className="hover:text-primary-500 transition-colors"
+                    >
+                      Terms of Service
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -805,9 +1086,24 @@ export default function Home() {
                 &copy; 2025 SkillSync. All rights reserved.
               </p>
               <div className="flex items-center space-x-6 text-sm text-text-muted">
-                <Link href="#" className="hover:text-primary-500 transition-colors">Twitter</Link>
-                <Link href="#" className="hover:text-primary-500 transition-colors">LinkedIn</Link>
-                <Link href="#" className="hover:text-primary-500 transition-colors">GitHub</Link>
+                <Link
+                  href="#"
+                  className="hover:text-primary-500 transition-colors"
+                >
+                  Twitter
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-primary-500 transition-colors"
+                >
+                  LinkedIn
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-primary-500 transition-colors"
+                >
+                  GitHub
+                </Link>
               </div>
             </div>
           </div>

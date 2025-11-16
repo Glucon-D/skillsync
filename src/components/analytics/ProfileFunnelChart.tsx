@@ -75,10 +75,10 @@ export function ProfileFunnelChart({ data }: ProfileFunnelChartProps) {
                   <div
                     className={`h-full flex items-center px-4 transition-all duration-500 ${
                       width > 80
-                        ? "bg-gradient-to-r from-emerald-500 to-green-500"
+                        ? "bg-linear-to-r from-emerald-500 to-green-500"
                         : width > 50
-                        ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                        : "bg-gradient-to-r from-orange-500 to-red-500"
+                        ? "bg-linear-to-r from-yellow-500 to-orange-500"
+                        : "bg-linear-to-r from-orange-500 to-red-500"
                     }`}
                     style={{ width: `${width}%` }}
                   >

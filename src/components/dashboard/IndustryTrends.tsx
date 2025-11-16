@@ -583,7 +583,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
                     className="p-3 bg-surface/50 rounded-lg border border-border"
                   >
                     <div className="flex items-start gap-3 mb-2">
-                      <div className="w-8 h-8 bg-primary-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-primary-500/10 rounded-lg flex items-center justify-center shrink-0">
                         {getCategoryIcon(insight.category)}
                       </div>
                       <div className="flex-1">

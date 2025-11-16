@@ -91,7 +91,7 @@ export default function NetworkPage() {
 
       if (result.success) {
         await loadFollowData(user.id);
-        
+
         const networkData = await loadNetworkProfiles(profile.userId);
         setFollowers(networkData.followers as Profile[]);
         setFollowing(networkData.following as Profile[]);
@@ -130,10 +130,10 @@ export default function NetworkPage() {
                 <img
                   src={userProfile.userImage}
                   alt={userProfile.username || "User"}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-border flex-shrink-0"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-border shrink-0"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-bold text-xl flex-shrink-0">
+                <div className="w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-bold text-xl shrink-0">
                   {getUserInitial(userProfile)}
                 </div>
               )}
@@ -156,13 +156,9 @@ export default function NetworkPage() {
                 disabled={isLoading}
                 variant={isFollowingUser ? "outline" : "primary"}
                 size="sm"
-                className="flex-shrink-0"
+                className="shrink-0"
               >
-                {isLoading
-                  ? "..."
-                  : isFollowingUser
-                  ? "Unfollow"
-                  : "Follow"}
+                {isLoading ? "..." : isFollowingUser ? "Unfollow" : "Follow"}
               </Button>
             )}
           </div>
@@ -296,7 +292,9 @@ export default function NetworkPage() {
                       <Card>
                         <CardContent className="py-16 text-center">
                           <Users className="w-12 h-12 text-text-muted mx-auto mb-4" />
-                          <p className="text-text-muted">Not following anyone yet</p>
+                          <p className="text-text-muted">
+                            Not following anyone yet
+                          </p>
                         </CardContent>
                       </Card>
                     ) : (

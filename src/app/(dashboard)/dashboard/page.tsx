@@ -33,7 +33,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 pb-8 p-6 md:p-8 max-w-6xl mx-auto">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
         <div className="relative z-10">
@@ -65,7 +65,7 @@ export default function DashboardPage() {
             </div>
             <div className="w-full bg-background rounded-full h-2.5 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-primary-500 to-primary-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                className="bg-linear-to-r from-primary-500 to-primary-600 h-2.5 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
 
       {/* Profile Completion Banner */}
       {completionPercentage < 100 && (
-        <Card className="border-2 border-primary-500/30 bg-gradient-to-br from-primary-500/5 to-primary-600/10 shadow-lg">
+        <Card className="border-2 border-primary-500/30 bg-linear-to-br from-primary-500/5 to-primary-600/10 shadow-lg">
           <CardContent className="">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">

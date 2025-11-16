@@ -281,7 +281,7 @@ export default function ProfilePage() {
     <div className="p-8 space-y-6">
       {/* Page Header */}
       <div className="text-center sm:text-left">
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+        <h1 className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
           My Profile
         </h1>
         <p className="text-text-muted mt-1">
@@ -290,7 +290,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Header Card with Avatar and Completion - Full Width */}
-      <div className="bg-gradient-to-br from-white via-orange-50/30 to-white dark:from-surface dark:via-primary-900/5 dark:to-surface rounded-3xl shadow-xl shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 sm:p-8">
+      <div className="bg-linear-to-br from-white via-orange-50/30 to-white dark:from-surface dark:via-primary-900/5 dark:to-surface rounded-3xl shadow-xl shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-center gap-6">
           {/* Avatar Display */}
           <div className="relative group shrink-0">
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary-500 shadow-2xl shadow-primary-500/30"
               />
             ) : (
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-2xl shadow-primary-500/30 relative">
+              <div className="w-32 h-32 rounded-full bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-2xl shadow-primary-500/30 relative">
                 <div className="absolute inset-0 bg-primary-400 rounded-full blur-xl opacity-30" />
                 <span className="relative z-10">{getUserInitial()}</span>
               </div>
@@ -380,11 +380,11 @@ export default function ProfilePage() {
               </div>
               <div className="relative w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner">
                 <div
-                  className="h-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 rounded-full transition-all duration-700 ease-out shadow-lg relative"
+                  className="h-full bg-linear-to-r from-primary-500 via-primary-600 to-primary-700 rounded-full transition-all duration-700 ease-out shadow-lg relative"
                   style={{ width: `${profile.completionPercentage}%` }}
                 >
                   <div
-                    className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 animate-[shimmer_2s_infinite]"
+                    className="absolute inset-0 bg-linear-to-r from-white/0 via-white/30 to-white/0 animate-[shimmer_2s_infinite]"
                     style={{ backgroundSize: "200% 100%" }}
                   />
                 </div>
@@ -397,9 +397,9 @@ export default function ProfilePage() {
       {/* Two Column Grid for smaller sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Basic Information */}
-        <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+        <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+            <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
               Basic Information
             </h3>
             {!isEditingBasicInfo ? (
@@ -500,9 +500,9 @@ export default function ProfilePage() {
         </div>
 
         {/* Bio */}
-        <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+        <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+            <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
               Bio
             </h3>
             {!isEditingBio ? (
@@ -563,9 +563,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Skills
           </h3>
           <Button
@@ -581,7 +581,7 @@ export default function ProfilePage() {
           <div className="flex flex-wrap gap-2.5">
             {profile.skills.map((skill, index) => (
               <div key={index} className="relative group">
-                <div className="px-4 py-2 bg-gradient-to-br from-primary-50 to-orange-50 dark:from-primary-900/30 dark:to-orange-900/20 border border-primary-200 dark:border-primary-800 rounded-full text-sm font-semibold text-primary-700 dark:text-primary-300 pr-10 shadow-sm hover:shadow-md transition-all hover:scale-105 duration-200">
+                <div className="px-4 py-2 bg-linear-to-br from-primary-50 to-orange-50 dark:from-primary-900/30 dark:to-orange-900/20 border border-primary-200 dark:border-primary-800 rounded-full text-sm font-semibold text-primary-700 dark:text-primary-300 pr-10 shadow-sm hover:shadow-md transition-all hover:scale-105 duration-200">
                   {skill.name}{" "}
                   <span className="opacity-70">({skill.level})</span>
                 </div>
@@ -596,7 +596,7 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="text-center py-12 text-text-muted">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
               <Plus className="w-8 h-8 text-primary-500" />
             </div>
             <p className="font-medium">No skills added yet</p>
@@ -611,9 +611,9 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Education
           </h3>
           <Button
@@ -661,7 +661,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="text-center py-12 text-text-muted">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
                 <Plus className="w-8 h-8 text-primary-500" />
               </div>
               <p className="font-medium">No education added yet</p>
@@ -677,9 +677,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Experience
           </h3>
           <Button
@@ -728,7 +728,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="text-center py-12 text-text-muted">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
                 <Plus className="w-8 h-8 text-primary-500" />
               </div>
               <p className="font-medium">No experience added yet</p>
@@ -744,9 +744,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Projects
           </h3>
           <Button
@@ -817,7 +817,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="text-center py-12 text-text-muted">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-primary-100 to-orange-100 dark:from-primary-900/20 dark:to-orange-900/10 flex items-center justify-center">
                 <Plus className="w-8 h-8 text-primary-500" />
               </div>
               <p className="font-medium">No projects added yet</p>
@@ -833,9 +833,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Social Links
           </h3>
         </div>
@@ -940,9 +940,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
+      <div className="bg-linear-to-br from-white via-orange-50/20 to-white dark:from-surface dark:via-primary-900/3 dark:to-surface rounded-2xl shadow-lg shadow-primary-500/5 border border-primary-100 dark:border-primary-900/20 p-6 transition-all hover:shadow-xl hover:shadow-primary-500/10">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
             Documents
           </h3>
           <Button
@@ -974,7 +974,7 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1">
-                      <FileText className="w-5 h-5 text-primary-500 mt-1 flex-shrink-0" />
+                      <FileText className="w-5 h-5 text-primary-500 mt-1 shrink-0" />
                       <div className="flex-1 min-w-0">
                         <a
                           href={doc.url}

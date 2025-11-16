@@ -4,10 +4,10 @@
  * @dependencies react, lucide-react, @/store/coursesStore, @/store/authStore, @/components/ui
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Bookmark,
   BookmarkCheck,
@@ -26,25 +26,25 @@ import {
   ChevronRight,
   Trash2,
   CheckSquare,
-  Square
-} from 'lucide-react';
-import { useCoursesStore } from '@/store/coursesStore';
-import { useAuthStore } from '@/store/authStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Select, Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/modal';
+  Square,
+} from "lucide-react";
+import { useCoursesStore } from "@/store/coursesStore";
+import { useAuthStore } from "@/store/authStore";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Select, Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/modal";
 
 const POPULAR_DOMAINS = [
-  'Web Development',
-  'Data Science',
-  'Machine Learning',
-  'Mobile Development',
-  'Cloud Computing',
-  'Cybersecurity',
-  'DevOps',
-  'UI/UX Design',
+  "Web Development",
+  "Data Science",
+  "Machine Learning",
+  "Mobile Development",
+  "Cloud Computing",
+  "Cybersecurity",
+  "DevOps",
+  "UI/UX Design",
 ];
 
 const COURSES_PER_PAGE = 12;
@@ -57,28 +57,30 @@ export default function CoursesPage() {
     allCourses,
     bookmarkedCourses,
     loadCourses,
-    isLoading: storeLoading
+    isLoading: storeLoading,
   } = useCoursesStore();
 
-  const [activeTab, setActiveTab] = useState<'all' | 'bookmarked'>('all');
-  const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
-  const [platformFilter, setPlatformFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<"all" | "bookmarked">("all");
+  const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
+  const [platformFilter, setPlatformFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Selection and deletion state
-  const [selectedCourseIds, setSelectedCourseIds] = useState<Set<string>>(new Set());
+  const [selectedCourseIds, setSelectedCourseIds] = useState<Set<string>>(
+    new Set()
+  );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [showBookmarkSuccess, setShowBookmarkSuccess] = useState(false);
 
   // AI Generation state
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
-  const [selectedDomain, setSelectedDomain] = useState<string>('');
-  const [customDomain, setCustomDomain] = useState<string>('');
+  const [selectedDomain, setSelectedDomain] = useState<string>("");
+  const [customDomain, setCustomDomain] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationError, setGenerationError] = useState<string>('');
+  const [generationError, setGenerationError] = useState<string>("");
 
   // Load user's courses on mount
   useEffect(() => {
@@ -89,23 +91,31 @@ export default function CoursesPage() {
 
   // Scroll to top when page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
   // Filter courses based on active tab and filters
-  const coursesToDisplay = activeTab === 'all' ? allCourses : bookmarkedCourses;
+  const coursesToDisplay = activeTab === "all" ? allCourses : bookmarkedCourses;
 
   const filteredCourses = coursesToDisplay
     .filter((course) => {
-      if (difficultyFilter !== 'all' && course.difficulty !== difficultyFilter) return false;
-      if (platformFilter !== 'all' && course.platform !== platformFilter) return false;
-      if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (difficultyFilter !== "all" && course.difficulty !== difficultyFilter)
+        return false;
+      if (platformFilter !== "all" && course.platform !== platformFilter)
+        return false;
+      if (
+        searchQuery &&
+        !course.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+        return false;
       return true;
     })
     .sort((a, b) => {
       // Sort by creation date: latest first (descending order)
       if (!a.$createdAt || !b.$createdAt) return 0;
-      return new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime();
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
     });
 
   // Calculate pagination
@@ -152,10 +162,10 @@ export default function CoursesPage() {
     const count = selectedCourseIds.size;
 
     toast.success(
-      `Successfully deleted ${count} course${count > 1 ? 's' : ''}!`,
+      `Successfully deleted ${count} course${count > 1 ? "s" : ""}!`,
       {
         duration: 4000,
-        position: 'top-center',
+        position: "top-center",
       }
     );
 
@@ -183,22 +193,22 @@ export default function CoursesPage() {
     }
 
     toast.success(
-      `Successfully bookmarked ${count} course${count > 1 ? 's' : ''}!`,
+      `Successfully bookmarked ${count} course${count > 1 ? "s" : ""}!`,
       {
         duration: 4000,
-        position: 'top-center',
+        position: "top-center",
         style: {
-          borderRadius: '12px',
-          background: 'var(--surface)',
-          color: 'var(--text)',
-          border: '2px solid #10b981',
-          padding: '16px 24px',
-          maxWidth: '600px',
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+          borderRadius: "12px",
+          background: "var(--surface)",
+          color: "var(--text)",
+          border: "2px solid #10b981",
+          padding: "16px 24px",
+          maxWidth: "600px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
         },
         iconTheme: {
-          primary: '#10b981',
-          secondary: '#fff',
+          primary: "#10b981",
+          secondary: "#fff",
         },
       }
     );
@@ -222,22 +232,24 @@ export default function CoursesPage() {
     }
 
     toast.success(
-      `Successfully removed ${count} course${count > 1 ? 's' : ''} from bookmarks!`,
+      `Successfully removed ${count} course${
+        count > 1 ? "s" : ""
+      } from bookmarks!`,
       {
         duration: 4000,
-        position: 'top-center',
+        position: "top-center",
         style: {
-          borderRadius: '12px',
-          background: 'var(--surface)',
-          color: 'var(--text)',
-          border: '2px solid #f97316',
-          padding: '16px 24px',
-          maxWidth: '600px',
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+          borderRadius: "12px",
+          background: "var(--surface)",
+          color: "var(--text)",
+          border: "2px solid #f97316",
+          padding: "16px 24px",
+          maxWidth: "600px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
         },
         iconTheme: {
-          primary: '#f97316',
-          secondary: '#fff',
+          primary: "#f97316",
+          secondary: "#fff",
         },
       }
     );
@@ -251,14 +263,20 @@ export default function CoursesPage() {
     setSelectedCourseIds(new Set());
   };
 
-  const isAllSelected = displayCourses.length > 0 && selectedCourseIds.size === displayCourses.length;
+  const isAllSelected =
+    displayCourses.length > 0 &&
+    selectedCourseIds.size === displayCourses.length;
 
   // Check which selected courses are bookmarked
-  const selectedBookmarkedCount = Array.from(selectedCourseIds).filter((courseId) =>
-    isBookmarked(courseId)
+  const selectedBookmarkedCount = Array.from(selectedCourseIds).filter(
+    (courseId) => isBookmarked(courseId)
   ).length;
-  const allSelectedAreBookmarked = selectedBookmarkedCount === selectedCourseIds.size && selectedCourseIds.size > 0;
-  const someSelectedAreBookmarked = selectedBookmarkedCount > 0 && selectedBookmarkedCount < selectedCourseIds.size;
+  const allSelectedAreBookmarked =
+    selectedBookmarkedCount === selectedCourseIds.size &&
+    selectedCourseIds.size > 0;
+  const someSelectedAreBookmarked =
+    selectedBookmarkedCount > 0 &&
+    selectedBookmarkedCount < selectedCourseIds.size;
 
   // Generate page numbers to display
   const getPageNumbers = (): (number | string)[] => {
@@ -273,7 +291,7 @@ export default function CoursesPage() {
       pages.push(1);
 
       if (currentPage > 3) {
-        pages.push('...');
+        pages.push("...");
       }
 
       const start = Math.max(2, currentPage - 1);
@@ -284,7 +302,7 @@ export default function CoursesPage() {
       }
 
       if (currentPage < totalPages - 2) {
-        pages.push('...');
+        pages.push("...");
       }
 
       if (totalPages > 1) {
@@ -295,28 +313,28 @@ export default function CoursesPage() {
     return pages;
   };
 
-  const platforms = Array.from(new Set(allCourses.map(c => c.platform)));
+  const platforms = Array.from(new Set(allCourses.map((c) => c.platform)));
 
   const handleGenerateCourses = async () => {
     if (!user?.id) {
-      setGenerationError('Please log in to generate courses');
+      setGenerationError("Please log in to generate courses");
       return;
     }
 
     const domain = customDomain.trim() || selectedDomain;
     if (!domain) {
-      setGenerationError('Please select or enter a domain');
+      setGenerationError("Please select or enter a domain");
       return;
     }
 
     setIsGenerating(true);
-    setGenerationError('');
+    setGenerationError("");
 
     try {
-      const response = await fetch('/api/courses/generate', {
-        method: 'POST',
+      const response = await fetch("/api/courses/generate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId: user.id,
@@ -327,31 +345,31 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate courses');
+        throw new Error(data.error || "Failed to generate courses");
       }
 
       // Close modal and show success toast
       setIsGenerateModalOpen(false);
-      setSelectedDomain('');
-      setCustomDomain('');
+      setSelectedDomain("");
+      setCustomDomain("");
 
       toast.success(
         `Successfully generated ${data.count} courses for ${domain}! Browse them in the All Courses tab and bookmark your favorites.`,
         {
           duration: 5000,
-          position: 'top-center',
+          position: "top-center",
           style: {
-            borderRadius: '12px',
-            background: 'var(--surface)',
-            color: 'var(--text)',
-            border: '2px solid #10b981',
-            padding: '16px 24px',
-            maxWidth: '600px',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+            borderRadius: "12px",
+            background: "var(--surface)",
+            color: "var(--text)",
+            border: "2px solid #10b981",
+            padding: "16px 24px",
+            maxWidth: "600px",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
           },
           iconTheme: {
-            primary: '#10b981',
-            secondary: '#fff',
+            primary: "#10b981",
+            secondary: "#fff",
           },
         }
       );
@@ -361,8 +379,10 @@ export default function CoursesPage() {
         await loadCourses(user.id);
       }
     } catch (error) {
-      console.error('Course generation error:', error);
-      setGenerationError(error instanceof Error ? error.message : 'Failed to generate courses');
+      console.error("Course generation error:", error);
+      setGenerationError(
+        error instanceof Error ? error.message : "Failed to generate courses"
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -370,9 +390,9 @@ export default function CoursesPage() {
 
   const resetModal = () => {
     setIsGenerateModalOpen(false);
-    setSelectedDomain('');
-    setCustomDomain('');
-    setGenerationError('');
+    setSelectedDomain("");
+    setCustomDomain("");
+    setGenerationError("");
   };
 
   return (
@@ -381,36 +401,36 @@ export default function CoursesPage() {
         position="top-center"
         toastOptions={{
           // Default options
-          className: '',
+          className: "",
           duration: 4000,
           style: {
-            background: 'var(--surface)',
-            color: 'var(--text)',
-            borderRadius: '12px',
-            padding: '16px 24px',
-            fontSize: '14px',
-            fontWeight: '500',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-            maxWidth: '600px',
+            background: "var(--surface)",
+            color: "var(--text)",
+            borderRadius: "12px",
+            padding: "16px 24px",
+            fontSize: "14px",
+            fontWeight: "500",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+            maxWidth: "600px",
           },
           // Success
           success: {
             style: {
-              border: '2px solid #10b981',
+              border: "2px solid #10b981",
             },
             iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+              primary: "#10b981",
+              secondary: "#fff",
             },
           },
           // Error
           error: {
             style: {
-              border: '2px solid #ef4444',
+              border: "2px solid #ef4444",
             },
             iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+              primary: "#ef4444",
+              secondary: "#fff",
             },
           },
         }}
@@ -422,7 +442,9 @@ export default function CoursesPage() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
             Course Recommendations
           </h1>
-          <p className="text-text-muted text-lg">Discover and manage your learning journey</p>
+          <p className="text-text-muted text-lg">
+            Discover and manage your learning journey
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {isSelectMode && (
@@ -438,7 +460,7 @@ export default function CoursesPage() {
                 onClick={toggleSelectAll}
                 className="flex items-center gap-2 whitespace-nowrap bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                {isAllSelected ? 'Deselect All' : 'Select All'}
+                {isAllSelected ? "Deselect All" : "Select All"}
               </Button>
             </>
           )}
@@ -465,21 +487,21 @@ export default function CoursesPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b-2 border-border pb-1">
         <div className="flex gap-2 bg-surface rounded-full p-1 border border-border shadow-sm">
           <button
-            onClick={() => setActiveTab('all')}
+            onClick={() => setActiveTab("all")}
             className={`px-6 py-2.5 font-semibold rounded-full transition-all duration-200 ${
-              activeTab === 'all'
-                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
-                : 'text-text-muted hover:text-text hover:bg-background'
+              activeTab === "all"
+                ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md"
+                : "text-text-muted hover:text-text hover:bg-background"
             }`}
           >
             All Courses
           </button>
           <button
-            onClick={() => setActiveTab('bookmarked')}
+            onClick={() => setActiveTab("bookmarked")}
             className={`px-6 py-2.5 font-semibold rounded-full transition-all duration-200 whitespace-nowrap ${
-              activeTab === 'bookmarked'
-                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
-                : 'text-text-muted hover:text-text hover:bg-background'
+              activeTab === "bookmarked"
+                ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md"
+                : "text-text-muted hover:text-text hover:bg-background"
             }`}
           >
             Bookmarked ({bookmarkedCourses.length})
@@ -495,16 +517,18 @@ export default function CoursesPage() {
           )}
 
           {/* Bookmark Selected Button - Show only when all selected are unbookmarked */}
-          {isSelectMode && selectedCourseIds.size > 0 && selectedBookmarkedCount === 0 && (
-            <Button
-              size="sm"
-              onClick={handleBookmarkSelected}
-              className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
-            >
-              <Bookmark className="w-4 h-4" />
-              Bookmark
-            </Button>
-          )}
+          {isSelectMode &&
+            selectedCourseIds.size > 0 &&
+            selectedBookmarkedCount === 0 && (
+              <Button
+                size="sm"
+                onClick={handleBookmarkSelected}
+                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
+              >
+                <Bookmark className="w-4 h-4" />
+                Bookmark
+              </Button>
+            )}
 
           {/* Unbookmark Selected Button - Show only when all selected are bookmarked */}
           {isSelectMode && allSelectedAreBookmarked && (
@@ -546,7 +570,6 @@ export default function CoursesPage() {
         </div>
       </div>
 
-
       {/* Filters */}
       {showFilters && (
         <Card className="border border-border shadow-md">
@@ -575,7 +598,9 @@ export default function CoursesPage() {
               >
                 <option value="all">All Platforms</option>
                 {platforms.map((platform) => (
-                  <option key={platform} value={platform}>{platform}</option>
+                  <option key={platform} value={platform}>
+                    {platform}
+                  </option>
                 ))}
               </Select>
             </div>
@@ -600,14 +625,14 @@ export default function CoursesPage() {
                 <GraduationCap className="w-16 h-16 text-primary-500 relative" />
               </div>
               <h3 className="text-xl font-bold text-text mb-2">
-                {activeTab === 'bookmarked'
-                  ? 'No bookmarked courses yet'
-                  : 'No courses yet'}
+                {activeTab === "bookmarked"
+                  ? "No bookmarked courses yet"
+                  : "No courses yet"}
               </h3>
               <p className="text-text-muted mb-6 max-w-md text-base">
-                {activeTab === 'bookmarked'
-                  ? 'Bookmark courses from the All Courses tab to see them here.'
-                  : 'Generate AI-powered course recommendations to get started with your learning journey.'}
+                {activeTab === "bookmarked"
+                  ? "Bookmark courses from the All Courses tab to see them here."
+                  : "Generate AI-powered course recommendations to get started with your learning journey."}
               </p>
               <Button
                 onClick={() => setIsGenerateModalOpen(true)}
@@ -632,7 +657,9 @@ export default function CoursesPage() {
               <Card
                 key={course.id}
                 className={`group relative bg-white dark:bg-surface border border-border hover:border-primary-400 hover:shadow-xl transition-all duration-300 overflow-hidden ${
-                  isSelected ? 'ring-2 ring-primary-500 border-primary-500 shadow-lg' : ''
+                  isSelected
+                    ? "ring-2 ring-primary-500 border-primary-500 shadow-lg"
+                    : ""
                 }`}
               >
                 {/* Completed Badge - Top Right Ribbon */}
@@ -651,8 +678,10 @@ export default function CoursesPage() {
                     {isSelectMode && (
                       <button
                         onClick={() => toggleCourseSelection(course.id)}
-                        className="flex-shrink-0 p-0.5 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded transition-all group/checkbox animate-in fade-in"
-                        aria-label={isSelected ? 'Deselect course' : 'Select course'}
+                        className="shrink-0 p-0.5 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded transition-all group/checkbox animate-in fade-in"
+                        aria-label={
+                          isSelected ? "Deselect course" : "Select course"
+                        }
                       >
                         {isSelected ? (
                           <CheckSquare className="w-5 h-5 text-primary-500" />
@@ -662,15 +691,21 @@ export default function CoursesPage() {
                       </button>
                     )}
 
-                    <h3 className={`font-semibold text-text line-clamp-2 flex-1 leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors ${isSelectMode ? 'text-base' : 'text-lg'}`}>
+                    <h3
+                      className={`font-semibold text-text line-clamp-2 flex-1 leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors ${
+                        isSelectMode ? "text-base" : "text-lg"
+                      }`}
+                    >
                       {course.title}
                     </h3>
 
                     <button
-                      onClick={() => user?.id && toggleBookmark(user.id, course)}
-                      className="flex-shrink-0 p-0.5 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded transition-all group/bookmark"
+                      onClick={() =>
+                        user?.id && toggleBookmark(user.id, course)
+                      }
+                      className="shrink-0 p-0.5 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded transition-all group/bookmark"
                       disabled={!user?.id}
-                      title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                      title={bookmarked ? "Remove bookmark" : "Add bookmark"}
                     >
                       {bookmarked ? (
                         <Bookmark className="w-5 h-5 text-primary-500 fill-primary-500" />
@@ -685,14 +720,15 @@ export default function CoursesPage() {
                     {course.difficulty && (
                       <span
                         className={`text-sm font-semibold px-3.5 py-1 rounded-full ${
-                          course.difficulty === 'beginner'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                            : course.difficulty === 'intermediate'
-                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                          course.difficulty === "beginner"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : course.difficulty === "intermediate"
+                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                         }`}
                       >
-                        {course.difficulty.charAt(0).toUpperCase() + course.difficulty.slice(1)}
+                        {course.difficulty.charAt(0).toUpperCase() +
+                          course.difficulty.slice(1)}
                       </span>
                     )}
                     {course.category && (
@@ -731,7 +767,9 @@ export default function CoursesPage() {
                           );
                         })}
                       </div>
-                      <span className="text-base font-bold text-text ml-1.5">{course.rating}</span>
+                      <span className="text-base font-bold text-text ml-1.5">
+                        {course.rating}
+                      </span>
                       <span className="text-sm text-text-muted">/ 5.0</span>
                     </div>
                   )}
@@ -749,16 +787,18 @@ export default function CoursesPage() {
                       ) : (
                         <div className="flex items-center gap-0.5">
                           <DollarSign className="w-5 h-5 text-text" />
-                          <span className="text-lg font-bold text-text">{course.price}</span>
+                          <span className="text-lg font-bold text-text">
+                            {course.price}
+                          </span>
                         </div>
                       )}
                     </div>
                     <a
-                      href={course.url || '#'}
+                      href={course.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => {
-                        if (!course.url || course.url === '#') {
+                        if (!course.url || course.url === "#") {
                           e.preventDefault();
                         }
                       }}
@@ -766,7 +806,7 @@ export default function CoursesPage() {
                       <Button
                         size="sm"
                         className="flex items-center gap-1.5 text-sm px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white transition-all duration-200 hover:shadow-md"
-                        disabled={!course.url || course.url === '#'}
+                        disabled={!course.url || course.url === "#"}
                       >
                         View Course
                         <ExternalLink className="w-3 h-3" />
@@ -787,9 +827,14 @@ export default function CoursesPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Page info */}
               <div className="text-sm font-medium text-text">
-                Page <span className="text-primary-600 dark:text-primary-400 font-bold">{currentPage}</span> of <span className="font-bold">{totalPages}</span>
+                Page{" "}
+                <span className="text-primary-600 dark:text-primary-400 font-bold">
+                  {currentPage}
+                </span>{" "}
+                of <span className="font-bold">{totalPages}</span>
                 <span className="text-text-muted ml-2">
-                  ({startIndex + 1}-{Math.min(endIndex, filteredCourses.length)} of {filteredCourses.length})
+                  ({startIndex + 1}-{Math.min(endIndex, filteredCourses.length)}{" "}
+                  of {filteredCourses.length})
                 </span>
               </div>
 
@@ -799,7 +844,9 @@ export default function CoursesPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
                   disabled={currentPage === 1}
                   className="flex items-center gap-1.5 px-3 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-400 transition-all duration-200"
                 >
@@ -812,16 +859,18 @@ export default function CoursesPage() {
                   {getPageNumbers().map((page, idx) => (
                     <button
                       key={idx}
-                      onClick={() => typeof page === 'number' && setCurrentPage(page)}
-                      disabled={page === '...' || page === currentPage}
+                      onClick={() =>
+                        typeof page === "number" && setCurrentPage(page)
+                      }
+                      disabled={page === "..." || page === currentPage}
                       className={`
                         min-w-[38px] h-[38px] flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200
                         ${
                           page === currentPage
-                            ? 'bg-primary-500 text-white shadow-md'
-                            : page === '...'
-                            ? 'text-text-muted cursor-default'
-                            : 'text-text hover:bg-primary-50 dark:hover:bg-primary-900/20 border border-border hover:border-primary-400'
+                            ? "bg-primary-500 text-white shadow-md"
+                            : page === "..."
+                            ? "text-text-muted cursor-default"
+                            : "text-text hover:bg-primary-50 dark:hover:bg-primary-900/20 border border-border hover:border-primary-400"
                         }
                       `}
                     >
@@ -834,7 +883,9 @@ export default function CoursesPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
                   disabled={currentPage === totalPages}
                   className="flex items-center gap-1.5 px-3 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-400 transition-all duration-200"
                 >
@@ -845,7 +896,10 @@ export default function CoursesPage() {
 
               {/* Mobile page numbers */}
               <div className="sm:hidden text-sm font-medium text-text">
-                <span className="text-primary-600 dark:text-primary-400 font-bold">{currentPage}</span> / <span className="font-bold">{totalPages}</span>
+                <span className="text-primary-600 dark:text-primary-400 font-bold">
+                  {currentPage}
+                </span>{" "}
+                / <span className="font-bold">{totalPages}</span>
               </div>
             </div>
           </CardContent>
@@ -861,23 +915,22 @@ export default function CoursesPage() {
       >
         <div className="space-y-6">
           <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <div className="text-sm">
               <p className="text-red-900 dark:text-red-100 font-semibold mb-1">
                 Are you sure you want to delete the selected courses?
               </p>
               <p className="text-red-700 dark:text-red-300">
-                You are about to delete <strong>{selectedCourseIds.size}</strong> course
-                {selectedCourseIds.size > 1 ? 's' : ''}. This action cannot be undone.
+                You are about to delete{" "}
+                <strong>{selectedCourseIds.size}</strong> course
+                {selectedCourseIds.size > 1 ? "s" : ""}. This action cannot be
+                undone.
               </p>
             </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteModal(false)}
-            >
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
             <Button
@@ -885,7 +938,8 @@ export default function CoursesPage() {
               className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
             >
               <Trash2 className="w-4 h-4" />
-              Delete {selectedCourseIds.size} Course{selectedCourseIds.size > 1 ? 's' : ''}
+              Delete {selectedCourseIds.size} Course
+              {selectedCourseIds.size > 1 ? "s" : ""}
             </Button>
           </div>
         </div>
@@ -900,12 +954,15 @@ export default function CoursesPage() {
       >
         <div className="space-y-6">
           <div className="flex items-start gap-3 p-4 bg-primary-500/5 border border-primary-500/20 rounded-lg">
-            <Sparkles className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="text-text font-medium mb-1">AI-Powered Recommendations</p>
+              <p className="text-text font-medium mb-1">
+                AI-Powered Recommendations
+              </p>
               <p className="text-text-muted">
-                Select a domain or enter a custom topic to get 5 personalized course recommendations
-                from top platforms like Udemy, Coursera, and more.
+                Select a domain or enter a custom topic to get 5 personalized
+                course recommendations from top platforms like Udemy, Coursera,
+                and more.
               </p>
             </div>
           </div>
@@ -921,12 +978,12 @@ export default function CoursesPage() {
                     key={domain}
                     onClick={() => {
                       setSelectedDomain(domain);
-                      setCustomDomain('');
+                      setCustomDomain("");
                     }}
                     className={`p-3 text-sm rounded-lg border transition-all ${
                       selectedDomain === domain
-                        ? 'border-primary-500 bg-primary-500/10 text-primary-500 shadow-sm'
-                        : 'border-border hover:border-primary-500/50 text-text hover:bg-primary-500/5'
+                        ? "border-primary-500 bg-primary-500/10 text-primary-500 shadow-sm"
+                        : "border-border hover:border-primary-500/50 text-text hover:bg-primary-500/5"
                     }`}
                   >
                     {domain}
@@ -951,7 +1008,7 @@ export default function CoursesPage() {
               onChange={(e) => {
                 setCustomDomain(e.target.value);
                 if (e.target.value.trim()) {
-                  setSelectedDomain('');
+                  setSelectedDomain("");
                 }
               }}
             />
@@ -959,7 +1016,7 @@ export default function CoursesPage() {
 
           {generationError && (
             <div className="flex items-start gap-3 p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
               <p className="text-red-500 text-sm">{generationError}</p>
             </div>
           )}
@@ -974,7 +1031,9 @@ export default function CoursesPage() {
             </Button>
             <Button
               onClick={handleGenerateCourses}
-              disabled={isGenerating || (!selectedDomain && !customDomain.trim())}
+              disabled={
+                isGenerating || (!selectedDomain && !customDomain.trim())
+              }
               className="flex items-center gap-2 min-w-[140px] justify-center"
             >
               {isGenerating ? (

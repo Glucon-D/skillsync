@@ -80,7 +80,7 @@ export default function ConnectProfilePage() {
                   key={index}
                   className="group relative p-4 bg-surface/50 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex justify-between items-start mb-1">
                       <h3 className="font-bold text-text text-base group-hover:text-primary-600 transition-colors">
@@ -126,7 +126,7 @@ export default function ConnectProfilePage() {
                   key={index}
                   className="group relative p-4 bg-surface/50 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <h3 className="font-bold text-text text-base mb-1 group-hover:text-primary-600 transition-colors">
                       {edu.degree}
@@ -194,7 +194,7 @@ export default function ConnectProfilePage() {
                       key={index}
                       className="group relative overflow-hidden rounded-xl bg-surface/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all duration-300"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div className="relative">
                         {project.image && (
                           <div className="relative overflow-hidden">
@@ -203,7 +203,7 @@ export default function ConnectProfilePage() {
                               alt={project.name}
                               className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
                         )}
                         <div className="p-4 space-y-3">
@@ -239,7 +239,7 @@ export default function ConnectProfilePage() {
                                 href={project.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-linear-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
                               >
                                 <ExternalLink className="w-3 h-3" />
                                 <span>View Project</span>
@@ -584,7 +584,7 @@ export default function ConnectProfilePage() {
                 className="w-12 h-12 rounded-full object-cover border-2 border-border"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-lg font-bold flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-primary-600 text-white text-lg font-bold flex items-center justify-center">
                 {getUserInitial()}
               </div>
             )}
@@ -666,7 +666,7 @@ export default function ConnectProfilePage() {
                     className="w-24 h-24 rounded-full object-cover border-4 border-primary-500 "
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-3xl font-bold flex items-center justify-center shadow-xl shadow-primary-500/30">
+                  <div className="w-24 h-24 rounded-full bg-linear-to-br from-primary-500 to-primary-600 text-white text-3xl font-bold flex items-center justify-center shadow-xl shadow-primary-500/30">
                     {getUserInitial()}
                   </div>
                 )}

@@ -438,10 +438,10 @@ export default function ConnectPage() {
                           <img
                             src={userProfile.userImage}
                             alt={userProfile.username || "User"}
-                            className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                            className="w-14 h-14 rounded-full object-cover shrink-0 "
                           />
                         ) : (
-                          <div className="w-14 h-14 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-bold text-lg flex-shrink-0">
+                          <div className="w-14 h-14 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 font-bold text-lg shrink-0">
                             {getUserInitial(userProfile)}
                           </div>
                         )}
@@ -464,7 +464,7 @@ export default function ConnectPage() {
                           disabled={isLoadingAction}
                           variant={isFollowingUser ? "outline" : "primary"}
                           size="sm"
-                          className="flex-shrink-0 min-w-[90px]"
+                          className="shrink-0 min-w-[90px]"
                         >
                           {isLoadingAction
                             ? "..."

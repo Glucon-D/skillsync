@@ -4,15 +4,15 @@
  * @dependencies react, next/link, lucide-react, @/hooks/useAuth, @/lib/constants, @/components/layout/ThemeToggle
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { LogOut, Menu, X, User, ChevronDown } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { useProfileStore } from '@/store/profileStore';
-import { ROUTES } from '@/lib/constants';
-import { ThemeToggle } from './ThemeToggle';
+import Link from "next/link";
+import { LogOut, Menu, X, User, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileStore } from "@/store/profileStore";
+import { ROUTES } from "@/lib/constants";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -24,17 +24,17 @@ export function Navbar() {
   const handleLogout = async () => {
     // Clear profile store
     resetProfile();
-    
+
     // Logout from auth (this clears sessions and storage)
     await logout();
-    
+
     // Clear all cookies as an extra safety measure
     document.cookie.split(";").forEach((c) => {
       document.cookie = c
         .replace(/^ +/, "")
         .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
-    
+
     // Force reload to login page to clear all state
     window.location.href = ROUTES.LOGIN;
   };
@@ -42,27 +42,33 @@ export function Navbar() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
 
     if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 border-b border-border backdrop-blur-md supports-[backdrop-filter]:bg-surface/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 border-b border-border backdrop-blur-md supports-backdrop-filter:bg-surface/60">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME} className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-sm">
+            <Link
+              href={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME}
+              className="flex items-center space-x-3"
+            >
+              <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
               <span className="text-xl font-bold text-text">SkillSync</span>
@@ -78,11 +84,17 @@ export function Navbar() {
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-background transition-all duration-200 group"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-md">
+                    <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-md">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-sm font-medium text-text">{user.name}</span>
-                    <ChevronDown className={`w-4 h-4 text-text-muted transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                    <span className="text-sm font-medium text-text">
+                      {user.name}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-text-muted transition-transform duration-200 ${
+                        dropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {dropdownOpen && (
@@ -130,7 +142,11 @@ export function Navbar() {
               className="p-2 rounded-lg text-text hover:bg-background transition-colors"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -141,7 +157,10 @@ export function Navbar() {
           <div className="px-4 py-4 space-y-3">
             {isAuthenticated && user && (
               <>
-                <p className="text-sm text-text-muted">Welcome, <span className="text-text font-medium">{user.name}</span></p>
+                <p className="text-sm text-text-muted">
+                  Welcome,{" "}
+                  <span className="text-text font-medium">{user.name}</span>
+                </p>
                 <button
                   onClick={handleLogout}
                   className="w-full inline-flex items-center justify-start px-3 py-2 text-sm font-medium text-text-muted hover:text-text bg-transparent hover:bg-background rounded-lg transition-all"

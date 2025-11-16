@@ -166,7 +166,7 @@ export default function PathwayDetailPage() {
       </div>
 
       {/* Pathway Header */}
-      <Card className="border-primary-500/20 bg-gradient-to-br from-primary-500/5 to-primary-600/5">
+      <Card className="border-primary-500/20 bg-linear-to-br from-primary-500/5 to-primary-600/5">
         <CardContent className="">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">

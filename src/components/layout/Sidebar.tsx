@@ -4,10 +4,10 @@
  * @dependencies react, next/link, next/navigation, lucide-react, @/lib/constants, @/lib/utils
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   User,
@@ -17,19 +17,19 @@ import {
   Briefcase,
   ExternalLink,
   Users,
-} from 'lucide-react';
-import { ROUTES } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/store/authStore';
-import { useProfileStore } from '@/store/profileStore';
+} from "lucide-react";
+import { ROUTES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/authStore";
+import { useProfileStore } from "@/store/profileStore";
 
 const navItems = [
-  { name: 'Dashboard', href: ROUTES.DASHBOARD, icon: LayoutDashboard },
-  { name: 'Assessment', href: ROUTES.ASSESSMENT, icon: ClipboardList },
-  { name: 'Pathways', href: ROUTES.PATHWAYS, icon: Map },
-  { name: 'Courses', href: ROUTES.COURSES, icon: BookOpen },
-  { name: 'Careers', href: ROUTES.CAREERS, icon: Briefcase },
-  { name: 'Connect', href: ROUTES.CONNECT, icon: Users },
+  { name: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+  { name: "Assessment", href: ROUTES.ASSESSMENT, icon: ClipboardList },
+  { name: "Pathways", href: ROUTES.PATHWAYS, icon: Map },
+  { name: "Courses", href: ROUTES.COURSES, icon: BookOpen },
+  { name: "Careers", href: ROUTES.CAREERS, icon: Briefcase },
+  { name: "Connect", href: ROUTES.CONNECT, icon: Users },
 ];
 
 export function Sidebar() {
@@ -44,11 +44,11 @@ export function Sidebar() {
     if (user?.name) {
       return user.name.charAt(0).toUpperCase();
     }
-    return '?';
+    return "?";
   };
 
   const getUsername = () => {
-    return profile?.username || user?.email?.split('@')[0] || 'user';
+    return profile?.username || user?.email?.split("@")[0] || "user";
   };
 
   return (
@@ -64,22 +64,26 @@ export function Sidebar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'group relative flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300',
+                  "group relative flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300",
                   isActive
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30'
-                    : 'text-text-muted hover:bg-background hover:text-text hover:shadow-md'
+                    ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                    : "text-text-muted hover:bg-background hover:text-text hover:shadow-md"
                 )}
               >
-                <div className={cn(
-                  'w-9 h-9 rounded-lg flex items-center justify-center mr-3 transition-all duration-300',
-                  isActive
-                    ? 'bg-white/20'
-                    : 'bg-transparent group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20'
-                )}>
+                <div
+                  className={cn(
+                    "w-9 h-9 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
+                    isActive
+                      ? "bg-white/20"
+                      : "bg-transparent group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20"
+                  )}
+                >
                   <Icon
                     className={cn(
-                      'flex-shrink-0 h-5 w-5',
-                      isActive ? 'text-white' : 'text-text-muted group-hover:text-primary-600 dark:group-hover:text-primary-400'
+                      "shrink-0 h-5 w-5",
+                      isActive
+                        ? "text-white"
+                        : "text-text-muted group-hover:text-primary-600 dark:group-hover:text-primary-400"
                     )}
                   />
                 </div>
@@ -92,7 +96,7 @@ export function Sidebar() {
         {/* Portfolio Link */}
         {user && (
           <div className="px-3 mt-auto">
-            <div className="mb-3 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <div className="mb-3 h-px bg-linear-to-r from-transparent via-border to-transparent" />
             <Link
               href={`/${getUsername()}`}
               className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border hover:border-primary-400 bg-background/50 hover:bg-background hover:shadow-lg transition-all duration-300 group"
@@ -104,7 +108,7 @@ export function Sidebar() {
                   className="w-11 h-11 rounded-full object-cover shrink-0 border-2 border-primary-500 shadow-md"
                 />
               ) : (
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md">
+                <div className="w-11 h-11 rounded-full bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md">
                   {getUserInitial()}
                 </div>
               )}
@@ -125,7 +129,13 @@ export function Sidebar() {
   );
 }
 
-export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeAction: () => void }) {
+export function MobileSidebar({
+  isOpen,
+  closeAction,
+}: {
+  isOpen: boolean;
+  closeAction: () => void;
+}) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const profile = useProfileStore((state) => state.profile);
@@ -137,11 +147,11 @@ export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeA
     if (user?.name) {
       return user.name.charAt(0).toUpperCase();
     }
-    return '?';
+    return "?";
   };
 
   const getUsername = () => {
-    return profile?.username || user?.email?.split('@')[0] || 'user';
+    return profile?.username || user?.email?.split("@")[0] || "user";
   };
 
   if (!isOpen) return null;
@@ -165,22 +175,26 @@ export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeA
                   href={item.href}
                   onClick={closeAction}
                   className={cn(
-                    'group relative flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300',
+                    "group relative flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300",
                     isActive
-                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30'
-                      : 'text-text-muted hover:bg-background hover:text-text hover:shadow-md'
+                      ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
+                      : "text-text-muted hover:bg-background hover:text-text hover:shadow-md"
                   )}
                 >
-                  <div className={cn(
-                    'w-9 h-9 rounded-lg flex items-center justify-center mr-3 transition-all duration-300',
-                    isActive
-                      ? 'bg-white/20'
-                      : 'bg-transparent group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20'
-                  )}>
+                  <div
+                    className={cn(
+                      "w-9 h-9 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
+                      isActive
+                        ? "bg-white/20"
+                        : "bg-transparent group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20"
+                    )}
+                  >
                     <Icon
                       className={cn(
-                        'flex-shrink-0 h-5 w-5',
-                        isActive ? 'text-white' : 'text-text-muted group-hover:text-primary-600 dark:group-hover:text-primary-400'
+                        "shrink-0 h-5 w-5",
+                        isActive
+                          ? "text-white"
+                          : "text-text-muted group-hover:text-primary-600 dark:group-hover:text-primary-400"
                       )}
                     />
                   </div>
@@ -193,7 +207,7 @@ export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeA
           {/* Portfolio Link */}
           {user && (
             <div className="px-3 mt-auto pb-4">
-              <div className="mb-3 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <div className="mb-3 h-px bg-linear-to-r from-transparent via-border to-transparent" />
               <Link
                 href={`/${getUsername()}`}
                 onClick={closeAction}
@@ -206,7 +220,7 @@ export function MobileSidebar({ isOpen, closeAction }: { isOpen: boolean; closeA
                     className="w-11 h-11 rounded-full object-cover shrink-0 border-2 border-primary-500 shadow-md"
                   />
                 ) : (
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md">
+                  <div className="w-11 h-11 rounded-full bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md">
                     {getUserInitial()}
                   </div>
                 )}
