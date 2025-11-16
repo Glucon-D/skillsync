@@ -18,8 +18,6 @@ import {
   Users,
   UserPlus,
   UserMinus,
-  Briefcase,
-  GraduationCap,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -642,18 +640,24 @@ export default function PortfolioPage() {
                         {profile.username}
                       </h1>
                       <div className="flex items-center gap-4 text-sm text-text-muted">
-                        <span>
+                        <Link
+                          href={`/${profile.username || profile.userId}/network`}
+                          className="hover:opacity-75 transition-opacity"
+                        >
                           <span className="font-semibold text-text">
                             {profile.followersCount || 0}
                           </span>{" "}
                           Followers
-                        </span>
-                        <span>
+                        </Link>
+                        <Link
+                          href={`/${profile.username || profile.userId}/network`}
+                          className="hover:opacity-75 transition-opacity"
+                        >
                           <span className="font-semibold text-text">
                             {profile.followingCount || 0}
                           </span>{" "}
                           Following
-                        </span>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -921,20 +925,26 @@ export default function PortfolioPage() {
 
           {/* Followers/Following Counts */}
           <div className="flex items-center justify-center gap-6 mb-8">
-            <div className="flex items-center gap-2 text-sm">
+            <Link
+              href={`/${profile.username || profile.userId}/network`}
+              className="flex items-center gap-2 text-sm hover:opacity-75 transition-opacity"
+            >
               <Users className="w-4 h-4 text-text-muted" />
               <span className="font-semibold text-text">
                 {profile.followersCount || 0}
               </span>
               <span className="text-text-muted">Followers</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
+            </Link>
+            <Link
+              href={`/${profile.username || profile.userId}/network`}
+              className="flex items-center gap-2 text-sm hover:opacity-75 transition-opacity"
+            >
               <Users className="w-4 h-4 text-text-muted" />
               <span className="font-semibold text-text">
                 {profile.followingCount || 0}
               </span>
               <span className="text-text-muted">Following</span>
-            </div>
+            </Link>
           </div>
 
           {/* Location & Website */}

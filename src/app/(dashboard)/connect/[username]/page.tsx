@@ -595,18 +595,32 @@ export default function ConnectProfilePage() {
                 {profile.username}
               </h1>
               <div className="flex items-center gap-4 text-sm text-text-muted">
-                <span>
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/${profile.username || profile.userId}/network`
+                    )
+                  }
+                  className="hover:opacity-75 transition-opacity"
+                >
                   <span className="font-semibold text-text">
                     {profile.followersCount || 0}
                   </span>{" "}
                   Followers
-                </span>
-                <span>
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/${profile.username || profile.userId}/network`
+                    )
+                  }
+                  className="hover:opacity-75 transition-opacity"
+                >
                   <span className="font-semibold text-text">
                     {profile.followingCount || 0}
                   </span>{" "}
                   Following
-                </span>
+                </button>
               </div>
             </div>
           </div>

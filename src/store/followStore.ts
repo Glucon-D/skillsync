@@ -14,16 +14,21 @@ interface FollowState {
   followersCount: number;
   isLoading: boolean;
   error: string | null;
+  followersProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
+  followingProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
 }
 
 interface FollowActions {
   loadFollowData: (userId: string) => Promise<void>;
+  loadNetworkProfiles: (userId: string) => Promise<{ followers: unknown[]; following: unknown[] }>;
   followUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   unfollowUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   isFollowing: (targetUserId: string) => boolean;
   updateLocalFollowState: (targetUserId: string, action: 'follow' | 'unfollow') => void;
   updateFollowCounts: (followersCount: number, followingCount: number) => void;
   resetFollowState: () => void;
+  getFollowersList: () => string[];
+  getFollowingList: () => string[];
 }
 
 export const useFollowStore = create<FollowState & FollowActions>((set, get) => ({
@@ -33,6 +38,8 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
   followersCount: 0,
   isLoading: false,
   error: null,
+  followersProfiles: new Map(),
+  followingProfiles: new Map(),
 
   loadFollowData: async (userId: string) => {
     set({ isLoading: true, error: null });
@@ -42,23 +49,29 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
         let followingList: string[] = [];
         let followersList: string[] = [];
 
-        console.log('Raw followingList from DB:', profile.followingList);
-        console.log('Raw followersList from DB:', profile.followersList);
+        console.log('loadFollowData - Raw data from DB:', {
+          followingList: profile.followingList,
+          followersList: profile.followersList,
+        });
 
         try {
           followingList = profile.followingList ? JSON.parse(profile.followingList) : [];
-          console.log('Parsed followingList:', followingList);
+          console.log('loadFollowData - Parsed followingList:', followingList);
         } catch (e) {
-          console.error('Error parsing followingList:', e);
-          followingList = [];
+          console.error('Error parsing followingList, trying CSV format:', e);
+          followingList = profile.followingList
+            ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
         }
 
         try {
           followersList = profile.followersList ? JSON.parse(profile.followersList) : [];
-          console.log('Parsed followersList:', followersList);
+          console.log('loadFollowData - Parsed followersList:', followersList);
         } catch (e) {
-          console.error('Error parsing followersList:', e);
-          followersList = [];
+          console.error('Error parsing followersList, trying CSV format:', e);
+          followersList = profile.followersList
+            ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
         }
 
         set({
@@ -69,11 +82,11 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
           isLoading: false,
         });
         
-        console.log('Follow store updated:', {
+        console.log('loadFollowData - Follow store updated:', {
           followingList,
           followersList,
-          followingCount: followingList.length,
-          followersCount: followersList.length,
+          followingCount: profile.followingCount,
+          followersCount: profile.followersCount,
         });
       } else {
         set({ isLoading: false, error: "Profile not found" });
@@ -216,6 +229,107 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
       followersCount: 0,
       isLoading: false,
       error: null,
+      followersProfiles: new Map(),
+      followingProfiles: new Map(),
     });
+  },
+
+  loadNetworkProfiles: async (userId: string) => {
+    try {
+      const profile = await profileService.getByUserId(userId);
+      if (!profile) {
+        return { followers: [], following: [] };
+      }
+
+      console.log('loadNetworkProfiles - Raw data:', {
+        followersList: profile.followersList,
+        followingList: profile.followingList,
+      });
+
+      let followerIds: string[] = [];
+      let followingIds: string[] = [];
+
+      try {
+        followerIds = profile.followersList
+          ? JSON.parse(profile.followersList)
+          : [];
+      } catch (e) {
+        console.error('Error parsing followersList:', e);
+        followerIds = profile.followersList
+          ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      try {
+        followingIds = profile.followingList
+          ? JSON.parse(profile.followingList)
+          : [];
+      } catch (e) {
+        console.error('Error parsing followingList:', e);
+        followingIds = profile.followingList
+          ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      console.log('loadNetworkProfiles - Parsed IDs:', {
+        followerIds,
+        followingIds,
+      });
+
+      const followerProfiles = await Promise.all(
+        followerIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+      const followingProfiles = await Promise.all(
+        followingIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+
+      const followers = followerProfiles.filter((p) => p !== null);
+      const following = followingProfiles.filter((p) => p !== null);
+
+      const followersMap = new Map();
+      const followingMap = new Map();
+
+      followers.forEach((p) => {
+        if (p) {
+          followersMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      following.forEach((p) => {
+        if (p) {
+          followingMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      set({
+        followersProfiles: followersMap,
+        followingProfiles: followingMap,
+        followersList: followerIds,
+        followingList: followingIds,
+      });
+
+      return { followers, following };
+    } catch (error) {
+      console.error("Error loading network profiles:", error);
+      return { followers: [], following: [] };
+    }
+  },
+
+  getFollowersList: () => {
+    return get().followersList;
+  },
+
+  getFollowingList: () => {
+    return get().followingList;
   },
 }));
