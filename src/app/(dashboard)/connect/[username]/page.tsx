@@ -164,7 +164,7 @@ export default function ConnectProfilePage() {
                     : "text-text-muted hover:text-text"
                 }`}
               >
-                Projects
+                Projects ({profile.projects?.length || 0})
                 {activeTab === "projects" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
                 )}
@@ -177,7 +177,7 @@ export default function ConnectProfilePage() {
                     : "text-text-muted hover:text-text"
                 }`}
               >
-                Completed Pathways
+                Completed Pathways ({completedPathways.length})
                 {activeTab === "pathways" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
                 )}

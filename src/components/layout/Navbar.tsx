@@ -7,7 +7,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LogOut, Menu, X, User, ChevronDown, MessageSquare, Briefcase, TrendingUp, Settings } from 'lucide-react';
+import { LogOut, Menu, X, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfileStore } from '@/store/profileStore';
@@ -86,39 +86,17 @@ export function Navbar() {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-surface/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute right-0 mt-2 w-56 bg-surface/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="p-1.5 space-y-0.5">
-                        <Link
-                          href={ROUTES.CAREERS}
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-text hover:bg-background transition-all duration-200 group"
-                        >
-                          <div className="w-9 h-9 bg-primary-500/10 rounded-lg flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
-                            <Briefcase className="w-4.5 h-4.5 text-primary-600 dark:text-primary-500" />
-                          </div>
-                          <span className="font-medium text-sm">Career Paths</span>
-                        </Link>
-
-                        <Link
-                          href={ROUTES.COURSES}
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-text hover:bg-background transition-all duration-200 group"
-                        >
-                          <div className="w-9 h-9 bg-primary-500/10 rounded-lg flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
-                            <TrendingUp className="w-4.5 h-4.5 text-primary-600 dark:text-primary-500" />
-                          </div>
-                          <span className="font-medium text-sm">Courses</span>
-                        </Link>
-
                         <Link
                           href={ROUTES.PROFILE}
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-text hover:bg-background transition-all duration-200 group"
                         >
                           <div className="w-9 h-9 bg-primary-500/10 rounded-lg flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
-                            <Settings className="w-4.5 h-4.5 text-primary-600 dark:text-primary-500" />
+                            <User className="w-4.5 h-4.5 text-primary-600 dark:text-primary-500" />
                           </div>
-                          <span className="font-medium text-sm">Settings</span>
+                          <span className="font-medium text-sm">Profile</span>
                         </Link>
 
                         <div className="h-px bg-border my-1.5" />

@@ -165,7 +165,7 @@ export default function PortfolioPage() {
                     : "text-text-muted hover:text-text"
                 }`}
               >
-                Projects
+                Projects ({profile.projects?.length || 0})
                 {activeTab === "projects" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
                 )}
@@ -178,7 +178,7 @@ export default function PortfolioPage() {
                     : "text-text-muted hover:text-text"
                 }`}
               >
-                Completed Pathways
+                Completed Pathways ({completedPathways.length})
                 {activeTab === "pathways" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
                 )}
@@ -641,7 +641,9 @@ export default function PortfolioPage() {
                       </h1>
                       <div className="flex items-center gap-4 text-sm text-text-muted">
                         <Link
-                          href={`/${profile.username || profile.userId}/network`}
+                          href={`/${
+                            profile.username || profile.userId
+                          }/network`}
                           className="hover:opacity-75 transition-opacity"
                         >
                           <span className="font-semibold text-text">
@@ -650,7 +652,9 @@ export default function PortfolioPage() {
                           Followers
                         </Link>
                         <Link
-                          href={`/${profile.username || profile.userId}/network`}
+                          href={`/${
+                            profile.username || profile.userId
+                          }/network`}
                           className="hover:opacity-75 transition-opacity"
                         >
                           <span className="font-semibold text-text">
@@ -767,6 +771,8 @@ export default function PortfolioPage() {
                         </div>
 
                         {/* Non-Coding Platform Social Links */}
+                      </div>
+                      <div className="flex items-center justify-center gap-3">
                         {profile.socialLinks &&
                           profile.socialLinks
                             .filter(

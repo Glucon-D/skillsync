@@ -25,7 +25,6 @@ import { useProfileStore } from '@/store/profileStore';
 
 const navItems = [
   { name: 'Dashboard', href: ROUTES.DASHBOARD, icon: LayoutDashboard },
-  { name: 'Profile', href: ROUTES.PROFILE, icon: User },
   { name: 'Assessment', href: ROUTES.ASSESSMENT, icon: ClipboardList },
   { name: 'Pathways', href: ROUTES.PATHWAYS, icon: Map },
   { name: 'Courses', href: ROUTES.COURSES, icon: BookOpen },
