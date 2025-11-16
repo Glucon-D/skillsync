@@ -26,10 +26,12 @@ export default function NetworkPage() {
     unfollowUser,
     isFollowing: checkIsFollowing,
     loadFollowData,
-    loadNetworkProfiles,
+    getCachedNetworkProfiles,
+    syncNetworkProfiles,
   } = useFollowStore();
 
-  const { getCachedProfileByUsername, syncProfileByUsername } = useProfileStore();
+  const { getCachedProfileByUsername, syncProfileByUsername } =
+    useProfileStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,29 +44,45 @@ export default function NetworkPage() {
 
   useEffect(() => {
     async function loadProfile() {
-      console.log('[Network] 🚀 Loading network for:', username);
-      
-      // Try cache first
+      console.log("[Network] 🚀 Loading network for:", username);
+
+      // Try cache first for profile
       const cachedProfile = getCachedProfileByUsername(username);
       if (cachedProfile) {
-        console.log('[Network] ⚡ Loaded from cache');
+        console.log("[Network] ⚡ Profile loaded from cache");
         setProfile(cachedProfile);
-        setLoading(false);
+
+        // Try cache for network profiles too
+        const cachedNetwork = getCachedNetworkProfiles(cachedProfile.userId);
+        if (cachedNetwork) {
+          console.log("[Network] ⚡ Network profiles loaded from cache");
+          setFollowers(cachedNetwork.followers as Profile[]);
+          setFollowing(cachedNetwork.following as Profile[]);
+          setLoading(false);
+        } else {
+          setLoading(true);
+        }
       } else {
         setLoading(true);
       }
 
       try {
-        // Sync in background with cache TTL
-        const data = await syncProfileByUsername(username, { silentSync: true });
-        
+        // Sync profile in background with cache TTL
+        const data = await syncProfileByUsername(username, {
+          silentSync: true,
+        });
+
         if (data) {
           setProfile(data);
-          
-          const networkData = await loadNetworkProfiles(data.userId);
+
+          // Sync network profiles in background with cache TTL
+          const networkData = await syncNetworkProfiles(data.userId, {
+            forceRefresh: false,
+          });
           setFollowers(networkData.followers as Profile[]);
           setFollowing(networkData.following as Profile[]);
 
+          // Load follow data for current user
           if (user) {
             await loadFollowData(user.id);
           }
@@ -79,7 +97,15 @@ export default function NetworkPage() {
     if (username) {
       loadProfile();
     }
-  }, [username, user, loadFollowData, loadNetworkProfiles, getCachedProfileByUsername, syncProfileByUsername]);
+  }, [
+    username,
+    user,
+    loadFollowData,
+    getCachedNetworkProfiles,
+    syncNetworkProfiles,
+    getCachedProfileByUsername,
+    syncProfileByUsername,
+  ]);
 
   const handleFollowToggle = async (targetUserId: string) => {
     if (!user || !profile) return;
@@ -96,13 +122,17 @@ export default function NetworkPage() {
         await loadFollowData(user.id);
 
         // Refresh the profile data to get updated counts
-        const updatedProfile = await syncProfileByUsername(username, { forceRefresh: true });
+        const updatedProfile = await syncProfileByUsername(username, {
+          forceRefresh: true,
+        });
         if (updatedProfile) {
           setProfile(updatedProfile);
         }
 
-        // Reload network profiles
-        const networkData = await loadNetworkProfiles(profile.userId);
+        // Reload network profiles with force refresh
+        const networkData = await syncNetworkProfiles(profile.userId, {
+          forceRefresh: true,
+        });
         setFollowers(networkData.followers as Profile[]);
         setFollowing(networkData.following as Profile[]);
       }
@@ -184,7 +214,7 @@ export default function NetworkPage() {
         <div className="flex pt-16">
           <Sidebar />
           <main className="flex-1 overflow-y-auto min-h-screen">
-            <div className="max-w-4xl mx-auto p-6 md:p-8">
+            <div className=" p-6 md:p-8">
               <div className="flex items-center justify-center h-96">
                 <div className="text-center">
                   <Loader2 className="w-16 h-16 text-primary-500 animate-spin mx-auto mb-4" />
@@ -230,7 +260,7 @@ export default function NetworkPage() {
       <div className="flex pt-16">
         <Sidebar />
         <main className="flex-1 overflow-y-auto min-h-screen">
-          <div className="max-w-4xl mx-auto p-6 md:p-8">
+          <div className="mx-auto p-6 md:p-8">
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <button
@@ -247,7 +277,7 @@ export default function NetworkPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-8 border-b border-border bg-surface rounded-t-xl">
+              <div className="flex items-center max-w-4xl mx-auto justify-center gap-8 border-b border-border  rounded-t-xl">
                 <button
                   onClick={() => setActiveTab("followers")}
                   className={`px-6 py-4 text-base font-semibold transition-all relative ${
@@ -280,7 +310,7 @@ export default function NetworkPage() {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 max-w-4xl mx-auto">
                 {activeTab === "followers" && (
                   <>
                     {followers.length === 0 ? (
