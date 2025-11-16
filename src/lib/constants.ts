@@ -15,6 +15,15 @@ export const STORAGE_KEYS = {
   THEME: 'skillsync_theme_preference',
 } as const;
 
+export const LOCALDB_KEYS = {
+  PROFILES: 'skillsync_localdb_profiles',
+  COURSES: 'skillsync_localdb_courses',
+  PATHWAYS: 'skillsync_localdb_pathways',
+  ASSESSMENTS: 'skillsync_localdb_assessments',
+  FOLLOWS: 'skillsync_localdb_follows',
+  ALL_USERS: 'skillsync_localdb_all_users',
+} as const;
+
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',

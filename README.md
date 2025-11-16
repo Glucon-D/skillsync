@@ -164,7 +164,7 @@ Meet the talented individuals who brought SkillSync to life:
       <p>Crafted the beautiful UI/UX and responsive design system</p>
     </td>
     <td align="center">
-      <h3>Gautam Kapoor</h3>
+      <h3>Gautam Kakkar</h3>
       <p><strong>Backend Developer</strong></p>
       <p>Built robust backend services and database architecture</p>
     </td>

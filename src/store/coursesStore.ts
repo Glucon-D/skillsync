@@ -6,9 +6,10 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Course } from '@/lib/types';
-import { STORAGE_KEYS } from '@/lib/constants';
+import type { Course, SyncOptions } from '@/lib/types';
+import { STORAGE_KEYS, LOCALDB_KEYS } from '@/lib/constants';
 import { coursesService } from '@/lib/db';
+import { localDB } from '@/lib/localDB';
 
 interface CoursesState {
   allCourses: Course[];
@@ -26,6 +27,8 @@ interface CoursesActions {
   markCompleted: (courseId: string, completed: boolean) => Promise<void>;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  loadFromLocalDB: () => void;
+  syncWithAppwrite: (userId: string, options?: SyncOptions) => Promise<void>;
 }
 
 export const useCoursesStore = create<CoursesState & CoursesActions>()(
@@ -140,6 +143,60 @@ export const useCoursesStore = create<CoursesState & CoursesActions>()(
 
       setError: (error: string | null) => {
         set({ error });
+      },
+
+      loadFromLocalDB: () => {
+        console.log('[CoursesStore] 📂 Loading courses from LocalDB...');
+        
+        const courses = localDB.getAll<Course & { bookmarked?: boolean }>(LOCALDB_KEYS.COURSES);
+        
+        if (courses.length > 0) {
+          const bookmarked = courses.filter(c => c.bookmarked !== false);
+          console.log(`[CoursesStore] ✅ Loaded ${courses.length} courses (${bookmarked.length} bookmarked)`);
+          set({
+            allCourses: courses,
+            bookmarkedCourses: bookmarked,
+            error: null,
+          });
+        } else {
+          console.log('[CoursesStore] ⚠️ No courses found in LocalDB');
+        }
+      },
+
+      syncWithAppwrite: async (userId: string, options?: SyncOptions) => {
+        const { silentSync = true } = options || {};
+        
+        console.log(`[CoursesStore] 🔄 Starting Appwrite sync for user: ${userId}`);
+        
+        if (!silentSync) {
+          set({ isLoading: true, error: null });
+        }
+
+        try {
+          const remoteCourses = await coursesService.getByUserId(userId);
+          
+          console.log(`[CoursesStore] 📥 Received ${remoteCourses.length} courses from Appwrite`);
+          
+          const bookmarked = remoteCourses.filter((c: Course & { bookmarked?: boolean }) => c.bookmarked !== false);
+          
+          set({
+            allCourses: remoteCourses,
+            bookmarkedCourses: bookmarked,
+          });
+          
+          localDB.setItems(LOCALDB_KEYS.COURSES, remoteCourses);
+          console.log('[CoursesStore] ✅ Sync complete - Updated Zustand & LocalDB');
+          
+          if (!silentSync) {
+            set({ isLoading: false });
+          }
+        } catch (error) {
+          console.error('[CoursesStore] ❌ Appwrite sync failed:', error);
+          set({ 
+            error: 'Failed to sync courses',
+            isLoading: false 
+          });
+        }
       },
     }),
     {

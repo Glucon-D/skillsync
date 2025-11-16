@@ -4,6 +4,16 @@
  * @dependencies none
  */
 
+export interface LocalDBData<T> {
+  items: T[];
+  lastSync: string;
+}
+
+export interface SyncOptions {
+  forceRefresh?: boolean;
+  silentSync?: boolean;
+}
+
 export interface User {
   id: string;
   name: string;

@@ -6,6 +6,9 @@
 
 import { create } from "zustand";
 import { profileService } from "@/lib/db";
+import { localDB } from "@/lib/localDB";
+import { LOCALDB_KEYS } from "@/lib/constants";
+import type { SyncOptions } from "@/lib/types";
 
 interface FollowState {
   followingList: string[];
@@ -14,16 +17,23 @@ interface FollowState {
   followersCount: number;
   isLoading: boolean;
   error: string | null;
+  followersProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
+  followingProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
 }
 
 interface FollowActions {
   loadFollowData: (userId: string) => Promise<void>;
+  loadNetworkProfiles: (userId: string) => Promise<{ followers: unknown[]; following: unknown[] }>;
   followUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   unfollowUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   isFollowing: (targetUserId: string) => boolean;
   updateLocalFollowState: (targetUserId: string, action: 'follow' | 'unfollow') => void;
   updateFollowCounts: (followersCount: number, followingCount: number) => void;
   resetFollowState: () => void;
+  getFollowersList: () => string[];
+  getFollowingList: () => string[];
+  loadFromLocalDB: () => void;
+  syncWithAppwrite: (userId: string, options?: SyncOptions) => Promise<void>;
 }
 
 export const useFollowStore = create<FollowState & FollowActions>((set, get) => ({
@@ -33,6 +43,8 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
   followersCount: 0,
   isLoading: false,
   error: null,
+  followersProfiles: new Map(),
+  followingProfiles: new Map(),
 
   loadFollowData: async (userId: string) => {
     set({ isLoading: true, error: null });
@@ -42,23 +54,29 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
         let followingList: string[] = [];
         let followersList: string[] = [];
 
-        console.log('Raw followingList from DB:', profile.followingList);
-        console.log('Raw followersList from DB:', profile.followersList);
+        console.log('loadFollowData - Raw data from DB:', {
+          followingList: profile.followingList,
+          followersList: profile.followersList,
+        });
 
         try {
           followingList = profile.followingList ? JSON.parse(profile.followingList) : [];
-          console.log('Parsed followingList:', followingList);
+          console.log('loadFollowData - Parsed followingList:', followingList);
         } catch (e) {
-          console.error('Error parsing followingList:', e);
-          followingList = [];
+          console.error('Error parsing followingList, trying CSV format:', e);
+          followingList = profile.followingList
+            ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
         }
 
         try {
           followersList = profile.followersList ? JSON.parse(profile.followersList) : [];
-          console.log('Parsed followersList:', followersList);
+          console.log('loadFollowData - Parsed followersList:', followersList);
         } catch (e) {
-          console.error('Error parsing followersList:', e);
-          followersList = [];
+          console.error('Error parsing followersList, trying CSV format:', e);
+          followersList = profile.followersList
+            ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
         }
 
         set({
@@ -69,11 +87,11 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
           isLoading: false,
         });
         
-        console.log('Follow store updated:', {
+        console.log('loadFollowData - Follow store updated:', {
           followingList,
           followersList,
-          followingCount: followingList.length,
-          followersCount: followersList.length,
+          followingCount: profile.followingCount,
+          followersCount: profile.followersCount,
         });
       } else {
         set({ isLoading: false, error: "Profile not found" });
@@ -216,6 +234,197 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
       followersCount: 0,
       isLoading: false,
       error: null,
+      followersProfiles: new Map(),
+      followingProfiles: new Map(),
     });
+  },
+
+  loadNetworkProfiles: async (userId: string) => {
+    try {
+      const profile = await profileService.getByUserId(userId);
+      if (!profile) {
+        return { followers: [], following: [] };
+      }
+
+      console.log('loadNetworkProfiles - Raw data:', {
+        followersList: profile.followersList,
+        followingList: profile.followingList,
+      });
+
+      let followerIds: string[] = [];
+      let followingIds: string[] = [];
+
+      try {
+        followerIds = profile.followersList
+          ? JSON.parse(profile.followersList)
+          : [];
+      } catch (e) {
+        console.error('Error parsing followersList:', e);
+        followerIds = profile.followersList
+          ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      try {
+        followingIds = profile.followingList
+          ? JSON.parse(profile.followingList)
+          : [];
+      } catch (e) {
+        console.error('Error parsing followingList:', e);
+        followingIds = profile.followingList
+          ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      console.log('loadNetworkProfiles - Parsed IDs:', {
+        followerIds,
+        followingIds,
+      });
+
+      const followerProfiles = await Promise.all(
+        followerIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+      const followingProfiles = await Promise.all(
+        followingIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+
+      const followers = followerProfiles.filter((p) => p !== null);
+      const following = followingProfiles.filter((p) => p !== null);
+
+      const followersMap = new Map();
+      const followingMap = new Map();
+
+      followers.forEach((p) => {
+        if (p) {
+          followersMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      following.forEach((p) => {
+        if (p) {
+          followingMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      set({
+        followersProfiles: followersMap,
+        followingProfiles: followingMap,
+        followersList: followerIds,
+        followingList: followingIds,
+      });
+
+      return { followers, following };
+    } catch (error) {
+      console.error("Error loading network profiles:", error);
+      return { followers: [], following: [] };
+    }
+  },
+
+  getFollowersList: () => {
+    return get().followersList;
+  },
+
+  getFollowingList: () => {
+    return get().followingList;
+  },
+
+  loadFromLocalDB: () => {
+    console.log('[FollowStore] 📂 Loading follow data from LocalDB...');
+    
+    interface FollowData {
+      followingList: string[];
+      followersList: string[];
+      followingCount: number;
+      followersCount: number;
+    }
+    
+    const followDataList = localDB.getAll<FollowData>(LOCALDB_KEYS.FOLLOWS);
+    
+    if (followDataList.length > 0) {
+      const data = followDataList[0];
+      console.log('[FollowStore] ✅ Loaded follow data from LocalDB');
+      set({
+        followingList: data.followingList || [],
+        followersList: data.followersList || [],
+        followingCount: data.followingCount || 0,
+        followersCount: data.followersCount || 0,
+        error: null,
+      });
+    } else {
+      console.log('[FollowStore] ⚠️ No follow data found in LocalDB');
+    }
+  },
+
+  syncWithAppwrite: async (userId: string, options?: SyncOptions) => {
+    const { silentSync = true } = options || {};
+    
+    console.log(`[FollowStore] 🔄 Starting Appwrite sync for user: ${userId}`);
+    
+    if (!silentSync) {
+      set({ isLoading: true, error: null });
+    }
+
+    try {
+      const profile = await profileService.getByUserId(userId);
+      
+      if (profile) {
+        console.log('[FollowStore] 📥 Received follow data from Appwrite');
+        
+        let followingList: string[] = [];
+        let followersList: string[] = [];
+
+        try {
+          followingList = profile.followingList ? JSON.parse(profile.followingList) : [];
+        } catch {
+          followingList = profile.followingList
+            ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
+        }
+
+        try {
+          followersList = profile.followersList ? JSON.parse(profile.followersList) : [];
+        } catch {
+          followersList = profile.followersList
+            ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+            : [];
+        }
+
+        const followData = {
+          followingList,
+          followersList,
+          followingCount: profile.followingCount || 0,
+          followersCount: profile.followersCount || 0,
+        };
+
+        set({
+          ...followData,
+          isLoading: false,
+        });
+        
+        localDB.setItems(LOCALDB_KEYS.FOLLOWS, [followData]);
+        console.log('[FollowStore] ✅ Sync complete - Updated Zustand & LocalDB');
+      } else {
+        console.log('[FollowStore] ⚠️ No profile found on Appwrite');
+        if (!silentSync) {
+          set({ isLoading: false, error: 'Profile not found' });
+        }
+      }
+    } catch (error) {
+      console.error('[FollowStore] ❌ Appwrite sync failed:', error);
+      set({ 
+        error: 'Failed to sync follow data',
+        isLoading: false 
+      });
+    }
   },
 }));
