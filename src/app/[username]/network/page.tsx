@@ -95,6 +95,13 @@ export default function NetworkPage() {
       if (result.success) {
         await loadFollowData(user.id);
 
+        // Refresh the profile data to get updated counts
+        const updatedProfile = await syncProfileByUsername(username, { forceRefresh: true });
+        if (updatedProfile) {
+          setProfile(updatedProfile);
+        }
+
+        // Reload network profiles
         const networkData = await loadNetworkProfiles(profile.userId);
         setFollowers(networkData.followers as Profile[]);
         setFollowing(networkData.following as Profile[]);

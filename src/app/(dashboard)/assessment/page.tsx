@@ -68,7 +68,30 @@ export default function AssessmentPage() {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-200px)] p-3 sm:p-6">
         <div className="w-full max-w-4xl mx-auto">
-          <Card className="border-2 shadow-2xl overflow-hidden">
+          <Card className="border-2 shadow-2xl overflow-hidden relative">
+            {/* Status Messages - Absolute Top Right */}
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
+              {isSaving && (
+                <Badge className="inline-flex items-center gap-1.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 px-3 py-1.5 shadow-lg">
+                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-700 dark:border-blue-300 border-t-transparent" />
+                  <span>Saving...</span>
+                </Badge>
+              )}
+
+              {!isSaving && !saveError && (
+                <Badge className="inline-flex items-center gap-1.5 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 px-3 py-1.5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                  <CheckCircle className="w-3 h-3" />
+                  <span>Saved Successfully</span>
+                </Badge>
+              )}
+
+              {saveError && (
+                <Badge className="inline-flex items-center gap-1.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700 px-3 py-1.5 shadow-lg">
+                  <span>Failed to save</span>
+                </Badge>
+              )}
+            </div>
+
             <CardContent className="p-4 sm:p-6 space-y-4">
               {/* Success Header */}
               <div className="text-center space-y-2">
@@ -83,29 +106,6 @@ export default function AssessmentPage() {
                 <h2 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-primary-600 via-primary-500 to-primary-400 bg-clip-text text-transparent">
                   Assessment Complete!
                 </h2>
-
-                {/* Status Messages */}
-                <div className="flex justify-center">
-                  {isSaving && (
-                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 px-3 py-1">
-                      <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-700 dark:border-blue-300 border-t-transparent" />
-                      <span>Saving...</span>
-                    </Badge>
-                  )}
-
-                  {!isSaving && !saveError && (
-                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 px-3 py-1">
-                      <CheckCircle className="w-3 h-3" />
-                      <span>Saved Successfully</span>
-                    </Badge>
-                  )}
-
-                  {saveError && (
-                    <Badge className="inline-flex items-center gap-1.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700 px-3 py-1">
-                      <span>Failed to save</span>
-                    </Badge>
-                  )}
-                </div>
               </div>
 
               {/* Dominant Type Badge */}
@@ -113,10 +113,10 @@ export default function AssessmentPage() {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-linear-to-r from-primary-500 to-primary-600 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity" />
                   <div className="relative bg-linear-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl shadow-xl border border-primary-400">
-                    <div className="text-xs uppercase tracking-widest font-bold opacity-90">
+                    <div className="text-xs text-center uppercase tracking-widest font-bold opacity-90">
                       Your Dominant Type
                     </div>
-                    <div className="text-2xl font-bold capitalize">
+                    <div className="text-2xl text-center font-bold capitalize">
                       {result.dominantType}
                     </div>
                   </div>
@@ -181,15 +181,15 @@ export default function AssessmentPage() {
   return (
     <div className="p-8 space-y-2 max-w-3xl mx-auto">
       <div className="text-center">
-        <h1 className="text-xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-linear-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
           Career Assessment
         </h1>
-        <p className="text-xs text-text-muted">
+        <p className="text-lg mt-1 text-text-muted">
           Answer questions to discover your career strengths
         </p>
       </div>
 
-      <Card className="shadow-xl shadow-primary-500/5 border-primary-500/10">
+      <Card className="shadow-xl mt-12 shadow-primary-500/5 border-primary-500/10">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between mb-2">
             <Badge className="px-2.5 py-0.5 text-xs font-semibold bg-linear-to-r from-primary-500 to-primary-600 text-white border-0 shadow-lg shadow-primary-500/30">
