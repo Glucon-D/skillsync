@@ -13,11 +13,12 @@ import {
   ExternalLink,
   Calendar,
   Mail,
-  Users,
   UserPlus,
   UserMinus,
   Briefcase,
   GraduationCap,
+  ArrowLeft,
+  ChevronDown,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -28,7 +29,7 @@ import {
 import { CiLinkedin, CiYoutube } from "react-icons/ci";
 import { IoLogoGithub } from "react-icons/io";
 import { RiTwitterXLine } from "react-icons/ri";
-import { profileService, aiPathwaysService, type AIPathwayRow } from "@/lib/db";
+import { aiPathwaysService, type AIPathwayRow } from "@/lib/db";
 import type { Profile } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTES } from "@/lib/constants";
 import { useFollowStore } from "@/store/followStore";
+import { useProfileStore } from "@/store/profileStore";
 
 export default function ConnectProfilePage() {
   const params = useParams();
@@ -49,6 +51,8 @@ export default function ConnectProfilePage() {
     isFollowing: checkIsFollowing,
     loadFollowData,
   } = useFollowStore();
+
+  const { loadProfileByUsername, getCachedProfile } = useProfileStore();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,39 +73,37 @@ export default function ConnectProfilePage() {
       <>
         {/* Experience Section */}
         {profile.experience && profile.experience.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
-                <Briefcase className="w-5 h-5 text-white" />
-              </div>
+          <div className="space-y-2 px-6">
+            <h2 className="text-lg font-bold text-text flex items-center">
               Experience
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-2">
               {profile.experience.map((exp, index) => (
                 <div
                   key={index}
-                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                  className="group relative p-4 bg-surface/50 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
-                      {exp.title}
-                    </h3>
-                    <p className="text-text-muted text-sm mb-4 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary-500" />
-                      {exp.duration}
-                    </p>
-                    <p className="text-text mb-4 leading-relaxed">
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="font-bold text-text text-base group-hover:text-primary-600 transition-colors">
+                        {exp.title}
+                      </h3>
+                      <p className="text-text-muted text-xs flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-primary-500" />
+                        {exp.duration}
+                      </p>
+                    </div>
+                    <p className="text-text-muted text-sm mb-2 leading-relaxed">
                       {exp.description}
                     </p>
                     {exp.techStack && exp.techStack.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {exp.techStack.map((tech, idx) => (
                           <Badge
                             key={idx}
                             variant="secondary"
-                            size="sm"
-                            className="shadow-sm"
+                            className="text-xs px-2 py-0.5"
                           >
                             {tech}
                           </Badge>
@@ -117,28 +119,25 @@ export default function ConnectProfilePage() {
 
         {/* Education Section */}
         {profile.education && profile.education.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-text flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
+          <div className="space-y-2 px-6">
+            <h2 className="text-lg font-bold text-text flex items-center gap-3">
               Education
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-2">
               {profile.education.map((edu, index) => (
                 <div
                   key={index}
-                  className="group relative p-6 bg-surface/50 backdrop-blur-sm rounded-2xl border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                  className="group relative p-4 bg-surface/50 backdrop-blur-sm rounded-xl border border-border hover:border-primary-500/50 transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <h3 className="font-bold text-text text-xl mb-2 group-hover:text-primary-600 transition-colors">
+                    <h3 className="font-bold text-text text-base mb-1 group-hover:text-primary-600 transition-colors">
                       {edu.degree}
                     </h3>
-                    <p className="text-text-muted text-lg mb-3">{edu.school}</p>
-                    <div className="flex gap-4 text-sm text-text-muted">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-primary-500" />
+                    <p className="text-text-muted text-sm mb-1">{edu.school}</p>
+                    <div className="flex gap-4 text-xs text-text-muted">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-primary-500" />
                         {edu.year}
                       </span>
                       {edu.gpa && (
@@ -157,28 +156,34 @@ export default function ConnectProfilePage() {
         {/* Projects / Completed Pathways Section */}
         {((profile.projects && profile.projects.length > 0) ||
           completedPathways.length > 0) && (
-          <div className="space-y-6">
+          <div className="space-y-6 px-6">
             {/* Tab Switcher */}
-            <div className="flex items-center gap-2 bg-surface/50 backdrop-blur-sm rounded-2xl p-1.5 border-2 border-border">
+            <div className="flex items-center justify-center gap-8 border-b border-border">
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
+                className={`px-4 py-3 text-base font-semibold transition-all relative ${
                   activeTab === "projects"
-                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
-                    : "text-text-muted hover:text-text hover:bg-background"
+                    ? "text-primary-500"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
-                Projects
+                Projects ({profile.projects?.length || 0})
+                {activeTab === "projects" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
+                )}
               </button>
               <button
                 onClick={() => setActiveTab("pathways")}
-                className={`flex-1 px-6 py-3 text-base font-semibold rounded-xl transition-all ${
+                className={`px-4 py-3 text-base font-semibold transition-all relative ${
                   activeTab === "pathways"
-                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
-                    : "text-text-muted hover:text-text hover:bg-background"
+                    ? "text-primary-500"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
-                Completed Pathways
+                Completed Pathways ({completedPathways.length})
+                {activeTab === "pathways" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500" />
+                )}
               </button>
             </div>
 
@@ -186,31 +191,31 @@ export default function ConnectProfilePage() {
             {activeTab === "projects" &&
               profile.projects &&
               profile.projects.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {profile.projects.map((project, index) => (
                     <div
                       key={index}
-                      className="group relative overflow-hidden rounded-2xl bg-surface/50 backdrop-blur-sm border-2 border-border hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300"
+                      className="group relative overflow-hidden rounded-xl bg-surface/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all duration-300"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-linear-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div className="relative">
                         {project.image && (
                           <div className="relative overflow-hidden">
                             <img
                               src={project.image}
                               alt={project.name}
-                              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                              className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
                         )}
-                        <div className="p-6 space-y-4">
+                        <div className="p-4 space-y-3">
                           <div>
-                            <h3 className="text-xl font-bold text-text group-hover:text-primary-600 transition-colors mb-2">
+                            <h3 className="text-base font-bold text-text group-hover:text-primary-600 transition-colors mb-1">
                               {project.name}
                             </h3>
                             {project.description && (
-                              <p className="text-text-muted text-sm leading-relaxed">
+                              <p className="text-text-muted text-xs leading-relaxed">
                                 {project.description}
                               </p>
                             )}
@@ -218,13 +223,12 @@ export default function ConnectProfilePage() {
 
                           {project.techStack &&
                             project.techStack.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-1.5">
                                 {project.techStack.map((tech, idx) => (
                                   <Badge
                                     key={idx}
                                     variant="secondary"
-                                    size="sm"
-                                    className="shadow-sm"
+                                    className="text-xs px-2 py-0.5"
                                   >
                                     {tech}
                                   </Badge>
@@ -233,14 +237,14 @@ export default function ConnectProfilePage() {
                             )}
 
                           {project.url && (
-                            <div className="flex gap-3 pt-2">
+                            <div className="flex gap-2 pt-1">
                               <a
                                 href={project.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-linear-to-r from-primary-500 to-primary-600 rounded-lg hover:shadow-lg hover:shadow-primary-500/30 transition-all"
                               >
-                                <ExternalLink className="w-4 h-4" />
+                                <ExternalLink className="w-3 h-3" />
                                 <span>View Project</span>
                               </a>
                             </div>
@@ -335,15 +339,14 @@ export default function ConnectProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       try {
-        console.log("Loading profile for username:", username);
-        const data = await profileService.getByUsername(username);
-        console.log("Profile data received:", data);
-        console.log("Followers count:", data?.followersCount);
-        console.log("Following count:", data?.followingCount);
+        console.log('[ConnectProfile] 🚀 Loading profile for username:', username);
+        
+        const data = await loadProfileByUsername(username);
+        console.log('[ConnectProfile] 📥 Profile data received:', data ? 'Found' : 'Not found');
 
         if (data) {
           setProfile(data);
-          // Load completed pathways
+          
           if (data.userId) {
             try {
               const pathways = await aiPathwaysService.getAIPathways(
@@ -356,22 +359,20 @@ export default function ConnectProfilePage() {
             }
           }
 
-          // Load follow data for current user
           if (user) {
             try {
               await loadFollowData(user.id);
-              console.log("Follow data loaded successfully");
+              console.log('[ConnectProfile] ✅ Follow data loaded');
             } catch (err) {
               console.error("Error loading follow data:", err);
-              // Don't set notFound on follow data error
             }
           }
         } else {
-          console.log("No profile found for username:", username);
+          console.log('[ConnectProfile] ⚠️ No profile found for username:', username);
           setNotFound(true);
         }
       } catch (error) {
-        console.error("Error loading portfolio:", error);
+        console.error('[ConnectProfile] ❌ Error loading portfolio:', error);
         setNotFound(true);
       } finally {
         setLoading(false);
@@ -381,8 +382,7 @@ export default function ConnectProfilePage() {
     if (username) {
       loadProfile();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+  }, [username, loadProfileByUsername, user, loadFollowData]);
 
   const handleBack = () => {
     router.push(ROUTES.CONNECT);
@@ -423,7 +423,7 @@ export default function ConnectProfilePage() {
         await loadFollowData(user.id);
 
         console.log("Fetching updated target profile...");
-        const updatedProfile = await profileService.getByUserId(profile.userId);
+        const updatedProfile = await loadProfileByUsername(username);
         console.log(
           "Updated profile followers count:",
           updatedProfile?.followersCount
@@ -434,7 +434,6 @@ export default function ConnectProfilePage() {
         );
 
         if (updatedProfile) {
-          // Update entire profile with fresh data from server
           console.log("Setting complete updated profile");
           setProfile(updatedProfile);
         }
@@ -537,7 +536,7 @@ export default function ConnectProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-text-muted">Loading portfolio...</p>
@@ -559,111 +558,152 @@ export default function ConnectProfilePage() {
   }
 
   return (
-    <div className="space-y-8 py-8 px-8">
-      {/* Back Button */}
+    <div className="space-y-2 px-6 pb-8">
+      {/* Header with Back Button, User Info, and Follow Button */}
+      <div className="flex items-center justify-between gap-4 pb-6 pt-4">
+        {/* Left: Back Button */}
+        <div className="flex gap-2 pt-3">
+          <Button
+            onClick={handleBack}
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-2 hover:bg-primary-50"
+          >
+            <ChevronDown className="w-4 h-4 rotate-90" />
+          </Button>
 
-      {/* Profile Header Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500/10 via-surface to-primary-600/10 border-2 border-border shadow-xl">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmOGM0MiIgc3Ryb2tlLW9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=')] opacity-50" />
-
-        <div className="relative pt-12 pb-10 px-8">
-          <div className="text-center">
+          {/* Center: User Info */}
+          <div className="flex items-center gap-4">
             {/* Avatar */}
-            <div className="relative inline-block mb-6">
-              {profile.userImage ? (
-                <img
-                  src={profile.userImage}
-                  alt={profile.username || "Profile"}
-                  className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-2xl shadow-primary-500/20"
-                />
-              ) : (
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white text-4xl font-bold flex items-center justify-center shadow-2xl shadow-primary-500/30">
-                  {getUserInitial()}
-                </div>
-              )}
-              <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
-                <Users className="w-5 h-5 text-white" />
+            {profile.userImage ? (
+              <img
+                src={profile.userImage}
+                alt={profile.username || "Profile"}
+                className="w-12 h-12 rounded-full object-cover border-2 border-border"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-primary-600 text-white text-lg font-bold flex items-center justify-center">
+                {getUserInitial()}
+              </div>
+            )}
+
+            {/* Username and Stats */}
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold text-text">
+                {profile.username}
+              </h1>
+              <div className="flex items-center gap-4 text-sm text-text-muted">
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/${profile.username || profile.userId}/network`
+                    )
+                  }
+                  className="hover:opacity-75 transition-opacity"
+                >
+                  <span className="font-semibold text-text">
+                    {profile.followersCount || 0}
+                  </span>{" "}
+                  Followers
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(
+                      `/${profile.username || profile.userId}/network`
+                    )
+                  }
+                  className="hover:opacity-75 transition-opacity"
+                >
+                  <span className="font-semibold text-text">
+                    {profile.followingCount || 0}
+                  </span>{" "}
+                  Following
+                </button>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Username */}
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-text to-text/80 bg-clip-text text-transparent mb-3">
-              {profile.username}
-            </h1>
+        {/* Right: Follow Button */}
+        {user && user.id !== profile.userId && (
+          <Button
+            onClick={handleFollowToggle}
+            disabled={followLoading}
+            variant={checkIsFollowing(profile.userId) ? "outline" : "primary"}
+          >
+            {followLoading ? (
+              "Loading..."
+            ) : checkIsFollowing(profile.userId) ? (
+              <>
+                <UserMinus className="w-4 h-4 mr-2" />
+                Unfollow
+              </>
+            ) : (
+              <>
+                <UserPlus className="w-4 h-4 mr-2" />
+                Follow
+              </>
+            )}
+          </Button>
+        )}
+      </div>
+
+      {/* Profile Content Card */}
+      <div className="relative overflow-hidden  mb-3 ">
+        {/* Background Pattern */}
+
+        <div className="relative pt-8 pb-10 px-8">
+          <div className="space-y-3">
+            {/* Avatar and Username */}
+            <div className="text-center">
+              <div className="relative inline-block mb-1">
+                {profile.userImage ? (
+                  <img
+                    src={profile.userImage}
+                    alt={profile.username || "Profile"}
+                    className="w-24 h-24 rounded-full object-cover border-4 border-primary-500 "
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-linear-to-br from-primary-500 to-primary-600 text-white text-3xl font-bold flex items-center justify-center shadow-xl shadow-primary-500/30">
+                    {getUserInitial()}
+                  </div>
+                )}
+              </div>
+              <h2 className="text-xl font-bold text-text ">
+                {profile.username}
+              </h2>
+            </div>
 
             {/* Bio */}
             {profile.bio && (
-              <p className="text-text-muted text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-                {profile.bio}
-              </p>
-            )}
-
-            {/* Followers/Following/Skills Counts */}
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-text">
-                    {(() => {
-                      const count = profile.followersCount || 0;
-                      console.log("Rendering followers count:", count);
-                      return count;
-                    })()}
-                  </span>
-                  <span className="text-sm text-text-muted">Followers</span>
-                </div>
-              </div>
-              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-text">
-                    {profile.followingCount || 0}
-                  </span>
-                  <span className="text-sm text-text-muted">Following</span>
-                </div>
-              </div>
-              <div className="group relative px-6 py-3 rounded-xl bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500/50 transition-all cursor-pointer">
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-text">
-                    {profile.skills?.length || 0}
-                  </span>
-                  <span className="text-sm text-text-muted">Skills</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Follow Button */}
-            {user && user.id !== profile.userId && (
-              <div className="mb-8">
-                <Button
-                  onClick={handleFollowToggle}
-                  disabled={followLoading}
-                  size="lg"
-                  variant={
-                    checkIsFollowing(profile.userId) ? "outline" : "primary"
-                  }
-                  className="shadow-lg"
-                >
-                  {followLoading ? (
-                    "Loading..."
-                  ) : checkIsFollowing(profile.userId) ? (
-                    <>
-                      <UserMinus className="w-4 h-4 mr-2" />
-                      Unfollow
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Follow
-                    </>
-                  )}
-                </Button>
+              <div className="text-center">
+                <p className="text-text-muted text-sm max-w-2xl mx-auto leading-relaxed">
+                  {profile.bio}
+                </p>
               </div>
             )}
 
-            {/* Location & Website */}
-            <div className="flex items-center justify-center gap-6 text-sm text-text-muted mb-8">
+            {/* Skills Section */}
+            {profile.skills && profile.skills.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {profile.skills.map((skill, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="px-4 py-1 text-xs"
+                    >
+                      {skill.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Location, Website, Join Date & Non-Coding Social Links */}
+            <div className="flex items-center justify-center gap-3 text-sm text-text-muted flex-wrap">
               {profile.location && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm ">
                   <MapPin className="w-4 h-4 text-primary-500" />
                   <span>{profile.location}</span>
                 </div>
@@ -673,49 +713,63 @@ export default function ConnectProfilePage() {
                   href={profile.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all group"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm   dark:hover:bg-primary-900/20 transition-all group"
                 >
                   <LinkIcon className="w-4 h-4 text-primary-500" />
-                  <span className="group-hover:text-primary-500 transition-colors">
-                    Website
-                  </span>
+                  <span>{profile.websiteUrl}</span>
                 </a>
               )}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm border border-border">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 backdrop-blur-sm ">
                 <Calendar className="w-4 h-4 text-primary-500" />
                 <span>Joined {getJoinDate()}</span>
               </div>
+
+              {/* Non-Coding Platform Social Links */}
             </div>
 
-            {/* Social Links */}
-            {profile.socialLinks && profile.socialLinks.length > 0 && (
-              <div className="flex items-center justify-center gap-3">
-                {profile.socialLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl border-2 border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500 hover:scale-110 hover:shadow-lg group"
-                  >
-                    {getSocialIcon(link)}
-                  </a>
-                ))}
-              </div>
-            )}
+            <div className="flex items-center justify-center gap-3">
+              {profile.socialLinks &&
+                profile.socialLinks
+                  .filter(
+                    (link) =>
+                      !link.toLowerCase().includes("github.com") &&
+                      !link.toLowerCase().includes("leetcode.com") &&
+                      !link.toLowerCase().includes("geeksforgeeks.org")
+                  )
+                  .map((link, index) => (
+                    <a
+                      key={index}
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1 rounded-lg border border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500 hover:scale-110"
+                    >
+                      {getSocialIcon(link)}
+                    </a>
+                  ))}
+            </div>
 
             {/* Coding Platform Heatmaps */}
             {(getGithubUsername() ||
               getLeetCodeUsername() ||
               getGFGUsername()) && (
-              <div className="mt-8 pt-8 border-t border-border/50 space-y-8">
+              <div className=" pt-2 border-t border-border/50 space-y-8">
                 {getGithubUsername() && (
                   <div>
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <IoLogoGithub className="w-6 h-6 text-primary-500" />
+                    <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-text">
                         GitHub Contributions
                       </h3>
+                      <a
+                        href={profile.socialLinks?.find((link) =>
+                          link.toLowerCase().includes("github.com")
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg border border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500"
+                      >
+                        <IoLogoGithub className="w-5 h-5" />
+                      </a>
                     </div>
                     <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img
@@ -730,17 +784,26 @@ export default function ConnectProfilePage() {
 
                 {getLeetCodeUsername() && (
                   <div>
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <SiLeetcode className="w-6 h-6 text-primary-500" />
+                    <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-text">
                         LeetCode Stats
                       </h3>
+                      <a
+                        href={profile.socialLinks?.find((link) =>
+                          link.toLowerCase().includes("leetcode.com")
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg border border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500"
+                      >
+                        <SiLeetcode className="w-5 h-5" />
+                      </a>
                     </div>
                     <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img
                         src={`https://leetcard.jacoblin.cool/${getLeetCodeUsername()}?theme=light&font=Karma&ext=heatmap`}
                         alt="LeetCode Stats"
-                        className="w-full max-w-2xl"
+                        className="w-full max-w-lg"
                       />
                     </div>
                   </div>
@@ -748,11 +811,24 @@ export default function ConnectProfilePage() {
 
                 {getGFGUsername() && (
                   <div>
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <SiGeeksforgeeks className="w-6 h-6 text-primary-500" />
+                    <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-text">
                         GeeksforGeeks Profile
                       </h3>
+                      <a
+                        href={profile.socialLinks?.find(
+                          (link) =>
+                            link.toLowerCase().includes("geeksforgeeks.org") ||
+                            link
+                              .toLowerCase()
+                              .includes("auth.geeksforgeeks.org")
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg border border-border hover:border-primary-500 bg-background/50 backdrop-blur-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-text-muted hover:text-primary-500"
+                      >
+                        <SiGeeksforgeeks className="w-5 h-5" />
+                      </a>
                     </div>
                     <div className="flex justify-center overflow-x-auto bg-background/50 backdrop-blur-sm rounded-2xl p-6 border border-border hover:border-primary-500/50 transition-all">
                       <img

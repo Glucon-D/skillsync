@@ -7,6 +7,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   BookOpen,
   Map,
@@ -27,13 +28,35 @@ import IndustryTrends from "@/components/dashboard/IndustryTrends";
 export default function DashboardPage() {
   const { user } = useAuth();
   const profile = useProfileStore((state) => state.profile);
+  const loadProfileFromLocalDB = useProfileStore((state) => state.loadFromLocalDB);
+  const syncProfileWithAppwrite = useProfileStore((state) => state.syncWithAppwrite);
+  
   const bookmarkedCourses = useCoursesStore((state) => state.bookmarkedCourses);
+  const loadCoursesFromLocalDB = useCoursesStore((state) => state.loadFromLocalDB);
+  const syncCoursesWithAppwrite = useCoursesStore((state) => state.syncWithAppwrite);
+  
   const completionPercentage = profile?.completionPercentage || 0;
+
+  useEffect(() => {
+    console.log('[Dashboard] 🚀 Page loaded');
+    
+    loadProfileFromLocalDB();
+    loadCoursesFromLocalDB();
+
+    if (user?.id) {
+      Promise.allSettled([
+        syncProfileWithAppwrite(user.id, { silentSync: true }),
+        syncCoursesWithAppwrite(user.id, { silentSync: true }),
+      ]).then(() => {
+        console.log('[Dashboard] ✅ Background sync completed');
+      });
+    }
+  }, [user?.id, loadProfileFromLocalDB, syncProfileWithAppwrite, loadCoursesFromLocalDB, syncCoursesWithAppwrite]);
 
   return (
     <div className="space-y-8 pb-8 p-6 md:p-8 max-w-6xl mx-auto">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary-500 via-primary-600 to-primary-700 p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
         <div className="relative z-10">
@@ -51,7 +74,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <Target className="w-6 h-6 text-primary-500" />
@@ -65,7 +88,7 @@ export default function DashboardPage() {
             </div>
             <div className="w-full bg-background rounded-full h-2.5 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-primary-500 to-primary-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                className="bg-linear-to-r from-primary-500 to-primary-600 h-2.5 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>
@@ -74,7 +97,7 @@ export default function DashboardPage() {
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-primary-500" />
@@ -91,7 +114,7 @@ export default function DashboardPage() {
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardContent className="pt-6">
+          <CardContent className="">
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
                 <Award className="w-6 h-6 text-primary-500" />
@@ -109,8 +132,8 @@ export default function DashboardPage() {
 
       {/* Profile Completion Banner */}
       {completionPercentage < 100 && (
-        <Card className="border-2 border-primary-500/30 bg-gradient-to-br from-primary-500/5 to-primary-600/10 shadow-lg">
-          <CardContent className="pt-6">
+        <Card className="border-2 border-primary-500/30 bg-linear-to-br from-primary-500/5 to-primary-600/10 shadow-lg">
+          <CardContent className="">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center shrink-0">

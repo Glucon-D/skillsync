@@ -22,17 +22,26 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import { usePathwaysStore } from "@/store/pathwaysStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { GeneratedPathwayResponse } from "@/lib/types";
-import { aiPathwaysService, type AIPathwayRow } from "@/lib/db";
+import { type AIPathwayRow } from "@/lib/db";
 
 export default function PathwayDetailPage() {
   const router = useRouter();
   const params = useParams();
   const user = useAuthStore((state) => state.user);
   const pathwayId = params.pathwayId as string;
+
+  const {
+    pathways,
+    currentPathway,
+    loadPathwayById,
+    updateCompletion,
+    deletePathway,
+  } = usePathwaysStore();
 
   const [pathway, setPathway] = useState<GeneratedPathwayResponse | null>(null);
   const [pathwayRow, setPathwayRow] = useState<AIPathwayRow | null>(null);
@@ -41,6 +50,7 @@ export default function PathwayDetailPage() {
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set([0]));
 
   useEffect(() => {
+    console.log('[PathwayDetail] 🚀 Page loaded for pathwayId:', pathwayId);
     loadPathway();
   }, [pathwayId, user?.id]);
 
@@ -55,23 +65,16 @@ export default function PathwayDetailPage() {
     setError(null);
 
     try {
-      // Get the pathway data
-      const pathwayData = await aiPathwaysService.getAIPathwayById(user.id, pathwayId);
-
-      if (!pathwayData) {
-        setError("Pathway not found");
-        setIsLoading(false);
-        return;
-      }
-
-      // Get the pathway row for additional metadata
-      const pathways = await aiPathwaysService.getAIPathways(user.id);
+      await loadPathwayById(user.id, pathwayId);
+      
       const row = pathways.find((p) => p.pathwayId === pathwayId);
 
-      setPathway(pathwayData);
+      setPathway(currentPathway);
       setPathwayRow(row || null);
+      
+      console.log('[PathwayDetail] ✅ Pathway loaded');
     } catch (err) {
-      console.error("Error loading pathway:", err);
+      console.error('[PathwayDetail] ❌ Error loading pathway:', err);
       setError("Failed to load pathway");
     } finally {
       setIsLoading(false);
@@ -89,23 +92,27 @@ export default function PathwayDetailPage() {
   };
 
   const handleToggleCompletion = async (completed: boolean) => {
-    if (!pathwayRow?.$id) return;
+    if (!pathwayId) return;
 
     try {
-      await aiPathwaysService.updateCompletion(pathwayRow.$id, completed);
-      // Reload pathway to get updated data
-      await loadPathway();
+      await updateCompletion(pathwayId, completed);
+      
+      const updatedRow = pathways.find((p) => p.pathwayId === pathwayId);
+      setPathwayRow(updatedRow || null);
+      
+      console.log('[PathwayDetail] ✅ Completion status updated');
     } catch (err) {
       setError("Failed to update completion status");
     }
   };
 
   const handleDeletePathway = async () => {
-    if (!pathwayRow?.$id) return;
+    if (!pathwayId) return;
     if (!confirm("Are you sure you want to delete this pathway?")) return;
 
     try {
-      await aiPathwaysService.delete(pathwayRow.$id);
+      await deletePathway(pathwayId);
+      console.log('[PathwayDetail] ✅ Pathway deleted');
       router.push("/pathways");
     } catch (err) {
       setError("Failed to delete pathway");
@@ -163,8 +170,8 @@ export default function PathwayDetailPage() {
       </div>
 
       {/* Pathway Header */}
-      <Card className="border-primary-500/20 bg-gradient-to-br from-primary-500/5 to-primary-600/5">
-        <CardContent className="pt-6">
+      <Card className="border-primary-500/20 bg-linear-to-br from-primary-500/5 to-primary-600/5">
+        <CardContent className="">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-3">
@@ -220,7 +227,10 @@ export default function PathwayDetailPage() {
         </h2>
         <div className="space-y-4">
           {pathway.steps.map((step, index) => (
-            <Card key={index} className="border-border hover:border-primary-500/50 transition-all duration-200">
+            <Card
+              key={index}
+              className="border-border hover:border-primary-500/50 transition-all duration-200"
+            >
               <CardHeader className="pb-3">
                 <div
                   className="flex items-center justify-between cursor-pointer"
@@ -300,7 +310,7 @@ export default function PathwayDetailPage() {
                 key={index}
                 className="border-border hover:border-primary-500/50 transition-colors"
               >
-                <CardContent className="pt-6">
+                <CardContent className="">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <Badge variant="default" size="sm" className="mb-2">

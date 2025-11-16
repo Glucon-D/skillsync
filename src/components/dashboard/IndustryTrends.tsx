@@ -169,7 +169,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
   if (error) {
     return (
       <Card className="border-primary-500/30 bg-primary-500/5 shadow-lg">
-        <CardContent className="pt-6">
+        <CardContent className="">
           <div className="flex items-start gap-4 p-4">
             <div className="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center shrink-0">
               <AlertCircle className="w-6 h-6 text-primary-500" />
@@ -212,9 +212,6 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
       {/* Professional Header with Visual Indicator */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/25">
-            <BarChart3 className="w-6 h-6 text-white" />
-          </div>
           <div>
             <div className="flex items-center gap-3 mb-1.5">
               <h2 className="text-2xl font-bold text-text tracking-tight">
@@ -292,7 +289,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
         {/* Market Outlook */}
         <Card className="relative overflow-hidden border-border hover:border-primary-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -translate-y-16 translate-x-16"></div>
-          <CardContent className="pt-6 relative">
+          <CardContent className=" relative">
             <div className="flex items-start justify-between mb-4">
               <div className="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center">
                 <LineChart className="w-5 h-5 text-primary-500" />
@@ -311,7 +308,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
         {/* Salary Growth */}
         <Card className="relative overflow-hidden border-border hover:border-primary-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -translate-y-16 translate-x-16"></div>
-          <CardContent className="pt-6 relative">
+          <CardContent className=" relative">
             <div className="flex items-start justify-between mb-4">
               <div className="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-primary-500" />
@@ -338,7 +335,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
         {/* Top Skills */}
         <Card className="relative overflow-hidden border-border hover:border-primary-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -translate-y-16 translate-x-16"></div>
-          <CardContent className="pt-6 relative">
+          <CardContent className=" relative">
             <div className="flex items-start justify-between mb-4">
               <div className="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center">
                 <Zap className="w-5 h-5 text-primary-500" />
@@ -586,7 +583,7 @@ export default function IndustryTrends({ profile }: IndustryTrendsProps) {
                     className="p-3 bg-surface/50 rounded-lg border border-border"
                   >
                     <div className="flex items-start gap-3 mb-2">
-                      <div className="w-8 h-8 bg-primary-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-primary-500/10 rounded-lg flex items-center justify-center shrink-0">
                         {getCategoryIcon(insight.category)}
                       </div>
                       <div className="flex-1">
