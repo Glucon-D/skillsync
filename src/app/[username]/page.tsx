@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import {
   ArrowLeft,
   MapPin,
@@ -18,6 +19,7 @@ import {
   Users,
   UserPlus,
   UserMinus,
+  Share2,
 } from "lucide-react";
 import {
   SiPeerlist,
@@ -455,6 +457,18 @@ export default function PortfolioPage() {
     }
   };
 
+  const handleShareProfile = async () => {
+    const shareUrl = `https://skillsync.aysh.me/${username}`;
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Link copied!');
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
+      toast.error('Failed to copy link');
+    }
+  };
+
   const getUserInitial = () => {
     if (profile?.username) {
       return profile.username.charAt(0).toUpperCase();
@@ -664,9 +678,20 @@ export default function PortfolioPage() {
 
                   {/* Right: Edit Profile or Follow Button */}
                   {user && user.id === profile.userId ? (
-                    <Link href="/profile">
-                      <Button variant="outline">Edit Profile</Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleShareProfile}
+                        className="flex items-center gap-2"
+                      >
+                        <Share2 className="w-4 h-4" />
+                        Share Profile
+                      </Button>
+                      <Link href="/profile">
+                        <Button variant="outline">Edit Profile</Button>
+                      </Link>
+                    </div>
                   ) : user && user.id !== profile.userId ? (
                     <Button
                       onClick={handleFollowToggle}

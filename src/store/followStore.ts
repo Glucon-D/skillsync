@@ -10,6 +10,12 @@ import { localDB } from "@/lib/localDB";
 import { LOCALDB_KEYS } from "@/lib/constants";
 import type { SyncOptions } from "@/lib/types";
 
+interface NetworkProfilesCache {
+  followers: unknown[];
+  following: unknown[];
+  cachedAt: string;
+}
+
 interface FollowState {
   followingList: string[];
   followersList: string[];
@@ -19,11 +25,14 @@ interface FollowState {
   error: string | null;
   followersProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
   followingProfiles: Map<string, { userId: string; username: string; bio: string; userImage: string }>;
+  networkProfilesCache: Record<string, NetworkProfilesCache>;
 }
 
 interface FollowActions {
   loadFollowData: (userId: string) => Promise<void>;
   loadNetworkProfiles: (userId: string) => Promise<{ followers: unknown[]; following: unknown[] }>;
+  getCachedNetworkProfiles: (userId: string) => { followers: unknown[]; following: unknown[] } | null;
+  syncNetworkProfiles: (userId: string, options?: SyncOptions) => Promise<{ followers: unknown[]; following: unknown[] }>;
   followUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   unfollowUser: (currentUserId: string, targetUserId: string) => Promise<{ success: boolean; error?: string }>;
   isFollowing: (targetUserId: string) => boolean;
@@ -45,6 +54,7 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
   error: null,
   followersProfiles: new Map(),
   followingProfiles: new Map(),
+  networkProfilesCache: {},
 
   loadFollowData: async (userId: string) => {
     set({ isLoading: true, error: null });
@@ -327,6 +337,121 @@ export const useFollowStore = create<FollowState & FollowActions>((set, get) => 
     } catch (error) {
       console.error("Error loading network profiles:", error);
       return { followers: [], following: [] };
+    }
+  },
+
+  getCachedNetworkProfiles: (userId: string) => {
+    const cached = get().networkProfilesCache[userId];
+    if (!cached) return null;
+
+    const cacheAge = Date.now() - new Date(cached.cachedAt).getTime();
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+    if (cacheAge > CACHE_TTL) {
+      console.log('[FollowStore] ⏰ Network cache expired for user:', userId);
+      return null;
+    }
+
+    console.log('[FollowStore] ✅ Using cached network profiles for user:', userId);
+    return { followers: cached.followers, following: cached.following };
+  },
+
+  syncNetworkProfiles: async (userId: string, options?: SyncOptions) => {
+    const { forceRefresh = false } = options || {};
+
+    console.log('[FollowStore] 🔄 Syncing network profiles for user:', userId);
+
+    const cached = get().getCachedNetworkProfiles(userId);
+
+    if (!forceRefresh && cached) {
+      console.log('[FollowStore] ⚡ Using cached network profiles (within TTL)');
+      return cached;
+    }
+
+    try {
+      const profile = await profileService.getByUserId(userId);
+      if (!profile) {
+        return { followers: [], following: [] };
+      }
+
+      let followerIds: string[] = [];
+      let followingIds: string[] = [];
+
+      try {
+        followerIds = profile.followersList
+          ? JSON.parse(profile.followersList)
+          : [];
+      } catch {
+        followerIds = profile.followersList
+          ? profile.followersList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      try {
+        followingIds = profile.followingList
+          ? JSON.parse(profile.followingList)
+          : [];
+      } catch {
+        followingIds = profile.followingList
+          ? profile.followingList.split(",").filter((id: string) => id.trim() !== "")
+          : [];
+      }
+
+      const followerProfiles = await Promise.all(
+        followerIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+      const followingProfiles = await Promise.all(
+        followingIds.map((id: string) => profileService.getByUserId(id.trim()))
+      );
+
+      const followers = followerProfiles.filter((p) => p !== null);
+      const following = followingProfiles.filter((p) => p !== null);
+
+      const followersMap = new Map();
+      const followingMap = new Map();
+
+      followers.forEach((p) => {
+        if (p) {
+          followersMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      following.forEach((p) => {
+        if (p) {
+          followingMap.set(p.userId, {
+            userId: p.userId,
+            username: p.username,
+            bio: p.bio,
+            userImage: p.userImage,
+          });
+        }
+      });
+
+      set({
+        followersProfiles: followersMap,
+        followingProfiles: followingMap,
+        followersList: followerIds,
+        followingList: followingIds,
+        networkProfilesCache: {
+          ...get().networkProfilesCache,
+          [userId]: {
+            followers,
+            following,
+            cachedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      console.log('[FollowStore] ✅ Network profiles synced and cached');
+      return { followers, following };
+    } catch (error) {
+      console.error('[FollowStore] ❌ Failed to sync network profiles:', error);
+      return cached || { followers: [], following: [] };
     }
   },
 
