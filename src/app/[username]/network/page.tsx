@@ -160,7 +160,7 @@ export default function NetworkPage() {
         key={userProfile.$id}
         className="border-border hover:border-primary-500 transition-all"
       >
-        <CardContent className="p-6">
+        <CardContent className="">
           <div className="flex items-start justify-between gap-4">
             <Link
               href={`/${userProfile.username || userProfile.userId}`}
